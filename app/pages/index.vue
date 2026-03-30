@@ -28,20 +28,11 @@ const eventsToday: Event[] = [
     attendees: 8
   }
 ]
-
-const calendarDays = Array.from({ length: 30 }, (_, i) => ({
-  date: i + 1,
-  hasEvent: [4, 10, 14, 17].includes(i + 1),
-  isToday: i + 1 === 10
-}))
-
-const previousDays = [30, 31]
-const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 </script>
 
 <template>
   <!-- Header -->
-  <div class="sky-header-gradient pt-8 pb-24 px-6 relative overflow-hidden">
+  <div class="sky-header-gradient pt-8 pb-20 px-6 relative overflow-hidden">
       <div class="absolute top-[-20px] right-[-20px] w-48 h-48 bg-white/20 rounded-full blur-3xl"></div>
       <div class="absolute bottom-[-10px] left-[-10px] w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
 
@@ -68,16 +59,16 @@ const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
         </div>
       </header>
 
-      <div class="mt-8 flex items-center justify-between relative z-10 text-white">
-        <div class="flex flex-col">
-          <span class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Club Calendar</span>
-          <span class="text-2xl font-bold">{{ currentMonth }}</span>
-        </div>
+      <div class="mt-8 flex flex-col items-center justify-between relative z-10 text-white">
+        <span class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Club Calendar</span>
         <div class="flex gap-1.5">
-          <button class="size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
+          <button class="mr-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
             <span class="material-symbols-outlined text-xl">chevron_left</span>
           </button>
-          <button class="size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
+          <div>
+            <span class="text-2xl font-bold">{{ currentMonth }}</span>
+          </div>
+          <button class="ml-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
             <span class="material-symbols-outlined text-xl">chevron_right</span>
           </button>
         </div>
