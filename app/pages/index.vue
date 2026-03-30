@@ -1,16 +1,58 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Event } from '@/types'
+import {
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  format,
+  add,
+  sub
+} from 'date-fns'
 
 definePageMeta({
   layout: 'default'
 })
 
-const currentMonth = ref('November 2023')
+const today = ref(new Date())
+const currentDate = ref(new Date())
+const selectedDate = ref(today.value)
 
-const eventsToday: Event[] = [
+const monthYear = computed(() => format(currentDate.value, 'MMMM yyyy'))
+
+const calendarGrid = computed(() => {
+  const startOfMonthDate = startOfMonth(currentDate.value)
+  const endOfMonthDate = endOfMonth(currentDate.value)
+  const startDate = startOfWeek(startOfMonthDate, { weekStartsOn: 1 })
+  const endDate = endOfWeek(endOfMonthDate, { weekStartsOn: 1 })
+
+  return eachDayOfInterval({ start: startDate, end: endDate })
+})
+
+const isToday = (date: Date) => isSameDay(date, today.value)
+const isSelected = (date: Date) => isSameDay(date, selectedDate.value)
+const isCurrentMonth = (date: Date) => isSameMonth(date, currentDate.value)
+
+const selectDate = (date: Date) => {
+  selectedDate.value = date
+}
+
+const previousMonth = () => {
+  currentDate.value = sub(currentDate.value, { months: 1 })
+}
+
+const nextMonth = () => {
+  currentDate.value = add(currentDate.value, { months: 1 })
+}
+
+const allEvents: Event[] = [
   {
     id: 1,
+    date: new Date(),
     time: '09:00',
     period: 'AM',
     title: 'Morning Zen Meditation',
@@ -20,14 +62,39 @@ const eventsToday: Event[] = [
   },
   {
     id: 2,
+    date: new Date(),
     time: '12:30',
     period: 'PM',
     title: 'Mindful Lunch Meetup',
     icon: 'restaurant',
     location: 'Vegetarian Dining Hall',
     attendees: 8
+  },
+  {
+    id: 3,
+    date: add(new Date(), { days: 4 }),
+    time: '18:00',
+    period: 'PM',
+    title: 'Evening Chanting',
+    icon: 'mosque',
+    location: 'Meditation Hall',
+    attendees: 12
   }
 ]
+
+const eventsForSelectedDate = computed(() => {
+  return allEvents.filter(event => isSameDay(event.date, selectedDate.value))
+})
+
+const eventsInMonth = computed(() => {
+  const eventsMap = new Map<number, boolean>()
+  allEvents.forEach(event => {
+    if (isSameMonth(event.date, currentDate.value)) {
+      eventsMap.set(event.date.getDate(), true)
+    }
+  })
+  return eventsMap
+})
 </script>
 
 <template>
@@ -61,14 +128,14 @@ const eventsToday: Event[] = [
 
       <div class="mt-8 flex flex-col items-center justify-between relative z-10 text-white">
         <span class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Club Calendar</span>
-        <div class="flex gap-1.5">
-          <button class="mr-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
+        <div class="flex gap-1.5 items-center">
+          <button @click="previousMonth" class="mr-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
             <span class="material-symbols-outlined text-xl">chevron_left</span>
           </button>
           <div>
-            <span class="text-2xl font-bold">{{ currentMonth }}</span>
+            <span class="text-2xl font-bold">{{ monthYear }}</span>
           </div>
-          <button class="ml-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
+          <button @click="nextMonth" class="ml-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
             <span class="material-symbols-outlined text-xl">chevron_right</span>
           </button>
         </div>
@@ -88,14 +155,30 @@ const eventsToday: Event[] = [
           <div class="text-[10px] font-bold text-sky-500/60 uppercase">Sun</div>
         </div>
         <div class="calendar-grid gap-y-3">
-          <div class="h-10 flex items-center justify-center text-slate-300 text-sm">30</div>
-          <div class="h-10 flex items-center justify-center text-slate-300 text-sm">31</div>
-          <div v-for="i in 28" :key="`day-${i}`" class="h-10 flex items-center justify-center text-slate-800 text-sm font-medium relative">
-            {{ i }}
-            <div v-if="[4, 14, 17].includes(i)" class="absolute bottom-1.5 size-1 bg-sky-400 rounded-full"></div>
-            <div v-if="i === 10" class="absolute inset-0 rounded-2xl bg-sky-500 shadow-lg shadow-sky-200 ring-4 ring-sky-100 flex items-center justify-center">
-              <span class="text-white font-bold">{{ i }}</span>
+          <div 
+            v-for="day in calendarGrid" 
+            :key="day.toISOString()"
+            class="h-10 flex items-center justify-center text-sm font-medium relative cursor-pointer"
+            :class="{
+              'text-slate-300': !isCurrentMonth(day),
+              'text-slate-800': isCurrentMonth(day),
+              'text-white font-bold': isSelected(day) && isToday(day),
+              'text-slate-900': isSelected(day) && !isToday(day)
+            }"
+            @click="selectDate(day)"
+          >
+            <div 
+              class="absolute inset-0 flex items-center justify-center"
+              :class="{
+                'bg-sky-500 shadow-lg shadow-sky-200 ring-4 ring-sky-100 rounded-2xl': isSelected(day),
+                'bg-sky-200 rounded-full w-8 h-8': isToday(day) && !isSelected(day)
+              }"
+            >
+               <span :class="{'text-white': isSelected(day) || (isToday(day) && !isSelected(day))}">
+                {{ format(day, 'd') }}
+              </span>
             </div>
+            <div v-if="eventsInMonth.get(day.getDate()) && isCurrentMonth(day) && !isSelected(day)" class="absolute bottom-1.5 size-1 bg-sky-400 rounded-full"></div>
           </div>
         </div>
       </div>
@@ -104,14 +187,14 @@ const eventsToday: Event[] = [
     <!-- Events -->
     <main class="flex-1 bg-white p-6 pb-24">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-bold text-slate-800">Events Today</h3>
+        <h3 class="text-lg font-bold text-slate-800">Events for {{ format(selectedDate, 'MMMM d') }}</h3>
         <button class="flex items-center gap-1 text-sky-500 font-bold text-xs uppercase tracking-wider bg-sky-50 px-3 py-1.5 rounded-full hover:bg-sky-100 transition-colors">
           <span class="material-symbols-outlined text-sm">add</span>
           Add Event
         </button>
       </div>
-      <div class="space-y-5">
-        <div v-for="event in eventsToday" :key="event.id" class="event-item pb-5 flex items-start gap-4">
+      <div v-if="eventsForSelectedDate.length > 0" class="space-y-5">
+        <div v-for="event in eventsForSelectedDate" :key="event.id" class="event-item pb-5 flex items-start gap-4">
           <div class="min-w-[50px] text-center pt-1">
             <p class="text-sm font-bold text-slate-800">{{ event.time }}</p>
             <p class="text-[10px] text-slate-400 uppercase font-bold">{{ event.period }}</p>
@@ -127,7 +210,7 @@ const eventsToday: Event[] = [
             </p>
             <div class="flex items-center justify-between">
               <div class="flex -space-x-2">
-                <div v-for="i in 3" :key="i" :style="{ background: `hsl(${200 + i * 30}, 70%, 70%)` }" class="size-7 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold">
+                <div v-for="i in Math.min(3, event.attendees)" :key="i" :style="{ background: `hsl(${200 + i * 30}, 70%, 70%)` }" class="size-7 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold">
                   {{ String.fromCharCode(64 + i) }}{{ String.fromCharCode(64 + i) }}
                 </div>
                 <div v-if="event.attendees > 3" class="size-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-400">
@@ -138,6 +221,9 @@ const eventsToday: Event[] = [
             </div>
           </div>
         </div>
+      </div>
+      <div v-else class="text-center py-10">
+        <p class="text-slate-500">No events for this day.</p>
       </div>
     </main>
 </template>
