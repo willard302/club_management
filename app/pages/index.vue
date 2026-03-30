@@ -41,7 +41,7 @@ const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 
 <template>
   <!-- Header -->
-  <div class="sky-header-gradient pt-14 pb-28 px-6 relative overflow-hidden">
+  <div class="sky-header-gradient pt-8 pb-24 px-6 relative overflow-hidden">
       <div class="absolute top-[-20px] right-[-20px] w-48 h-48 bg-white/20 rounded-full blur-3xl"></div>
       <div class="absolute bottom-[-10px] left-[-10px] w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
 
@@ -51,11 +51,7 @@ const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
             <span class="material-symbols-outlined text-white text-2xl">menu</span>
           </button>
           <div class="flex items-center gap-3">
-            <div class="zen-logo-circles">
-              <div class="circle-1"></div>
-              <div class="circle-2"></div>
-              <div class="circle-3"></div>
-            </div>
+            <ZenLogo size="sm" />
             <div class="flex flex-col">
               <h1 class="text-white font-bold text-lg leading-tight tracking-tight">淡江大學禪學社</h1>
               <p class="text-white/80 text-[10px] font-medium tracking-widest uppercase">TKU Zen Club</p>
@@ -90,7 +86,7 @@ const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 
     <!-- Calendar Card -->
     <div class="px-4 -mt-16 relative z-20">
-      <div class="cloud-card rounded-3xl p-5 mb-6">
+      <div class="cloud-card rounded-3xl p-5 mb-2">
         <div class="calendar-grid text-center mb-4">
           <div class="text-[10px] font-bold text-sky-500/60 uppercase">Mon</div>
           <div class="text-[10px] font-bold text-sky-500/60 uppercase">Tue</div>
@@ -115,7 +111,7 @@ const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
     </div>
 
     <!-- Events -->
-    <main class="flex-1 bg-white p-6">
+    <main class="flex-1 bg-white p-6 pb-24">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-bold text-slate-800">Events Today</h3>
         <button class="flex items-center gap-1 text-sky-500 font-bold text-xs uppercase tracking-wider bg-sky-50 px-3 py-1.5 rounded-full hover:bg-sky-100 transition-colors">
@@ -156,13 +152,12 @@ const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 </template>
 
 <style scoped>
-:root {
-  --sky-gradient: linear-gradient(180deg, #0EA5E9 0%, #38BDF8 100%);
-  --cloud-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.1);
+.sky-header-gradient {
+  background: linear-gradient(180deg, #0EA5E9 0%, #38BDF8 100%);
 }
 
-.sky-header-gradient {
-  background: var(--sky-gradient);
+.cloud-card {
+  --cloud-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.1);
 }
 
 .calendar-grid {
@@ -183,42 +178,5 @@ const nextDays = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 
 .event-item:last-child {
   border-bottom: none;
-}
-
-.zen-logo-circles {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.circle-1 {
-  border: 2.5px solid #FFD700;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.9;
-}
-
-.circle-2 {
-  border: 2.5px solid #FF4D4D;
-  width: 22px;
-  height: 22px;
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.9;
-}
-
-.circle-3 {
-  border: 2.5px solid #FFFFFF;
-  width: 12px;
-  height: 12px;
-  position: absolute;
-  border-radius: 50%;
-  opacity: 1;
 }
 </style>

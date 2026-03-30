@@ -39,16 +39,7 @@ const handleLogin = () => {
       <!-- Center Content -->
       <div class="flex flex-col items-center gap-6 w-full">
         <!-- Logo -->
-        <div class="relative flex items-center justify-center">
-          <div
-            class="size-28 rounded-full flex items-center justify-center relative overflow-hidden bg-red-500/80 shadow-lg"
-            style="box-shadow: 0 0 40px 10px rgba(255, 255, 255, 0.5);"
-          >
-            <div class="size-20 rounded-full flex items-center justify-center bg-yellow-400/90">
-              <div class="size-12 rounded-full" style="background-color: #4CAF50;"></div>
-            </div>
-          </div>
-        </div>
+        <ZenLogo size="lg" />
 
         <!-- Title -->
         <div class="text-center">

@@ -30,11 +30,7 @@ const handleRegister = () => {
 
       <!-- Top Logo -->
       <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20">
-        <div class="size-12 rounded-full flex items-center justify-center relative overflow-hidden bg-[#D15151]" style="box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);">
-          <div class="size-8 rounded-full flex items-center justify-center bg-[#FBC02D]">
-            <div class="size-4 rounded-full bg-[#4CAF50]"></div>
-          </div>
-        </div>
+        <ZenLogo size="sm" />
       </div>
 
       <!-- Header Content in Hero Section -->
