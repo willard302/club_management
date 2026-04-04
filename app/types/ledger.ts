@@ -1,11 +1,16 @@
 export interface Transaction {
-  id: number
+  id: string | number
   icon: string
   title: string
-  category: string
+  category?: string
   amount: string
-  status: 'success' | 'settled' | 'pending'
+  amountValue: number
+  status: 'success' | 'settled' | 'pending' | 'approved' | 'rejected' | 'reviewing'
   time: string
+  date: string
+  requisitioner?: string
+  reviewer?: string
+  type: 'income' | 'expense'
 }
 
 export interface LedgerSummary {

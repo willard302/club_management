@@ -49,9 +49,9 @@ onMounted(() => {
           <p class="text-white/80 text-xs font-bold uppercase tracking-[0.2em] mb-2">Club Treasury Balance</p>
           <h1 class="text-5xl font-bold tracking-tight text-white mb-6">{{ clubBalance }}</h1>
           <div class="flex gap-4 w-full">
-            <button class="flex-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white py-3.5 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-white/30">
+            <NuxtLink to="/ledger/new" class="flex-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white py-3.5 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-white/30 inline-flex">
               <span class="material-symbols-outlined text-lg">add_circle</span> New Entry
-            </button>
+            </NuxtLink>
             <button class="flex-1 bg-white text-sky-500 py-3.5 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 hover:shadow-lg">
               <span class="material-symbols-outlined text-lg">ios_share</span> Report
             </button>
@@ -89,10 +89,11 @@ onMounted(() => {
         <button class="text-sky-500 text-sm font-semibold hover:text-sky-600 transition-colors">View All</button>
       </div>
       <div class="space-y-0">
-        <div
+        <NuxtLink
           v-for="transaction in transactions"
           :key="transaction.id"
-          class="transaction-item flex items-center justify-between py-3"
+          :to="`/ledger/${transaction.id}`"
+          class="transaction-item flex items-center justify-between py-3 hover:bg-slate-50/50 transition-colors"
         >
           <div class="flex items-center gap-4">
             <div :class="`size-12 rounded-2xl flex items-center justify-center ${getIconColor(transaction.icon)}`">
@@ -117,7 +118,7 @@ onMounted(() => {
               {{ transaction.status }}
             </span>
           </div>
-        </div>
+        </NuxtLink>
       </div>
     </main>
 

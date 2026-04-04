@@ -49,6 +49,51 @@ export function useLedger() {
     return 'bg-sky-50 text-sky-500'
   }
 
+  const getTransaction = async (id: string | number) => {
+    isLedgerLoading.value = true
+    try {
+      return await ledgerService.getTransactionById(id)
+    } finally {
+      isLedgerLoading.value = false
+    }
+  }
+
+  const saveTransaction = async (transaction: Partial<Transaction> & { id?: string | number }) => {
+    isLedgerLoading.value = true
+    try {
+      if (transaction.id && transaction.id !== 'new') {
+        const updated = await ledgerService.updateTransaction(transaction.id, transaction)
+        if (updated) {
+          const index = transactions.value.findIndex(t => String(t.id) === String(transaction.id))
+          if (index > -1) {
+            transactions.value[index] = updated
+          }
+        }
+        return updated
+      } else {
+        const { id, ...data } = transaction
+        const created = await ledgerService.createTransaction(data as Omit<Transaction, 'id'>)
+        transactions.value.unshift(created)
+        return created
+      }
+    } finally {
+      isLedgerLoading.value = false
+    }
+  }
+
+  const removeTransaction = async (id: string | number) => {
+    isLedgerLoading.value = true
+    try {
+      const success = await ledgerService.deleteTransaction(id)
+      if (success) {
+        transactions.value = transactions.value.filter(t => String(t.id) !== String(id))
+      }
+      return success
+    } finally {
+      isLedgerLoading.value = false
+    }
+  }
+
   return {
     isLedgerLoading,
     clubBalance,
@@ -56,6 +101,9 @@ export function useLedger() {
     monthOut,
     transactions,
     loadLedgerData,
+    getTransaction,
+    saveTransaction,
+    removeTransaction,
     getStatusColor,
     getIconColor
   }
