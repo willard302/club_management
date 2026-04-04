@@ -1,208 +1,39 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 definePageMeta({
   layout: 'default'
 })
 
-const totalSeconds = ref(25 * 60 - 1)
-const isPlaying = ref(true)
-let timerInterval: ReturnType<typeof setInterval> | null = null
+// Controller 層: 取得所有的計時狀態與事件處理函式
+const {
+  isPlaying,
+  formattedTime,
+  meditationType,
+  meditationDescription,
+  showDropdown,
+  showChimeSettings,
+  selectedChime,
+  chimeOptions,
+  audioFileInput,
+  handleFocus,
+  handleBlur,
+  toggleTimer,
+  jumpTime,
+  handleAudioUpload,
+  selectChimeOption,
+  setupInitialState,
+  tearDownState
+} = useMeditationTimer()
 
-const isEditing = ref(false)
-const editValue = ref('')
-
-const formattedTime = computed({
-  get() {
-    if (isEditing.value) {
-      return editValue.value
-    }
-    const minutes = Math.floor(totalSeconds.value / 60)
-    const seconds = totalSeconds.value % 60
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-  },
-  set(val: string) {
-    editValue.value = val
-  }
-})
-
-const handleFocus = () => {
-  isEditing.value = true
-  const minutes = Math.floor(totalSeconds.value / 60)
-  const seconds = totalSeconds.value % 60
-  editValue.value = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-  if (isPlaying.value) {
-    pauseTimer()
-    isPlaying.value = false
-  }
-}
-
-const handleBlur = (event: Event) => {
-  isEditing.value = false
-  const val = editValue.value.trim()
-  if (!val) return
-
-  let parsedSeconds = 0
-  if (val.includes(':')) {
-    const parts = val.split(':')
-    const min = parseInt(parts[0] || '0', 10) || 0
-    const sec = parseInt(parts[1] || '0', 10) || 0
-    parsedSeconds = min * 60 + sec
-  } else {
-    // Treat integers as minutes
-    const num = parseInt(val, 10)
-    if (!isNaN(num)) {
-      parsedSeconds = num * 60
-    }
-  }
-
-  if (parsedSeconds >= 0) {
-    totalSeconds.value = Math.min(parsedSeconds, 99 * 60 + 59)
-  }
-}
-
-const playChime = (type = selectedChime.value) => {
-  if (type === 'custom' && customChimeUrl.value) {
-    const audio = new Audio(customChimeUrl.value)
-    audio.play().catch(e => console.error('Failed to play custom audio:', e))
-    return
-  }
-
-  const AudioContext = window.AudioContext || (window as any).webkitAudioContext
-  if (!AudioContext) return
-  
-  const audioCtx = new AudioContext()
-  const now = audioCtx.currentTime
-
-  const createOscillator = (freq: number, typeStr: OscillatorType, attack: number, decay: number, volume: number) => {
-    const osc = audioCtx.createOscillator()
-    const gain = audioCtx.createGain()
-    
-    osc.type = typeStr
-    osc.frequency.value = freq
-    
-    osc.connect(gain)
-    gain.connect(audioCtx.destination)
-    
-    gain.gain.setValueAtTime(0, now)
-    gain.gain.linearRampToValueAtTime(volume, now + attack)
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + decay)
-    
-    osc.start(now)
-    osc.stop(now + decay)
-  }
-
-  if (type === 'deep_bowl') {
-    const baseFreq = 432
-    createOscillator(baseFreq, 'sine', 0.05, 8, 0.7)
-    createOscillator(baseFreq * 2.76, 'sine', 0.05, 5, 0.3)
-    createOscillator(baseFreq * 5.43, 'sine', 0.02, 3, 0.15)
-    createOscillator(baseFreq * 8.92, 'sine', 0.02, 1.5, 0.05)
-  } else if (type === 'soft_bell') {
-    const baseFreq = 1200
-    createOscillator(baseFreq, 'sine', 0.005, 4, 0.4)
-    createOscillator(baseFreq * 1.52, 'sine', 0.005, 2.5, 0.2)
-    createOscillator(baseFreq * 2.76, 'sine', 0.002, 1.5, 0.1)
-  } else {
-    // default (crisp)
-    const baseFreq = 900
-    createOscillator(baseFreq, 'sine', 0.01, 7, 0.6)
-    createOscillator(baseFreq * 1.52, 'sine', 0.01, 5, 0.25)
-    createOscillator(baseFreq * 2.76, 'sine', 0.01, 4, 0.4)
-    createOscillator(baseFreq * 5.43, 'sine', 0.005, 1.5, 0.2)
-    createOscillator(baseFreq * 8.92, 'sine', 0.002, 0.5, 0.1)
-  }
-}
-
-const startTimer = () => {
-  if (timerInterval) return
-  timerInterval = setInterval(() => {
-    if (totalSeconds.value > 0) {
-      totalSeconds.value--
-    } else {
-      pauseTimer()
-      isPlaying.value = false
-      playChime()
-    }
-  }, 1000)
-}
-
-const pauseTimer = () => {
-  if (timerInterval) {
-    clearInterval(timerInterval)
-    timerInterval = null
-  }
-}
-
-const toggleTimer = () => {
-  isPlaying.value = !isPlaying.value
-  if (isPlaying.value) {
-    startTimer()
-  } else {
-    pauseTimer()
-  }
-}
-
-const jumpTime = (seconds: number) => {
-  const newTime = totalSeconds.value + seconds
-  if (newTime < 0) {
-    totalSeconds.value = 0
-  } else {
-    totalSeconds.value = newTime
-  }
-}
-
+// 初始化與生命週期卸載
 onMounted(() => {
-  startTimer()
+  setupInitialState()
 })
 
 onUnmounted(() => {
-  pauseTimer()
+  tearDownState()
 })
-
-const meditationType = ref('Morning Meditation')
-const meditationDescription = ref('Find your center in the clear blue sky')
-
-const showDropdown = ref(false)
-
-const showChimeSettings = ref(false)
-const selectedChime = ref('default')
-const customChimeUrl = ref<string | null>(null)
-const audioFileInput = ref<HTMLInputElement | null>(null)
-
-const chimeOptions = ref([
-  { label: '清脆頌缽 (預設)', value: 'default' },
-  { label: '低沉冥想缽', value: 'deep_bowl' },
-  { label: '輕柔小鈴', value: 'soft_bell' },
-  { label: '從裝置選擇...', value: 'custom' }
-])
-
-const handleAudioUpload = (event: Event) => {
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (file) {
-    if (customChimeUrl.value) URL.revokeObjectURL(customChimeUrl.value)
-    customChimeUrl.value = URL.createObjectURL(file)
-    selectedChime.value = 'custom'
-    const customOption = chimeOptions.value.find(o => o.value === 'custom')
-    if (customOption) {
-      customOption.label = `自訂: ${file.name}`
-    }
-    playChime('custom')
-  }
-  if (event.target) {
-    (event.target as HTMLInputElement).value = ''
-  }
-}
-
-const selectChimeOption = (val: string) => {
-  if (val === 'custom') {
-    audioFileInput.value?.click()
-  } else {
-    selectedChime.value = val
-    playChime(val)
-  }
-}
-
 </script>
 
 <template>
