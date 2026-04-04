@@ -61,6 +61,43 @@ const handleBlur = (event: Event) => {
   }
 }
 
+const playChime = () => {
+  const AudioContext = window.AudioContext || (window as any).webkitAudioContext
+  if (!AudioContext) return
+  
+  const audioCtx = new AudioContext()
+  const baseFreq = 900 // Higher root frequency for a crisper, clearer sound
+  const now = audioCtx.currentTime
+
+  const createOscillator = (freq: number, type: OscillatorType, attack: number, decay: number, volume: number) => {
+    const osc = audioCtx.createOscillator()
+    const gain = audioCtx.createGain()
+    
+    osc.type = type
+    osc.frequency.value = freq
+    
+    osc.connect(gain)
+    gain.connect(audioCtx.destination)
+    
+    gain.gain.setValueAtTime(0, now)
+    // Faster attack creates a snappier "strike" sound
+    gain.gain.linearRampToValueAtTime(volume, now + attack)
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + decay)
+    
+    osc.start(now)
+    osc.stop(now + decay)
+  }
+
+  // Base note, strong and long, but sharper attack
+  createOscillator(baseFreq, 'sine', 0.01, 7, 0.6)
+  // Complex overtones typical of "crisp" bells
+  createOscillator(baseFreq * 1.52, 'sine', 0.01, 5, 0.25)
+  createOscillator(baseFreq * 2.76, 'sine', 0.01, 4, 0.4)
+  // Very high frequency "pings" that make the strike feel glass-like/crisp
+  createOscillator(baseFreq * 5.43, 'sine', 0.005, 1.5, 0.2)
+  createOscillator(baseFreq * 8.92, 'sine', 0.002, 0.5, 0.1)
+}
+
 const startTimer = () => {
   if (timerInterval) return
   timerInterval = setInterval(() => {
@@ -69,6 +106,7 @@ const startTimer = () => {
     } else {
       pauseTimer()
       isPlaying.value = false
+      playChime()
     }
   }, 1000)
 }
