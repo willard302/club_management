@@ -18,7 +18,7 @@ export const useTabbarConfig = () => {
     '/meditation': 2,
     '/calendar': 3,
     '/settings': 0,
-    '/userData': 0
+    '/userCenter/userInfo': 0
   }
 
   // 2. 計算當前的 activeIndex，如果找不到匹配的路徑，預設亮起第一個 (0)

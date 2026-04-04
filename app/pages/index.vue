@@ -19,7 +19,7 @@ const stats: StatCard[] = [
 ]
 
 const menuItems: MenuItem[] = [
-  { icon: 'person_edit', label: '編輯個人資料' },
+  { icon: 'person_edit', label: '編輯個人資料', path: '/userCenter/userInfo' },
   { icon: 'lock_reset', label: '修改密碼' },
   { icon: 'security', label: '隱私權設定' }
 ]
@@ -99,10 +99,10 @@ const menuItems: MenuItem[] = [
       <div class="space-y-3 mb-8">
         <h3 class="px-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">帳戶設定</h3>
         <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
-          <a
+          <NuxtLink
             v-for="(item, index) in menuItems"
             :key="item.label"
-            href="#"
+            :to="item.path || '#'"
             class="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors"
             :class="{ 'border-b border-slate-50 dark:border-slate-700': index < menuItems.length - 1 }"
           >
@@ -111,7 +111,7 @@ const menuItems: MenuItem[] = [
               <span class="font-medium">{{ item.label }}</span>
             </div>
             <span class="material-symbols-outlined text-slate-300">chevron_right</span>
-          </a>
+          </NuxtLink>
           <a
             href="/auth/login"
             class="flex items-center justify-between p-4 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"

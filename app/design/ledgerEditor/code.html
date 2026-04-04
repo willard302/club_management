@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html lang="zh-Hant"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b8cee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+        :root {
+            --logo-red: #EF4444;
+            --logo-yellow: #FBBF24;
+            --logo-green: #22C55E;
+        }
+        .zen-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 32px;
+            height: 32px;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+        }
+        .circle-1 { width: 100%; height: 100%; background-color: var(--logo-red); z-index: 1; }
+        .circle-2 { width: 66.67%; height: 66.67%; background-color: var(--logo-yellow); z-index: 2; }
+        .circle-3 { width: 33.33%; height: 33.33%; background-color: var(--logo-green); z-index: 3; }
+    </style></head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col bg-gradient-to-b from-[#e0f2fe] to-white dark:from-background-dark dark:to-background-dark overflow-x-hidden pb-20">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 py-4 bg-white/50 backdrop-blur-md sticky top-0 z-10 border-b border-primary/10">
+<div class="flex items-center gap-3">
+<button class="text-slate-900 dark:text-slate-100 flex items-center justify-center p-2 rounded-lg hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex flex-col">
+<h1 class="text-xs font-bold text-primary tracking-wider uppercase">淡江大學禪學社</h1>
+<h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">編輯紀錄</h2>
+</div>
+</div>
+<div class="zen-logo">
+<div class="circle circle-1"></div>
+<div class="circle circle-2"></div>
+<div class="circle circle-3"></div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 p-4 max-w-lg mx-auto w-full">
+<div class="glass-card rounded-xl p-6 shadow-xl shadow-primary/5 space-y-6">
+<!-- Date Field -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">calendar_today</span>
+                        日期
+                    </label>
+<div class="relative flex items-stretch">
+<input class="form-input flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 px-4 text-base transition-all" type="date" value="2023-10-25"/>
+</div>
+</div>
+<!-- Item Field -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">edit_note</span>
+                        項目
+                    </label>
+<input class="form-input flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 px-4 text-base transition-all" placeholder="例：社課點心採買" type="text" value="期中社大餐費"/>
+</div>
+<!-- Amount Field -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">payments</span>
+                        金額
+                    </label>
+<div class="relative flex items-center">
+<span class="absolute left-4 text-slate-500 font-bold">$</span>
+<input class="form-input flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 pl-8 pr-4 text-base transition-all" type="number" value="1250"/>
+</div>
+</div>
+<!-- Requisitioner Field -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">person</span>
+                        請款人
+                    </label>
+<input class="form-input flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 px-4 text-base transition-all" type="text" value="陳大文"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">admin_panel_settings</span>
+                        財務長
+                    </label>
+<input class="form-input flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 px-4 text-base transition-all" placeholder="請輸入財務長姓名" type="text" value=""/>
+</div>
+<!-- Finance Review Field -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">account_balance_wallet</span>
+                        財務審核
+                    </label>
+<select class="form-select flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 px-4 text-base transition-all">
+<option value="pending">待處理</option>
+<option selected="" value="approved">已核銷</option>
+<option value="rejected">退回</option>
+<option value="reviewing">審核中</option>
+</select>
+</div>
+<!-- Save Button -->
+<div class="pt-4">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">save</span>
+                        儲存修改
+                    </button>
+<button class="w-full mt-3 bg-transparent hover:bg-red-50 text-red-500 font-semibold py-2 rounded-xl transition-colors text-sm">
+                        刪除此筆紀錄
+                    </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 border-t border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg px-4 pb-4 pt-2 z-20">
+<div class="flex max-w-lg mx-auto gap-2">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">timer</span>
+<p class="text-[10px] font-bold tracking-wide">計時</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">newspaper</span>
+<p class="text-[10px] font-bold tracking-wide">帳本</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-[10px] font-bold tracking-wide">日曆</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-[10px] font-bold tracking-wide">設定</p>
+</a>
+</div>
+</nav>
+<!-- Decorative Background Element -->
+<div class="fixed top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="fixed bottom-40 -left-20 w-64 h-64 bg-blue-300/20 rounded-full blur-3xl pointer-events-none"></div>
+</div>
+</body></html>
