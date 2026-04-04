@@ -1,71 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { Transaction } from '@/types'
+import { onMounted } from 'vue'
 
 definePageMeta({
   layout: 'default'
 })
 
-const clubBalance = ref('$12,450')
-const monthIn = ref('+$2,400')
-const monthOut = ref('-$850')
+// 從 Controller 取得處理好的狀態與操作方法
+const {
+  isLedgerLoading,
+  clubBalance,
+  monthIn,
+  monthOut,
+  transactions,
+  loadLedgerData,
+  getStatusColor,
+  getIconColor
+} = useLedger()
 
-const transactions: Transaction[] = [
-  {
-    id: 1,
-    icon: 'self_improvement',
-    title: 'Zen Retreat Deposit',
-    category: 'Workshop • 10:45 AM',
-    amount: '+$450.00',
-    status: 'success',
-    time: 'Today'
-  },
-  {
-    id: 2,
-    icon: 'local_florist',
-    title: 'Altar Flowers',
-    category: 'Activity • Yesterday',
-    amount: '-$120.50',
-    status: 'settled',
-    time: 'Yesterday'
-  },
-  {
-    id: 3,
-    icon: 'groups',
-    title: 'Membership Dues',
-    category: 'Collection • Oct 24',
-    amount: '+$1,200.00',
-    status: 'success',
-    time: 'Oct 24'
-  },
-  {
-    id: 4,
-    icon: 'lightbulb_outline',
-    title: 'Room Electricity',
-    category: 'Utilities • Oct 22',
-    amount: '-$340.00',
-    status: 'pending',
-    time: 'Oct 22'
-  }
-]
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'success':
-      return 'bg-emerald-50 text-emerald-600'
-    case 'pending':
-      return 'bg-amber-50 text-amber-600'
-    default:
-      return 'bg-slate-50 text-slate-400'
-  }
-}
-
-const getIconColor = (icon: string) => {
-  if (icon === 'local_florist' || icon === 'lightbulb_outline') {
-    return 'bg-slate-50 text-slate-400'
-  }
-  return 'bg-sky-50 text-sky-500'
-}
+// 載入初始資料
+onMounted(() => {
+  loadLedgerData()
+})
 </script>
 
 <template>

@@ -21,15 +21,7 @@ export interface Activity {
   icon: string
 }
 
-export interface Transaction {
-  id: number
-  icon: string
-  title: string
-  category: string
-  amount: string
-  status: 'success' | 'settled' | 'pending'
-  time: string
-}
+export * from './ledger'
 
 /**
  * Form Data
