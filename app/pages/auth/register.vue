@@ -50,6 +50,11 @@ const handleRegister = async () => {
     if (error) throw error
     
     successMessage.value = 'Registration successful! Please check your email to verify your account.'
+
+    // 導向登入頁
+    setTimeout(() => {
+      navigateTo('/auth/login')
+    }, 2000)
     
   } catch (error: any) {
     errorMessage.value = error.message || 'An error occurred during registration.'
@@ -87,20 +92,6 @@ const handleRegister = async () => {
 
       <!-- Registration Form -->
       <div class="flex flex-col gap-4 px-6 py-4">
-        <!-- Student ID -->
-        <label class="flex flex-col gap-2">
-          <span class="text-slate-700 dark:text-slate-300 text-sm font-semibold ml-1">Student ID</span>
-          <div class="relative group">
-            <i class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">badge</i>
-            <input
-              v-model="formData.studentId"
-              type="text"
-              placeholder="e.g. 410012345"
-              class="form-input block w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
-            />
-          </div>
-        </label>
-
         <!-- Email -->
         <label class="flex flex-col gap-2">
           <span class="text-slate-700 dark:text-slate-300 text-sm font-semibold ml-1">Account</span>
