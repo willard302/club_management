@@ -7,4 +7,7 @@ export interface UserProfile {
   department: string
   studentId: string
   avatar?: string
+  dateOfBirth?: string
+  gender?: string
+  bio?: string
 }

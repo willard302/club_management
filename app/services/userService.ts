@@ -34,7 +34,10 @@ export const userService = {
         monthlyCheckIns: metadata.monthly_checkins || '0次',
         department: metadata.department || 'Department',
         studentId: metadata.student_id || '000000000',
-        avatar: avatarUrl
+        avatar: avatarUrl,
+        dateOfBirth: metadata.date_of_birth,
+        gender: metadata.gender,
+        bio: metadata.bio
       }
     } catch (error) {
       console.error('Error fetching user profile:', error)
@@ -47,7 +50,10 @@ export const userService = {
         monthlyCheckIns: '8次',
         department: 'Department Name',
         studentId: '410012345',
-        avatar: undefined
+        avatar: undefined,
+        dateOfBirth: undefined,
+        gender: undefined,
+        bio: undefined
       }
     }
   },
