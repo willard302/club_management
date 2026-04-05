@@ -39,8 +39,7 @@ const goBack = () => {
           </button>
         </div>
         <div class="text-center">
-          <p class="text-sky-500 font-semibold">淡江大學禪學社</p>
-          <p class="text-slate-500 text-sm">TKU Zen Club Member</p>
+          <p class="text-sky-500 font-semibold">社團管理系統</p>
         </div>
       </div>
 

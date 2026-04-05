@@ -41,7 +41,7 @@ const goBack = () => {
         <!-- Description Section -->
         <div class="flex flex-col items-center space-y-4">
           <p class="text-white/80 text-center px-4 tracking-wide leading-relaxed">
-            淡江大學禪學社 - TKU Zen Club<br/>
+            社團管理系統<br/>
             請輸入您的電子郵件以重設密碼
           </p>
         </div>

@@ -32,8 +32,7 @@ onMounted(() => {
         </button>
         <div class="flex items-center gap-3">
           <div class="flex flex-col items-end">
-            <h2 class="text-white font-bold text-base leading-tight">淡江大學禪學社</h2>
-            <p class="text-white/80 text-[10px] tracking-widest uppercase font-medium">TKU Zen Club</p>
+            <h2 class="text-white font-bold text-base leading-tight">社團管理系統</h2>
           </div>
           <ZenLogo size="sm" />
         </div>

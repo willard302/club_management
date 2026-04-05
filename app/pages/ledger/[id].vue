@@ -69,7 +69,7 @@ const handleDelete = async () => {
           <span class="material-symbols-outlined">arrow_back</span>
         </button>
         <div class="flex flex-col">
-          <h1 class="text-xs font-bold text-sky-500 tracking-wider uppercase">淡江大學禪學社</h1>
+          <h1 class="text-xs font-bold text-sky-500 tracking-wider uppercase">社團管理系統</h1>
           <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">{{ isNew ? '新增紀錄' : '編輯紀錄' }}</h2>
         </div>
       </div>

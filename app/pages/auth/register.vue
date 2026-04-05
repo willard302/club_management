@@ -77,7 +77,7 @@ const handleRegister = async () => {
 
       <!-- Header Content in Hero Section -->
       <div class="relative p-6">
-        <h2 class="text-slate-900 text-2xl font-bold leading-tight tracking-tight">TKU Zen Club</h2>
+        <h2 class="text-slate-900 text-2xl font-bold leading-tight tracking-tight">社團管理系統</h2>
         <p class="text-slate-700 text-sm font-medium">Join our peaceful community</p>
       </div>
     </div>

@@ -65,8 +65,7 @@ const handleLogin = async () => {
 
         <!-- Title -->
         <div class="text-center">
-          <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md">淡江大學禪學社</h1>
-          <p class="text-white/80 text-sm mt-2 tracking-widest uppercase">TKU Zen Club</p>
+          <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md">社團管理系統</h1>
         </div>
 
         <!-- Form -->

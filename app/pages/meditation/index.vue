@@ -44,7 +44,7 @@ onUnmounted(() => {
       </button>
       <div class="flex items-center gap-2">
         <ZenLogo size="sm" />
-        <h1 class="text-white font-semibold text-lg tracking-wide">淡江大學禪學社</h1>
+        <h1 class="text-white font-semibold text-lg tracking-wide">社團管理系統</h1>
       </div>
       <div class="relative z-50">
         <button @click="showDropdown = !showDropdown" class="flex items-center justify-center size-10 rounded-full bg-white/20 active:bg-white/30 transition-colors relative z-50">
