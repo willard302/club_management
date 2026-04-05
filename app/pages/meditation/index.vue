@@ -38,35 +38,28 @@ onUnmounted(() => {
 
 <template>
   <!-- Header -->
-    <header class="bg-soft-sky pt-6 pb-4 px-6 relative z-30 flex items-center justify-between">
-      <button class="flex items-center justify-center size-10 rounded-full bg-white/20 active:bg-white/30 transition-colors">
-        <span class="material-symbols-outlined text-white">menu</span>
+  <AppHeader title="禪定時間" bg-class="bg-soft-sky">
+    <template #right-actions>
+      <button @click="showDropdown = !showDropdown" class="p-2 text-white hover:bg-white/20 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-white text-3xl">menu</span>
       </button>
-      <div class="flex items-center gap-2">
-        <ZenLogo size="sm" />
-        <h1 class="text-white font-semibold text-lg tracking-wide">社團管理系統</h1>
-      </div>
-      <div class="relative z-50">
-        <button @click="showDropdown = !showDropdown" class="flex items-center justify-center size-10 rounded-full bg-white/20 active:bg-white/30 transition-colors relative z-50">
-          <span class="material-symbols-outlined text-white">more_horiz</span>
-        </button>
-        
-        <!-- Dropdown Background Overlay -->
-        <div v-if="showDropdown" @click="showDropdown = false" class="fixed inset-0 z-40" style="width: 100vw; height: 100vh;"></div>
+      
+      <!-- Dropdown Background Overlay -->
+      <div v-if="showDropdown" @click="showDropdown = false" class="fixed inset-0 z-40" style="width: 100vw; height: 100vh;"></div>
 
-        <!-- Dropdown Menu -->
-        <div v-if="showDropdown" class="absolute right-0 top-[110%] mt-2 w-44 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden z-50 border border-white/60 origin-top-right animate-fade-in">
-          <button @click="showDropdown = false; showChimeSettings = true" class="w-full text-left px-5 py-3.5 text-sky-900 hover:bg-sky-50 active:bg-sky-100 transition-colors flex items-center gap-3 border-b border-sky-100/50">
-            <span class="material-symbols-outlined text-[20px] text-sky-600">music_note</span>
-            <span class="font-medium text-[15px]">設置鈴聲</span>
-          </button>
-          <button @click="showDropdown = false" class="w-full text-left px-5 py-3.5 text-sky-900 hover:bg-sky-50 active:bg-sky-100 transition-colors flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px] text-sky-600">history</span>
-            <span class="font-medium text-[15px]">禪定紀錄</span>
-          </button>
-        </div>
+      <!-- Dropdown Menu -->
+      <div v-if="showDropdown" class="absolute right-0 top-[110%] mt-2 w-44 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden z-50 border border-white/60 origin-top-right animate-fade-in">
+        <button @click="showDropdown = false; showChimeSettings = true" class="w-full text-left px-5 py-3.5 text-sky-900 hover:bg-sky-50 active:bg-sky-100 transition-colors flex items-center gap-3 border-b border-sky-100/50">
+          <span class="material-symbols-outlined text-[20px] text-sky-600">music_note</span>
+          <span class="font-medium text-[15px]">設置鈴聲</span>
+        </button>
+        <button @click="showDropdown = false" class="w-full text-left px-5 py-3.5 text-sky-900 hover:bg-sky-50 active:bg-sky-100 transition-colors flex items-center gap-3">
+          <span class="material-symbols-outlined text-[20px] text-sky-600">history</span>
+          <span class="font-medium text-[15px]">禪定紀錄</span>
+        </button>
       </div>
-    </header>
+    </template>
+  </AppHeader>
 
     <!-- Chime Settings Dialog -->
     <div v-if="showChimeSettings" class="fixed inset-0 z-[60] flex items-center justify-center p-4">

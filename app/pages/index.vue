@@ -27,19 +27,13 @@ const menuItems: MenuItem[] = [
 
 <template>
   <!-- Header Section -->
-    <header class="sky-gradient pt-6 pb-20 px-4 relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
-      <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -ml-10 -mb-10"></div>
-      <div class="relative z-10 flex items-center justify-between">
-        <button class="p-2 text-white hover:bg-white/20 rounded-lg transition-colors">
-          <span class="material-symbols-outlined text-3xl">menu</span>
-        </button>
-        <h1 class="text-white text-xl font-bold tracking-tight">個人資料</h1>
-        <div class="flex items-center gap-2">
-          <ZenLogo size="sm" />
-        </div>
-      </div>
-    </header>
+  <AppHeader title="個人資料" bg-class="sky-gradient" :has-padding="true">
+    <template #right-actions>
+      <button class="p-2 text-white hover:bg-white/20 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-3xl">menu</span>
+      </button>
+    </template>
+  </AppHeader>
 
     <!-- Main Content -->
     <main class="flex-1 -mt-4 px-4 pb-24 relative z-20">

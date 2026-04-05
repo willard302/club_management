@@ -25,19 +25,13 @@ onMounted(() => {
 
 <template>
   <!-- Header -->
-    <header class="bg-sky-400 pt-6 pb-4 px-6 sticky top-0 z-30">
-      <div class="flex items-center justify-between">
-        <button class="flex items-center justify-center size-10 rounded-full bg-white/10 text-white transition-active active:scale-95 hover:bg-white/20">
-          <span class="material-symbols-outlined text-2xl">menu</span>
-        </button>
-        <div class="flex items-center gap-3">
-          <div class="flex flex-col items-end">
-            <h2 class="text-white font-bold text-base leading-tight">社團管理系統</h2>
-          </div>
-          <ZenLogo size="sm" />
-        </div>
-      </div>
-    </header>
+  <AppHeader title="社團帳務" bg-class="bg-sky-400">
+    <template #right-actions>
+      <button class="p-2 text-white hover:bg-white/20 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-3xl">menu</span>
+      </button>
+    </template>
+  </AppHeader>
 
     <!-- Balance Card -->
     <section class="px-6 py-4">
