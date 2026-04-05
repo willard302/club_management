@@ -12,7 +12,7 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <header :class="[bgClass, 'pt-6 px-4 sticky top-0 z-30', hasPadding ? 'pb-20' : 'pb-4', 'relative overflow-hidden']">
+  <header :class="[bgClass, 'pt-6 px-4 sticky top-0 z-30', hasPadding ? 'pb-20' : 'pb-4']">
     <div class="relative z-10 flex items-center">
       <!-- Left side: Logo -->
       <div class="flex-1 flex justify-start">

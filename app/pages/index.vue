@@ -28,15 +28,10 @@ const menuItems: MenuItem[] = [
 <template>
   <!-- Header Section -->
   <AppHeader title="個人資料" bg-class="sky-gradient" :has-padding="true">
-    <template #right-actions>
-      <button class="p-2 text-white hover:bg-white/20 rounded-lg transition-colors">
-        <span class="material-symbols-outlined text-3xl">menu</span>
-      </button>
-    </template>
   </AppHeader>
 
     <!-- Main Content -->
-    <main class="flex-1 -mt-4 px-4 pb-24 relative z-20">
+    <main class="flex-1 -mt-4 px-4 pb-24 relative z-40">
       <!-- Profile Info Card -->
       <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-6 flex flex-col items-center text-center mb-6">
         <div class="relative -mt-20 mb-4 p-2 bg-white dark:bg-slate-800 rounded-full shadow-lg">
