@@ -65,24 +65,28 @@ export function useLedger() {
     }
   }
 
-  const saveTransaction = async (transaction: Partial<Transaction> & { id?: string }) => {
+  const saveTransaction = async (formData: TransactionFormData, transactionId?: string) => {
     isLedgerLoading.value = true
     try {
-      if (transaction.id && transaction.id !== 'new') {
-        const updated = await ledgerService.updateTransaction(transaction.id, transaction)
+      if (transactionId && transactionId !== 'new') {
+        // 編輯現有記錄
+        const updated = await ledgerService.updateTransaction(transactionId, formData)
         if (updated) {
-          const index = transactions.value.findIndex(t => t.id === transaction.id)
+          const index = transactions.value.findIndex(t => t.id === transactionId)
           if (index > -1) {
             transactions.value[index] = updated
           }
         }
         return updated
       } else {
-        const { id, ...data } = transaction
-        const created = await ledgerService.createTransaction(data as Omit<Transaction, 'id'>)
+        // 新增記錄
+        const created = await ledgerService.createTransaction(formData)
         transactions.value.unshift(created)
         return created
       }
+    } catch (error) {
+      console.error('Failed to save transaction', error)
+      throw error
     } finally {
       isLedgerLoading.value = false
     }

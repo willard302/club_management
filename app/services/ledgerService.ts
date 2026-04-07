@@ -12,172 +12,210 @@ import {
   mapFormDataToInsert 
 } from '@/types/ledger'
 
-// In-memory mock state to simulate a database session
-// 使用資料庫型別存儲原始資料
-let mockTransactions: DatabaseTransaction[] = [
-  {
-    id: '1',
-    icon: 'self_improvement',
-    title: 'Zen Retreat Deposit',
-    category: 'Workshop',
-    amount: 450,
-    status: 'success',
-    date: '2023-10-25',
-    requester_id: 'admin',
-    finance_id: 'finance_lead_1',
-    type: 'income',
-    created_at: '2023-10-25T10:45:00Z',
-    updated_at: null,
-    is_approved: true,
-    receipt_path: null
-  },
-  {
-    id: '2',
-    icon: 'local_florist',
-    title: 'Altar Flowers',
-    category: 'Activity',
-    amount: -120.5,
-    status: 'settled',
-    date: '2023-10-24',
-    requester_id: 'jane_doe',
-    finance_id: 'finance_lead_1',
-    type: 'expense',
-    created_at: '2023-10-24T00:00:00Z',
-    updated_at: null,
-    is_approved: true,
-    receipt_path: null
-  },
-  {
-    id: '3',
-    icon: 'groups',
-    title: 'Membership Dues',
-    category: 'Collection',
-    amount: 1200,
-    status: 'success',
-    date: '2023-10-24',
-    requester_id: 'tom',
-    finance_id: 'finance_lead_1',
-    type: 'income',
-    created_at: '2023-10-24T00:00:00Z',
-    updated_at: null,
-    is_approved: true,
-    receipt_path: null
-  },
-  {
-    id: '4',
-    icon: 'lightbulb_outline',
-    title: 'Room Electricity',
-    category: 'Utilities',
-    amount: -340,
-    status: 'pending',
-    date: '2023-10-22',
-    requester_id: 'john_smith',
-    finance_id: '',
-    type: 'expense',
-    created_at: '2023-10-22T00:00:00Z',
-    updated_at: null,
-    is_approved: false,
-    receipt_path: null
-  }
-]
-
 /**
- * Model (資料存取層): 負責功德帳目與庫存資料的操作
+ * Supabase 帳務服務
+ * 將資料持久化到 Supabase ledger 表
  */
+
 export const ledgerService = {
   /**
    * 取得俱樂部餘額概況
    */
   async fetchSummary(): Promise<LedgerSummary> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          clubBalance: '$12,450',
-          monthIn: '+$2,400',
-          monthOut: '-$850'
-        })
-      }, 300)
-    })
+    try {
+      const supabase = useSupabaseClient()
+      
+      // 查詢所有交易
+      const { data, error } = await supabase
+        .from('ledger')
+        .select('*')
+        .throwOnError()
+
+      if (error) throw error
+
+      // 計算餘額
+      const transactions = data || []
+      const totalBalance = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0)
+      const now = new Date()
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+      
+      const thisMonthTxs = transactions.filter(tx => new Date(tx.date) >= monthStart)
+      const monthIncome = thisMonthTxs
+        .filter(tx => tx.type === 'income')
+        .reduce((sum, tx) => sum + Math.abs(tx.amount || 0), 0)
+      const monthExpense = thisMonthTxs
+        .filter(tx => tx.type === 'expense')
+        .reduce((sum, tx) => sum + Math.abs(tx.amount || 0), 0)
+
+      return {
+        clubBalance: `$${Math.abs(totalBalance).toFixed(2)}`,
+        monthIn: `+$${monthIncome.toFixed(2)}`,
+        monthOut: `-$${monthExpense.toFixed(2)}`
+      }
+    } catch (error) {
+      console.error('Error fetching ledger summary:', error)
+      // 返回默認值
+      return {
+        clubBalance: '$0.00',
+        monthIn: '+$0.00',
+        monthOut: '-$0.00'
+      }
+    }
   },
 
   /**
    * 取得交易歷史紀錄
-   * 將資料庫記錄映射到前端型別
    */
   async fetchTransactions(): Promise<Transaction[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // 將資料庫記錄映射到前端型別
-        const frontendTransactions = mockTransactions.map(mapDatabaseTransactionToFrontend)
-        resolve(frontendTransactions)
-      }, 300)
-    })
+    try {
+      const supabase = useSupabaseClient()
+      
+      const { data, error } = await supabase
+        .from('ledger')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .throwOnError()
+
+      if (error) throw error
+
+      const transactions = data || []
+      return transactions.map(mapDatabaseTransactionToFrontend)
+    } catch (error) {
+      console.error('Error fetching transactions:', error)
+      return []
+    }
   },
 
   /**
    * 取得單筆交易紀錄
    */
   async getTransactionById(id: string): Promise<Transaction | null> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const found = mockTransactions.find(t => t.id === id)
-        resolve(found ? mapDatabaseTransactionToFrontend(found) : null)
-      }, 200)
-    })
+    try {
+      const supabase = useSupabaseClient()
+      
+      const { data, error } = await supabase
+        .from('ledger')
+        .select('*')
+        .eq('id', id)
+        .single()
+        .throwOnError()
+
+      if (error || !data) return null
+      
+      return mapDatabaseTransactionToFrontend(data)
+    } catch (error) {
+      console.error('Error fetching transaction:', error)
+      return null
+    }
   },
 
   /**
    * 新增交易紀錄
    */
-  async createTransaction(data: Omit<Transaction, 'id'>): Promise<Transaction> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // 將前端型別轉換回資料庫型別
-        const dbTransaction: DatabaseTransaction = {
-          ...mapFrontendTransactionToDatabase(data as Transaction),
-          id: Date.now().toString(),
-          created_at: new Date().toISOString(),
-          updated_at: null
-        }
-        mockTransactions.unshift(dbTransaction)
-        resolve(mapDatabaseTransactionToFrontend(dbTransaction))
-      }, 300)
-    })
+  async createTransaction(formData: TransactionFormData): Promise<Transaction> {
+    const supabase = useSupabaseClient()
+    
+    try {
+      // 計算實際金額（考慮正負號）
+      const amount = formData.type === 'income'
+        ? Math.abs(formData.amount)
+        : -Math.abs(formData.amount)
+
+      // 構建插入資料
+      const insertData: TransactionInsert = {
+        amount,
+        category: formData.category,
+        date: formData.date,
+        finance_id: formData.financeId || formData.requesterId, // 使用 requester_id 作為預設值
+        icon: formData.icon,
+        is_approved: formData.isApproved ?? false,
+        receipt_path: formData.receiptPath ?? null,
+        requester_id: formData.requesterId,
+        status: formData.status,
+        title: formData.title,
+        type: formData.type
+      }
+
+      const { data, error } = await supabase
+        .from('ledger')
+        .insert([insertData])
+        .select()
+        .single()
+        .throwOnError()
+
+      if (error || !data) throw error
+
+      return mapDatabaseTransactionToFrontend(data)
+    } catch (error) {
+      console.error('Error creating transaction:', error)
+      throw error
+    }
   },
 
   /**
    * 更新交易紀錄
    */
-  async updateTransaction(id: string, data: Partial<Transaction>): Promise<Transaction | null> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const index = mockTransactions.findIndex(t => t.id === id)
-        if (index > -1) {
-          // 將前端資料轉換為資料庫格式
-          const dbData = mapFrontendTransactionToDatabase(data as Transaction)
-          mockTransactions[index] = { 
-            ...mockTransactions[index], 
-            ...dbData,
-            updated_at: new Date().toISOString()
-          }
-          resolve(mapDatabaseTransactionToFrontend(mockTransactions[index]))
-        } else {
-          resolve(null)
-        }
-      }, 300)
-    })
+  async updateTransaction(id: string, formData: TransactionFormData): Promise<Transaction | null> {
+    const supabase = useSupabaseClient()
+    
+    try {
+      // 計算實際金額（考慮正負號）
+      const amount = formData.type === 'income'
+        ? Math.abs(formData.amount)
+        : -Math.abs(formData.amount)
+
+      // 構建更新資料
+      const updateData: TransactionUpdate = {
+        amount,
+        category: formData.category,
+        date: formData.date,
+        finance_id: formData.financeId || formData.requesterId, // 使用 requester_id 作為預設值
+        icon: formData.icon,
+        is_approved: formData.isApproved ?? false,
+        receipt_path: formData.receiptPath ?? null,
+        requester_id: formData.requesterId,
+        status: formData.status,
+        title: formData.title,
+        type: formData.type,
+        updated_at: new Date().toISOString()
+      }
+
+      const { data, error } = await supabase
+        .from('ledger')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single()
+        .throwOnError()
+
+      if (error || !data) throw error
+
+      return mapDatabaseTransactionToFrontend(data)
+    } catch (error) {
+      console.error('Error updating transaction:', error)
+      return null
+    }
   },
 
   /**
    * 刪除交易紀錄
    */
   async deleteTransaction(id: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const initialLength = mockTransactions.length
-        mockTransactions = mockTransactions.filter(t => t.id !== id)
-        resolve(mockTransactions.length < initialLength)
-      }, 300)
-    })
+    const supabase = useSupabaseClient()
+    
+    try {
+      const { error } = await supabase
+        .from('ledger')
+        .delete()
+        .eq('id', id)
+        .throwOnError()
+
+      if (error) throw error
+      
+      return true
+    } catch (error) {
+      console.error('Error deleting transaction:', error)
+      return false
+    }
   }
 }

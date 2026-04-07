@@ -11,22 +11,36 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
+const supabase = useSupabaseClient()
 const { getTransaction, saveTransaction, removeTransaction } = useLedger()
 
 const isNew = computed(() => route.params.id === 'new')
+const currentUserId = ref<string>('')
 
 const formData = ref<Partial<TransactionFormData>>({
   date: new Date().toISOString().split('T')[0],
   title: '',
   amount: 0,
-  requesterId: '',
+  requesterId: '', // 將在 onMounted 中設置
   type: 'expense',
   status: 'pending',
   category: '',
-  icon: ''
+  icon: '',
+  financeId: '' // 可選
 })
 
 onMounted(async () => {
+  // 獲取當前用戶 ID
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user?.id) {
+      currentUserId.value = user.id
+      formData.value.requesterId = user.id // 將當前用戶設為請款人
+    }
+  } catch (error) {
+    console.error('Failed to get current user:', error)
+  }
+
   if (!isNew.value) {
     const tx = await getTransaction(route.params.id as string)
     if (tx) {
@@ -56,25 +70,34 @@ const handleSave = async () => {
     return
   }
 
-  // 生成最終交易物件
-  const transactionData: Partial<Transaction> = {
-    title: formData.value.title,
-    date: formData.value.date,
-    amount: Math.abs(formData.value.amount),
-    type: formData.value.type,
-    requesterId: formData.value.requesterId,
-    status: formData.value.status,
-    category: formData.value.category || (formData.value.type === 'income' ? 'Income' : 'Expense'),
-    icon: formData.value.icon || (formData.value.type === 'income' ? 'savings' : 'receipt_long'),
-    financeId: formData.value.financeId || '',
-    is_approved: formData.value.isApproved || false
+  // 驗證必要字段
+  if (!formData.value.type || !formData.value.status) {
+    alert('請選擇交易類型和審核狀態')
+    return
   }
 
-  // 計算顯示文字
-  const prefix = formData.value.type === 'income' ? '+' : '-'
-  transactionData.amountDisplay = `${prefix}$${(formData.value.amount || 0).toFixed(2)}`
+  // 確保 requesterId 有值（應該是當前用戶 ID）
+  if (!formData.value.requesterId) {
+    alert('無法獲取用戶信息，請重新載入頁面')
+    return
+  }
 
-  await saveTransaction({ ...transactionData, id: isNew.value ? 'new' : route.params.id as string })
+  // 建立表單資料物件
+  const formDataObj: TransactionFormData = {
+    title: formData.value.title!,
+    date: formData.value.date!,
+    amount: Math.abs(formData.value.amount), // 存儲絕對值，type 決定正負
+    type: formData.value.type as 'income' | 'expense',
+    category: formData.value.category || (formData.value.type === 'income' ? 'Income' : 'Expense'),
+    icon: formData.value.icon || (formData.value.type === 'income' ? 'savings' : 'receipt_long'),
+    status: formData.value.status as any,
+    requesterId: formData.value.requesterId || '',
+    financeId: formData.value.financeId || '', // 允許空值
+    isApproved: formData.value.isApproved,
+    receiptPath: formData.value.receiptPath
+  }
+
+  await saveTransaction(formDataObj, isNew.value ? 'new' : route.params.id as string)
   goBack()
 }
 
