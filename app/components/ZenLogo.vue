@@ -42,7 +42,7 @@ const current = sizeClasses[props.size]
       ]"
       :style="{ boxShadow: current.glow }"
     >
-      <div
+      <!-- <div
         :class="[
           current.middle,
           'rounded-full flex items-center justify-center bg-yellow-400/90'
@@ -52,7 +52,7 @@ const current = sizeClasses[props.size]
           :class="[current.inner, 'rounded-full']"
           style="background-color: #4CAF50;"
         ></div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
