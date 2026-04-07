@@ -1,18 +1,30 @@
-import type { Transaction, LedgerSummary } from '@/types/ledger'
+import type { 
+  Transaction, 
+  LedgerSummary, 
+  DatabaseTransaction,
+  TransactionInsert,
+  TransactionUpdate,
+  TransactionFormData
+} from '@/types/ledger'
+import { 
+  mapDatabaseTransactionToFrontend, 
+  mapFrontendTransactionToDatabase,
+  mapFormDataToInsert 
+} from '@/types/ledger'
 
 // In-memory mock state to simulate a database session
-let mockTransactions: Transaction[] = [
+// 使用資料庫型別存儲原始資料
+let mockTransactions: DatabaseTransaction[] = [
   {
     id: '1',
     icon: 'self_improvement',
     title: 'Zen Retreat Deposit',
     category: 'Workshop',
     amount: 450,
-    amountDisplay: '+$450.00',
     status: 'success',
     date: '2023-10-25',
-    requesterId: 'admin',
-    financeId: 'finance_lead_1',
+    requester_id: 'admin',
+    finance_id: 'finance_lead_1',
     type: 'income',
     created_at: '2023-10-25T10:45:00Z',
     updated_at: null,
@@ -24,12 +36,11 @@ let mockTransactions: Transaction[] = [
     icon: 'local_florist',
     title: 'Altar Flowers',
     category: 'Activity',
-    amount: 120.5,
-    amountDisplay: '-$120.50',
+    amount: -120.5,
     status: 'settled',
     date: '2023-10-24',
-    requesterId: 'jane_doe',
-    financeId: 'finance_lead_1',
+    requester_id: 'jane_doe',
+    finance_id: 'finance_lead_1',
     type: 'expense',
     created_at: '2023-10-24T00:00:00Z',
     updated_at: null,
@@ -42,11 +53,10 @@ let mockTransactions: Transaction[] = [
     title: 'Membership Dues',
     category: 'Collection',
     amount: 1200,
-    amountDisplay: '+$1,200.00',
     status: 'success',
     date: '2023-10-24',
-    requesterId: 'tom',
-    financeId: 'finance_lead_1',
+    requester_id: 'tom',
+    finance_id: 'finance_lead_1',
     type: 'income',
     created_at: '2023-10-24T00:00:00Z',
     updated_at: null,
@@ -58,12 +68,11 @@ let mockTransactions: Transaction[] = [
     icon: 'lightbulb_outline',
     title: 'Room Electricity',
     category: 'Utilities',
-    amount: 340,
-    amountDisplay: '-$340.00',
+    amount: -340,
     status: 'pending',
     date: '2023-10-22',
-    requesterId: 'john_smith',
-    financeId: '',
+    requester_id: 'john_smith',
+    finance_id: '',
     type: 'expense',
     created_at: '2023-10-22T00:00:00Z',
     updated_at: null,
@@ -93,11 +102,14 @@ export const ledgerService = {
 
   /**
    * 取得交易歷史紀錄
+   * 將資料庫記錄映射到前端型別
    */
   async fetchTransactions(): Promise<Transaction[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve([...mockTransactions]) // return copy
+        // 將資料庫記錄映射到前端型別
+        const frontendTransactions = mockTransactions.map(mapDatabaseTransactionToFrontend)
+        resolve(frontendTransactions)
       }, 300)
     })
   },
@@ -109,7 +121,7 @@ export const ledgerService = {
     return new Promise((resolve) => {
       setTimeout(() => {
         const found = mockTransactions.find(t => t.id === id)
-        resolve(found ? { ...found } : null)
+        resolve(found ? mapDatabaseTransactionToFrontend(found) : null)
       }, 200)
     })
   },
@@ -120,12 +132,15 @@ export const ledgerService = {
   async createTransaction(data: Omit<Transaction, 'id'>): Promise<Transaction> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const newTx: Transaction = {
-          ...data,
-          id: Date.now().toString()
+        // 將前端型別轉換回資料庫型別
+        const dbTransaction: DatabaseTransaction = {
+          ...mapFrontendTransactionToDatabase(data as Transaction),
+          id: Date.now().toString(),
+          created_at: new Date().toISOString(),
+          updated_at: null
         }
-        mockTransactions.unshift(newTx)
-        resolve({ ...newTx })
+        mockTransactions.unshift(dbTransaction)
+        resolve(mapDatabaseTransactionToFrontend(dbTransaction))
       }, 300)
     })
   },
@@ -138,8 +153,14 @@ export const ledgerService = {
       setTimeout(() => {
         const index = mockTransactions.findIndex(t => t.id === id)
         if (index > -1) {
-          mockTransactions[index] = { ...mockTransactions[index], ...data } as Transaction
-          resolve({ ...mockTransactions[index] })
+          // 將前端資料轉換為資料庫格式
+          const dbData = mapFrontendTransactionToDatabase(data as Transaction)
+          mockTransactions[index] = { 
+            ...mockTransactions[index], 
+            ...dbData,
+            updated_at: new Date().toISOString()
+          }
+          resolve(mapDatabaseTransactionToFrontend(mockTransactions[index]))
         } else {
           resolve(null)
         }
