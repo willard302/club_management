@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TKU Zen Club - Change Password</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "rgba(255, 255, 255, 0.3)",
+              "surface-container-low": "rgba(255, 255, 255, 0.1)",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#004a77",
+              "on-surface-variant": "rgba(255, 255, 255, 0.8)",
+              "tertiary-fixed-dim": "#ffb869",
+              "primary-container": "#2b9dee",
+              "secondary": "#87ceeb",
+              "primary-fixed": "#cfe5ff",
+              "inverse-on-surface": "#f6f7f8",
+              "tertiary-container": "#d78400",
+              "surface-variant": "rgba(255, 255, 255, 0.15)",
+              "surface-tint": "#2b9dee",
+              "inverse-surface": "#101a22",
+              "surface-container": "rgba(255, 255, 255, 0.2)",
+              "primary": "#2b9dee",
+              "on-tertiary-container": "#472800",
+              "tertiary-fixed": "#ffdcbb",
+              "on-error": "#ffffff",
+              "surface-container-highest": "rgba(255, 255, 255, 0.4)",
+              "secondary-fixed": "#cfe5ff",
+              "on-background": "#101a22",
+              "surface-bright": "#ffffff",
+              "on-primary-fixed": "#001d33",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed": "#001d33",
+              "surface-dim": "#d7dae1",
+              "inverse-primary": "#98cbff",
+              "surface": "rgba(255, 255, 255, 0.2)",
+              "error": "#ba1a1a",
+              "primary-fixed-dim": "#98cbff",
+              "secondary-container": "#b9dbff",
+              "outline-variant": "rgba(255, 255, 255, 0.2)",
+              "on-secondary-fixed-variant": "#284967",
+              "outline": "rgba(255, 255, 255, 0.3)",
+              "on-tertiary-fixed-variant": "#673d00",
+              "on-primary": "#ffffff",
+              "secondary-fixed-dim": "#a9caee",
+              "error-container": "#ffdad6",
+              "on-primary-container": "#ffffff",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#40607f",
+              "on-error-container": "#93000a",
+              "background": "#f6f7f8",
+              "tertiary": "#4CAF50",
+              "on-tertiary-fixed": "#2b1700",
+              "on-surface": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>body {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+    }
+.celestial-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBODLk3HxT4nPWQ3B0UknkHkjOXndBrrUPNuq536FtoLg-RjD18XVE7YLfnFGrbycU_DEI5AZVetmL8rUmrfrM5XqwRX1CkFWeDwf-N5iFjTodJMdgKggRiZWdEPHaBsI-_4R-tQmIhjO8o8O5EOgcBfV40OeTVqbukFwww0jjZ2jsD6w1noZow8BAJ774g3-LPXwxOzCyVeWFTYarS-nUi-qRagSyH4cEYDWJszecQO9NcKnHMlEcvnVrzS2hjufpxBGPE2tE3j54);
+    background-size: cover;
+    background-position: center
+    }
+.glass-well {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3)
+    }
+.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="celestial-bg min-h-screen flex items-center justify-center p-6" data-alt="expansive bright blue sky with ethereal wispy white clouds at midday creating a peaceful celestial atmosphere">
+<!-- TopAppBar Content (Internal Logic: Suppression for Focused Task) -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-8">
+<button class="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg hover:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="hidden md:block">
+<!-- Space filler for centering if needed -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-md flex flex-col items-center">
+<!-- Logo Section -->
+<div class="mb-10 flex flex-col items-center">
+<div class="w-24 h-24 rounded-full flex items-center justify-center relative shadow-[0_0_40px_10px_rgba(255,255,255,0.6)]">
+<!-- Tricolor Circle Logo -->
+<div class="w-full h-full rounded-full border-[12px] border-red-500 p-0 flex items-center justify-center overflow-hidden bg-white">
+<div class="w-full h-full rounded-full border-[12px] border-yellow-400 p-0 flex items-center justify-center">
+<div class="w-full h-full rounded-full bg-[#4CAF50]"></div>
+</div>
+</div>
+</div>
+<h1 class="mt-8 text-white text-3xl font-extrabold tracking-widest font-headline drop-shadow-md">
+                變更密碼
+            </h1>
+</div>
+<!-- Form Section -->
+<div class="w-full space-y-6">
+<!-- New Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-[12px] text-white/90 font-label tracking-widest uppercase ml-4">
+                    新密碼
+                </label>
+<div class="glass-well rounded-lg px-6 py-4 flex items-center gap-4 group focus-within:bg-white/25 transition-all duration-300">
+<span class="material-symbols-outlined text-white/70" data-icon="lock">lock</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-white placeholder-white/50 w-full font-body text-lg" placeholder="New Password" type="password"/>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-[12px] text-white/90 font-label tracking-widest uppercase ml-4">
+                    確認新密碼
+                </label>
+<div class="glass-well rounded-lg px-6 py-4 flex items-center gap-4 group focus-within:bg-white/25 transition-all duration-300">
+<span class="material-symbols-outlined text-white/70" data-icon="lock_reset">lock_reset</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-white placeholder-white/50 w-full font-body text-lg" placeholder="Confirm New Password" type="password"/>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full mt-4 bg-primary text-white font-headline text-lg font-bold py-5 rounded-lg shadow-[0_0_20px_rgba(43,157,238,0.4)] active:scale-95 transition-all duration-200 hover:shadow-[0_0_30px_rgba(43,157,238,0.6)]">
+                確認修改
+            </button>
+</div>
+<!-- Footer Text -->
+<p class="mt-12 text-white/60 text-sm font-label tracking-widest uppercase">
+            TKU Zen Club • 淡江大學禪學社
+        </p>
+</main>
+<!-- Navigation Shell (Suppressed per task context: Change Password is a focused task) -->
+<!-- BottomNavBar would be here but is hidden for focused journey -->
+</body></html>

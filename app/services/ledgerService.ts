@@ -48,9 +48,9 @@ export const ledgerService = {
         .reduce((sum, tx) => sum + Math.abs(tx.amount || 0), 0)
 
       return {
-        clubBalance: `$${Math.abs(totalBalance).toFixed(0)}`,
-        monthIn: `+$${monthIncome.toFixed(0)}`,
-        monthOut: `-$${monthExpense.toFixed(0)}`
+        clubBalance: `$${Math.round(Math.abs(totalBalance))}`,
+        monthIn: `+$${Math.round(monthIncome)}`,
+        monthOut: `-$${Math.round(monthExpense)}`
       }
     } catch (error) {
       console.error('Error fetching ledger summary:', error)

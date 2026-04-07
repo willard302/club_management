@@ -165,7 +165,7 @@ const handleDelete = async () => {
           </label>
           <div class="relative flex items-center">
             <span class="absolute left-4 text-slate-500 font-bold">$</span>
-            <input v-model.number="formData.amount" class="form-input flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 pl-8 pr-4 text-base transition-all" type="number" step="0.01" placeholder="0.00" />
+            <input v-model.number="formData.amount" class="form-input flex w-full rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500/20 border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 h-12 pl-8 pr-4 text-base transition-all" type="number" />
           </div>
         </div>
 

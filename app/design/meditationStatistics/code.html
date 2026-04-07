@@ -1,0 +1,196 @@
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Meditation Statistics Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b8cee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .sky-gradient {
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F2F7 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-full min-h-screen w-full flex-col sky-gradient overflow-x-hidden pb-20">
+<header class="flex items-center glass-effect sticky top-0 z-10 p-4 justify-between">
+<div class="flex size-10 shrink-0 items-center overflow-hidden rounded-full bg-primary/20">
+<div class="bg-center bg-no-repeat aspect-square bg-cover size-full" data-alt="Calm blue sky with white clouds" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAUFuMw_aw2w5JQo2Aqbue5y-n9gNT3-9U6TkKHofpZj4xLa03BqA8d746-WdSyRWYSNCpY-TDTVLyC_wMqTdm0IpNC3jDVkJUiHTnHgHL7Uianf9jCLMjJrdF1ocSkmCHgmeB_mBjVQrsYktldoUlCUaBzEvzW9zHzAVV0ERNQ7CAKfj0y4cueWHT2P_SLUhjqjTB3sulVrNoUdWSw3lYMGPSid6nu9xSTF-4nUesLZI7Penyp3s0Jdh_B8TeqbUS28TeU9agSRSY");'></div>
+</div>
+<div class="flex-1 px-3">
+<h1 class="text-slate-900 text-lg font-bold leading-tight tracking-tight">TKU Zen Club</h1>
+<p class="text-xs text-primary font-medium">Statistics Overview</p>
+</div>
+<div class="flex gap-2">
+<button class="flex size-10 items-center justify-center rounded-full bg-white/40 text-slate-900">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex flex-col gap-6 p-4">
+<div class="flex h-12 items-center justify-center rounded-xl glass-effect p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 text-sm font-semibold transition-all">
+<span>Day</span>
+<input class="hidden" name="period" type="radio" value="Day"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 text-sm font-semibold transition-all">
+<span>Week</span>
+<input checked="" class="hidden" name="period" type="radio" value="Week"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 text-sm font-semibold transition-all">
+<span>Month</span>
+<input class="hidden" name="period" type="radio" value="Month"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 text-sm font-semibold transition-all">
+<span>Year</span>
+<input class="hidden" name="period" type="radio" value="Year"/>
+</label>
+</div>
+<section class="glass-effect rounded-xl p-5 shadow-sm">
+<div class="flex justify-between items-end mb-6">
+<div>
+<p class="text-slate-500 text-sm font-medium">Total Meditation Time</p>
+<h2 class="text-slate-900 text-3xl font-extrabold tracking-tight">12.5 <span class="text-lg font-medium text-slate-500">hrs</span></h2>
+</div>
+<div class="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>15%</span>
+</div>
+</div>
+<div class="flex items-end justify-between h-40 gap-2 px-1">
+<div class="flex flex-col items-center flex-1 gap-2 h-full justify-end">
+<div class="w-full bg-primary/40 rounded-t-lg" style="height: 60%;"></div>
+<span class="text-[10px] font-bold text-slate-500">Mon</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2 h-full justify-end">
+<div class="w-full bg-primary/60 rounded-t-lg" style="height: 85%;"></div>
+<span class="text-[10px] font-bold text-slate-500">Tue</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2 h-full justify-end">
+<div class="w-full bg-primary/30 rounded-t-lg" style="height: 40%;"></div>
+<span class="text-[10px] font-bold text-slate-500">Wed</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2 h-full justify-end">
+<div class="w-full bg-primary rounded-t-lg" style="height: 95%;"></div>
+<span class="text-[10px] font-bold text-slate-500">Thu</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2 h-full justify-end">
+<div class="w-full bg-primary/50 rounded-t-lg" style="height: 70%;"></div>
+<span class="text-[10px] font-bold text-slate-500">Fri</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2 h-full justify-end">
+<div class="w-full bg-primary/40 rounded-t-lg" style="height: 55%;"></div>
+<span class="text-[10px] font-bold text-slate-500">Sat</span>
+</div>
+<div class="flex flex-col items-center flex-1 gap-2 h-full justify-end">
+<div class="w-full bg-primary/20 rounded-t-lg" style="height: 30%;"></div>
+<span class="text-[10px] font-bold text-slate-500">Sun</span>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-slate-900 text-lg font-bold">Recent Sessions</h3>
+<button class="text-primary text-sm font-semibold">View All</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="glass-effect p-4 rounded-xl flex items-center gap-4">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">self_improvement</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 font-bold text-sm">Morning Mindful Flow</h4>
+<span class="text-[11px] text-slate-500 font-medium">Oct 24, 08:30</span>
+</div>
+<p class="text-slate-500 text-xs mt-1 italic">"Felt very calm and centered today..."</p>
+</div>
+<div class="text-right">
+<p class="text-slate-900 font-bold text-sm">45m</p>
+</div>
+</div>
+<div class="glass-effect p-4 rounded-xl flex items-center gap-4">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">nightlight</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 font-bold text-sm">Evening Zen Reflection</h4>
+<span class="text-[11px] text-slate-500 font-medium">Oct 23, 21:00</span>
+</div>
+<p class="text-slate-500 text-xs mt-1 italic">"Released the stress from exams."</p>
+</div>
+<div class="text-right">
+<p class="text-slate-900 font-bold text-sm">30m</p>
+</div>
+</div>
+<div class="glass-effect p-4 rounded-xl flex items-center gap-4">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">wb_sunny</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 font-bold text-sm">Lunchtime Breathing</h4>
+<span class="text-[11px] text-slate-500 font-medium">Oct 23, 12:15</span>
+</div>
+<p class="text-slate-500 text-xs mt-1 italic">"Quick reset during classes."</p>
+</div>
+<div class="text-right">
+<p class="text-slate-900 font-bold text-sm">15m</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 glass-effect border-t border-white/20 px-4 pb-6 pt-2 z-20">
+<div class="flex items-center justify-around">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">bar_chart</span>
+<span class="text-[10px] font-bold">Stats</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">timer</span>
+<span class="text-[10px] font-bold">Sessions</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>
