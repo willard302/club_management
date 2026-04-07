@@ -15,6 +15,7 @@ export function useUser() {
   const recentActivities = ref<Activity[]>([])
   const isLoading = ref(false)
   const isUploadingAvatar = ref(false)
+  const isUpdatingProfile = ref(false)
   const error = ref<string | null>(null)
 
   // 動作 (Actions)
@@ -62,6 +63,69 @@ export function useUser() {
     }
   }
 
+  /**
+   * 更新使用者的 display_name 和其他個人資訊
+   * @deprecated 使用 updateUserProfile 代替，保留此方法以向後兼容
+   */
+  const updateDisplayName = async (
+    displayName: string,
+    additionalData?: {
+      role?: string
+      department?: string
+      dateOfBirth?: string
+      gender?: string
+      bio?: string
+    }
+  ) => {
+    await updateUserProfile({
+      name: displayName,
+      ...additionalData
+    })
+  }
+
+  /**
+   * 更新使用者個人資料（統一方法）
+   */
+  const updateUserProfile = async (
+    profileData: {
+      name?: string
+      studentId?: string
+      role?: string
+      department?: string
+      dateOfBirth?: string
+      gender?: string
+      bio?: string
+    }
+  ) => {
+    if (!userProfile.value) return
+
+    isUpdatingProfile.value = true
+    error.value = null
+
+    try {
+      // 呼叫 userService 更新 metadata
+      await userService.updateUserProfile(supabase, profileData)
+
+      // 更新本地狀態
+      if (profileData.name !== undefined) userProfile.value.name = profileData.name
+      if (profileData.studentId !== undefined) userProfile.value.studentId = profileData.studentId
+      if (profileData.role !== undefined) userProfile.value.role = profileData.role
+      if (profileData.department !== undefined) userProfile.value.department = profileData.department
+      if (profileData.dateOfBirth !== undefined) userProfile.value.dateOfBirth = profileData.dateOfBirth
+      if (profileData.gender !== undefined) userProfile.value.gender = profileData.gender
+      if (profileData.bio !== undefined) userProfile.value.bio = profileData.bio
+
+      // 重新載入用戶資料確保資料一致性
+      await loadUserData()
+    } catch (err: any) {
+      error.value = err.message || 'Failed to update profile'
+      console.error(err)
+      throw err
+    } finally {
+      isUpdatingProfile.value = false
+    }
+  }
+
   const handleLogout = () => {
     // 這裡可以處理清除 Token 等邏輯
     // ...
@@ -75,9 +139,12 @@ export function useUser() {
     recentActivities,
     isLoading,
     isUploadingAvatar,
+    isUpdatingProfile,
     error,
     loadUserData,
     uploadAvatar,
+    updateDisplayName,
+    updateUserProfile,
     handleLogout
   }
 }

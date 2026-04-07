@@ -169,5 +169,154 @@ export const userService = {
         ])
       }, 300)
     })
+  },
+
+  /**
+   * 初始化使用者 metadata（於註冊時調用）
+   */
+  async initializeUserMetadata(
+    supabase: any,
+    displayName: string,
+    studentId?: string
+  ): Promise<void> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) throw new Error('User not authenticated')
+
+      const currentMetadata = user.user_metadata || {}
+
+      // 更新用戶 metadata
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          ...currentMetadata,
+          name: displayName, // display_name 綁定
+          display_name: displayName, // 備份字段
+          student_id: studentId || '',
+          join_date: new Date().toISOString().split('T')[0],
+          role: 'Club Member',
+          department: 'Department',
+          total_meditation: '0h',
+          monthly_checkins: '0次'
+        }
+      })
+
+      if (error) throw error
+    } catch (error: any) {
+      console.error('Error initializing user metadata:', error)
+      throw new Error(error.message || 'Failed to initialize user metadata')
+    }
+  },
+
+  /**
+   * 更新使用者的完整資料（包含 display_name 和所有邊樣資訊）
+   * @param supabase Supabase 客戶端實例
+   * @param profileData 用戶資料物件
+   */
+  async updateUserProfile(
+    supabase: any,
+    profileData: {
+      name?: string
+      studentId?: string
+      role?: string
+      department?: string
+      dateOfBirth?: string
+      gender?: string
+      bio?: string
+    }
+  ): Promise<void> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) throw new Error('User not authenticated')
+
+      const currentMetadata = user.user_metadata || {}
+
+      // 構建更新物件，只包含提供的字段
+      const updateData: Record<string, any> = {
+        ...currentMetadata
+      }
+
+      if (profileData.name !== undefined) {
+        updateData.name = profileData.name
+        updateData.display_name = profileData.name
+      }
+
+      if (profileData.studentId !== undefined) {
+        updateData.student_id = profileData.studentId
+      }
+
+      if (profileData.role !== undefined) {
+        updateData.role = profileData.role
+      }
+
+      if (profileData.department !== undefined) {
+        updateData.department = profileData.department
+      }
+
+      if (profileData.dateOfBirth !== undefined) {
+        updateData.date_of_birth = profileData.dateOfBirth
+      }
+
+      if (profileData.gender !== undefined) {
+        updateData.gender = profileData.gender
+      }
+
+      if (profileData.bio !== undefined) {
+        updateData.bio = profileData.bio
+      }
+
+      // 更新用戶 metadata
+      const { error } = await supabase.auth.updateUser({
+        data: updateData
+      })
+
+      if (error) throw error
+    } catch (error: any) {
+      console.error('Error updating user profile:', error)
+      throw new Error(error.message || 'Failed to update user profile')
+    }
+  },
+
+  /**
+   * 更新使用者 display_name 與相關資訊（便利方法）
+   * @deprecated 使用 updateUserProfile 代替，保留此方法以向後兼容
+   */
+  async updateDisplayName(
+    supabase: any,
+    displayName: string,
+    additionalData?: {
+      role?: string
+      department?: string
+      dateOfBirth?: string
+      gender?: string
+      bio?: string
+    }
+  ): Promise<void> {
+    await userService.updateUserProfile(supabase, {
+      name: displayName,
+      role: additionalData?.role,
+      department: additionalData?.department,
+      dateOfBirth: additionalData?.dateOfBirth,
+      gender: additionalData?.gender,
+      bio: additionalData?.bio
+    })
+  },
+
+  /**
+   * 取得使用者的認證 metadata
+   */
+  async getUserAuthMetadata(): Promise<Record<string, any>> {
+    try {
+      const supabase = useSupabaseClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) throw new Error('User not authenticated')
+
+      return user.user_metadata || {}
+    } catch (error: any) {
+      console.error('Error fetching user auth metadata:', error)
+      return {}
+    }
   }
 }

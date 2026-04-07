@@ -54,25 +54,15 @@ export function useUserInfo() {
     success.value = false
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (!user) throw new Error('User not authenticated')
-
-      // 更新用戶 metadata
-      const currentMetadata = user.user_metadata || {}
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          ...currentMetadata,
-          name: formData.value.name,
-          student_id: formData.value.studentId,
-          department: formData.value.department,
-          date_of_birth: formData.value.dateOfBirth,
-          gender: formData.value.gender,
-          bio: formData.value.bio
-        }
+      // 使用統一的 updateUserProfile 方法更新所有字段
+      await userService.updateUserProfile(supabase, {
+        name: formData.value.name,
+        studentId: formData.value.studentId,
+        department: formData.value.department,
+        dateOfBirth: formData.value.dateOfBirth,
+        gender: formData.value.gender,
+        bio: formData.value.bio
       })
-
-      if (updateError) throw updateError
 
       success.value = true
       // 3 秒後清除成功提示

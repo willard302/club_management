@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { RegisterFormData } from '@/types'
+import { userService } from '@/services/userService'
 
 definePageMeta({
   layout: 'auth'
@@ -26,8 +27,8 @@ const handleRegister = async () => {
     return
   }
   
-  if (!formData.value.email || !formData.value.password) {
-    errorMessage.value = 'Please enter both email and password.'
+  if (!formData.value.email || !formData.value.password || !formData.value.fullName) {
+    errorMessage.value = 'Please fill in all required fields.'
     return
   }
 
@@ -36,18 +37,29 @@ const handleRegister = async () => {
     errorMessage.value = ''
     successMessage.value = ''
     
-    // We can store the student ID in user metadata
-    const { error } = await supabase.auth.signUp({
+    // 透過 Supabase Auth 註冊使用者
+    const { error, data } = await supabase.auth.signUp({
       email: formData.value.email,
       password: formData.value.password,
       options: {
         data: {
           student_id: formData.value.studentId,
+          name: formData.value.fullName, // 暫時設定，之後會被 initializeUserMetadata 覆蓋
+          display_name: formData.value.fullName
         }
       }
     })
     
     if (error) throw error
+    
+    // 初始化使用者 metadata（綁定 display_name）
+    if (data.user) {
+      await userService.initializeUserMetadata(
+        supabase,
+        formData.value.fullName,
+        formData.value.studentId
+      )
+    }
     
     successMessage.value = 'Registration successful! Please check your email to verify your account.'
 
