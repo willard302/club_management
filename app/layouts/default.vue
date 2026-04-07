@@ -7,9 +7,19 @@ const route = useRoute()
 const { tabbarItems, activeIndex } = useTabbarConfig()
 const { toasts, removeToast } = useToast()
 
+// 检查当前路由是否隐藏 tabbar
+const hideTabbarRoutes = ['/userCenter/changePassword', '/userCenter/userInfo']
 const showTabbar = computed(() => {
-  const hideTabbar = (route.meta.hideTabbar as boolean) || false
-  return tabbarItems.length > 0 && !hideTabbar
+  const path = route.path
+  // 检查完整路由路径
+  if (hideTabbarRoutes.includes(path)) {
+    return false
+  }
+  // 检查动态路由 /ledger/{id}
+  if (path.startsWith('/ledger/') && path !== '/ledger') {
+    return false
+  }
+  return true
 })
 </script>
 
