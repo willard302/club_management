@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 definePageMeta({ layout: 'default' })
+
+const menuVisible = ref(false)
 
 const {
   selectedDate, monthYear, calendarGrid,
@@ -24,7 +26,7 @@ onMounted(() => {
   <div class="sky-header-gradient pb-20 relative overflow-hidden">
     <AppHeader title="社團行事曆" bg-class="bg-soft-sky">
       <template #right-actions>
-        <button class="flex items-center justify-center size-9 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+        <button @click="menuVisible = true" class="flex items-center justify-center size-9 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
           <span class="material-symbols-outlined text-white text-3xl">menu</span>
         </button>
       </template>
@@ -88,16 +90,18 @@ onMounted(() => {
     </div>
   </div>
 
-  <!-- Add Event FAB (permission-gated) -->
-  <teleport to="body">
-    <button
-      v-if="canAddEvent"
-      class="fixed bottom-24 right-5 z-30 flex items-center gap-1.5 bg-sky-500 text-white font-bold text-sm px-4 py-3 rounded-full shadow-lg shadow-sky-300 hover:bg-sky-600 active:scale-95 transition-all"
-    >
-      <span class="material-symbols-outlined text-lg">add</span>
-      新增活動
-    </button>
-  </teleport>
+  <!-- Nav Menu Action Sheet -->
+  <van-action-sheet v-model:show="menuVisible" title="選單" class="pb-safe">
+    <div class="px-4 pb-6 space-y-2">
+      <button
+        v-if="canAddEvent"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-sky-50 hover:bg-sky-100 transition-colors text-sky-600 font-bold text-sm"
+      >
+        <span class="material-symbols-outlined text-lg">add</span>
+        新增活動
+      </button>
+    </div>
+  </van-action-sheet>
 
   <!-- Events Action Sheet -->
   <van-action-sheet

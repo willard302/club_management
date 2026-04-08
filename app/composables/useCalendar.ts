@@ -38,12 +38,8 @@ export function useCalendar() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     currentUserId.value = user.id
-    const { data } = await supabase
-      .from('members')
-      .select('club_role')
-      .eq('id', user.id)
-      .single()
-    if (data) currentRole.value = data.club_role as Role
+    const metadata = user.user_metadata || {}
+    if (metadata.role) currentRole.value = metadata.role as Role
   }
 
   const canAddEvent = computed(() =>

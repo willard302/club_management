@@ -15,33 +15,17 @@ export const userService = {
 
       if (!user) throw new Error('User not authenticated')
 
-      // 從 members 表讀取 club_role（授權來源），其餘欄位仍讀 user_metadata
-      const { data: memberData } = await supabase
-        .from('members')
-        .select('club_role, avatar_url')
-        .eq('id', user.id)
-        .single()
-
       const metadata = user.user_metadata || {}
-
-      // 優先使用 members.avatar_url，fallback 至 Storage
-      let avatarUrl: string | undefined = memberData?.avatar_url || undefined
-      if (!avatarUrl && metadata.avatar_path) {
-        const { data: avatarData } = supabase.storage
-          .from('icc_avatar')
-          .getPublicUrl(metadata.avatar_path)
-        avatarUrl = avatarData.publicUrl
-      }
 
       return {
         name: metadata.name || user.email?.split('@')[0] || 'User',
-        role: (memberData?.club_role as Role) ?? 'Role.member',
+        role: (metadata.role as Role) ?? 'Role.member',
         joinDate: metadata.join_date || 'Since 2024',
         totalMeditation: metadata.total_meditation || '0h',
         monthlyCheckIns: metadata.monthly_checkins || '0次',
         department: metadata.department || 'Department',
         studentId: metadata.student_id || '000000000',
-        avatar: avatarUrl,
+        avatar: metadata.avatar_path || undefined,
         dateOfBirth: metadata.date_of_birth,
         gender: metadata.gender,
         bio: metadata.bio
@@ -104,22 +88,24 @@ export const userService = {
 
       if (error) throw error
 
-      // 更新用戶 metadata 中的 avatar_path
+      // 取得公開 URL
+      const { data: urlData } = supabase.storage
+        .from('icc_avatar')
+        .getPublicUrl(fileName)
+      const publicUrl = urlData.publicUrl
+
+      // 更新 metadata：同時儲存 avatar_path（供刪除用）與 avatar_url（直接存取用）
       const { error: updateError } = await supabase.auth.updateUser({
         data: {
           ...currentMetadata,
-          avatar_path: fileName
+          avatar_path: fileName,
+          avatar_url: publicUrl
         }
       })
 
       if (updateError) throw updateError
 
-      // 返回公開 URL
-      const { data: urlData } = supabase.storage
-        .from('icc_avatar')
-        .getPublicUrl(fileName)
-
-      return urlData.publicUrl
+      return publicUrl
     } catch (error: any) {
       console.error('Error uploading avatar:', error)
       throw new Error(error.message || '上傳大頭照失敗')

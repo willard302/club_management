@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { userService } from '@/services/userService'
-import type { UserProfile, Activity } from '@/types'
+import type { UserProfile, Activity, Role } from '@/types'
 
 /**
  * Logic Layer: 使用者的業務邏輯與狀態管理
@@ -29,6 +29,8 @@ export function useUser() {
         userService.fetchUserProfile(),
         userService.fetchRecentActivities()
       ])
+
+      console.log('Fetched user profile:', profileData)
 
       userProfile.value = profileData
       recentActivities.value = activitiesData
@@ -110,7 +112,7 @@ export function useUser() {
       // 更新本地狀態
       if (profileData.name !== undefined) userProfile.value.name = profileData.name
       if (profileData.studentId !== undefined) userProfile.value.studentId = profileData.studentId
-      if (profileData.role !== undefined) userProfile.value.role = profileData.role
+      if (profileData.role !== undefined) userProfile.value.role = profileData.role as Role
       if (profileData.department !== undefined) userProfile.value.department = profileData.department
       if (profileData.dateOfBirth !== undefined) userProfile.value.dateOfBirth = profileData.dateOfBirth
       if (profileData.gender !== undefined) userProfile.value.gender = profileData.gender
