@@ -54,7 +54,7 @@ const handleFileSelect = async (event: Event) => {
 
 // 獲取大頭照URL，如果沒有則使用預設圖片
 const getAvatarUrl = () => {
-  return userProfile.value?.avatar || 'public/images/default_avatar.png'
+  return userProfile.value?.avatar || '/images/default_avatar.png'
 }
 
 // 統計數據

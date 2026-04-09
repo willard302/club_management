@@ -72,18 +72,16 @@ const handleLogin = async () => {
         <div class="w-full max-w-sm flex flex-col gap-4">
           <!-- Email Input -->
           <div class="glass-effect rounded-xl p-1">
-            <label class="block px-4 pt-3 text-white/90 text-xs font-semibold uppercase tracking-wider">Email</label>
             <input
               v-model="formData.email"
               type="email"
-              placeholder="university-email@tku.edu.tw"
+              placeholder="Enter your email"
               class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
             />
           </div>
 
           <!-- Password Input -->
           <div class="glass-effect rounded-xl p-1 relative">
-            <label class="block px-4 pt-3 text-white/90 text-xs font-semibold uppercase tracking-wider">Password</label>
             <div class="flex items-center">
               <input
                 v-model="formData.password"

@@ -106,7 +106,6 @@ const handleRegister = async () => {
       <div class="flex flex-col gap-4 px-6 py-4">
         <!-- Email -->
         <label class="flex flex-col gap-2">
-          <span class="text-slate-700 dark:text-slate-300 text-sm font-semibold ml-1">Account</span>
           <div class="relative group">
             <i class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">mail</i>
             <input
@@ -120,7 +119,6 @@ const handleRegister = async () => {
 
         <!-- Password -->
         <label class="flex flex-col gap-2">
-          <span class="text-slate-700 dark:text-slate-300 text-sm font-semibold ml-1">Password</span>
           <div class="relative group">
             <i class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">lock</i>
             <input
@@ -141,7 +139,6 @@ const handleRegister = async () => {
 
         <!-- Confirm Password -->
         <label class="flex flex-col gap-2">
-          <span class="text-slate-700 dark:text-slate-300 text-sm font-semibold ml-1">Confirm Password</span>
           <div class="relative group">
             <i class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">lock</i>
             <input
