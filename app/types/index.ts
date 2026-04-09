@@ -39,6 +39,15 @@ export interface RegisterFormData {
   confirmPassword: string
 }
 
+export interface GoogleSignupFormData {
+  fullName: string
+  studentId: string
+  department: string
+  dateOfBirth: string
+  gender: string
+  bio: string
+}
+
 /**
  * UI Components
  */

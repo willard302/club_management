@@ -172,6 +172,43 @@ export function useUser() {
     }
   }
 
+  /**
+   * 完成 Google OAuth 用戶註冊（首次登入時填寫額外資料）
+   */
+  const completeGoogleSignup = async (googleSignupData: {
+    fullName: string
+    studentId: string
+    department: string
+    dateOfBirth?: string
+    gender?: string
+    bio?: string
+    avatarPath?: string
+  }) => {
+    isUpdatingProfile.value = true
+    error.value = null
+
+    try {
+      // 更新用戶個人資料
+      await userService.updateUserProfile(supabase, {
+        name: googleSignupData.fullName,
+        studentId: googleSignupData.studentId,
+        department: googleSignupData.department,
+        dateOfBirth: googleSignupData.dateOfBirth,
+        gender: googleSignupData.gender,
+        bio: googleSignupData.bio
+      })
+
+      // 重新載入用戶資料以確保本地狀態一致
+      await loadUserData()
+    } catch (err: any) {
+      error.value = err.message || 'Failed to complete Google signup'
+      console.error(err)
+      throw err
+    } finally {
+      isUpdatingProfile.value = false
+    }
+  }
+
   return {
     userProfile,
     recentActivities,
@@ -185,6 +222,7 @@ export function useUser() {
     updateDisplayName,
     updateUserProfile,
     changePassword,
+    completeGoogleSignup,
     handleLogout
   }
 }
