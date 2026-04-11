@@ -25,7 +25,7 @@ export const userService = {
         monthlyCheckIns: metadata.monthly_checkins || '0次',
         department: metadata.department || 'Department',
         studentId: metadata.student_id || '000000000',
-        avatar: metadata.avatar_path || undefined,
+        avatar: metadata.avatar_url || undefined,
         dateOfBirth: metadata.date_of_birth,
         gender: metadata.gender,
         bio: metadata.bio
