@@ -24,7 +24,7 @@ const showTabbar = computed(() => {
 </script>
 
 <template>
-  <div class="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto shadow-2xl overflow-hidden bg-white">
+  <div class="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto shadow-2xl bg-white overflow-y-auto overflow-x-hidden">
     <!-- 页面内容 -->
     <slot />
 

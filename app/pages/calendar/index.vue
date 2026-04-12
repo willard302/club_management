@@ -12,7 +12,6 @@ const {
   eventsForSelectedDate, eventsInMonth,
   format, loadEvents, loadCurrentUserRole, isCalendarLoading,
   canAddEvent, canEditEvent, canDeleteEvent,
-  actionSheetVisible, openActionSheet,
 } = useCalendar()
 
 onMounted(() => {
@@ -71,7 +70,7 @@ onMounted(() => {
             'text-white font-bold': isSelected(day) && isToday(day),
             'text-slate-900': isSelected(day) && !isToday(day)
           }"
-          @click="openActionSheet(day)"
+          @click="selectDate(day)"
         >
           <div 
             class="absolute inset-0 flex items-center justify-center"
@@ -90,42 +89,47 @@ onMounted(() => {
     </div>
   </div>
 
-  <!-- Nav Menu Action Sheet -->
-  <van-action-sheet v-model:show="menuVisible" title="選單" class="pb-safe">
-    <div class="px-4 pb-6 space-y-2">
+  <!-- Selected Date Events -->
+  <div class="px-4 pb-24">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-sm font-bold text-slate-700">{{ format(selectedDate, 'M 月 d 日') }}</span>
       <button
         v-if="canAddEvent"
-        class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-sky-50 hover:bg-sky-100 transition-colors text-sky-600 font-bold text-sm"
+        class="flex items-center gap-1 text-xs text-sky-500 font-bold hover:text-sky-600 transition-colors"
       >
-        <span class="material-symbols-outlined text-lg">add</span>
+        <span class="material-symbols-outlined text-base">add</span>
         新增活動
       </button>
     </div>
-  </van-action-sheet>
 
-  <!-- Events Action Sheet -->
-  <van-action-sheet
-    v-model:show="actionSheetVisible"
-    :title="format(selectedDate, 'yyyy 年 M 月 d 日')"
-    class="pb-safe"
-  >
-    <div class="px-4 pb-6 space-y-4 max-h-[60vh] overflow-y-auto">
+    <div v-if="isCalendarLoading" class="text-center py-8 text-slate-400 text-sm">
+      <span class="material-symbols-outlined text-3xl block mb-2 animate-spin opacity-40">progress_activity</span>
+      載入中…
+    </div>
+    <div v-else-if="eventsForSelectedDate.length === 0" class="text-center py-8 text-slate-400 text-sm">
+      <span class="material-symbols-outlined text-3xl block mb-2 opacity-30">event_busy</span>
+      此日沒有活動
+    </div>
+    <div v-else class="space-y-3">
       <div
         v-for="event in eventsForSelectedDate"
         :key="event.id"
-        class="flex items-start gap-4 bg-sky-50/40 p-4 rounded-2xl border border-sky-100/50"
+        class="flex items-start gap-4 bg-white p-4 rounded-2xl border border-sky-100/60 shadow-sm"
       >
-        <div class="min-w-[50px] text-center pt-1">
+        <div class="min-w-[48px] text-center">
           <p class="text-sm font-bold text-slate-800">{{ event.time }}</p>
           <p class="text-[10px] text-slate-400 uppercase font-bold">{{ event.period }}</p>
         </div>
-        <div class="flex-1">
-          <p class="font-bold text-slate-800 text-sm mb-1">{{ event.title }}</p>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="inline-block w-2 h-2 rounded-full flex-shrink-0" :style="{ backgroundColor: event.color || '#0EA5E9' }"></span>
+            <p class="font-bold text-slate-800 text-sm truncate">{{ event.title }}</p>
+          </div>
           <p class="text-xs text-slate-500 flex items-center gap-1 mb-2">
             <span class="material-symbols-outlined text-[14px]">location_on</span>
             {{ event.location || '未指定地點' }}
           </p>
-          <p v-if="event.description" class="text-xs text-slate-400 mb-2">{{ event.description }}</p>
+          <p v-if="event.description" class="text-xs text-slate-400 mb-2 line-clamp-2">{{ event.description }}</p>
           <div class="flex items-center justify-between">
             <span class="text-[10px] text-sky-600 font-bold bg-sky-100/50 px-2 py-1 rounded-md">
               {{ event.attendees }} 人參與
@@ -147,7 +151,22 @@ onMounted(() => {
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Nav Menu Action Sheet -->
+  <van-action-sheet v-model:show="menuVisible" title="選單" class="pb-safe">
+    <div class="px-4 pb-6 space-y-2">
+      <button
+        v-if="canAddEvent"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-sky-50 hover:bg-sky-100 transition-colors text-sky-600 font-bold text-sm"
+      >
+        <span class="material-symbols-outlined text-lg">add</span>
+        新增活動
+      </button>
+    </div>
   </van-action-sheet>
+
+
 </template>
 
 <style scoped>
