@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { format as fnsFormat } from 'date-fns'
 
 definePageMeta({ layout: 'default' })
 
+const router = useRouter()
 const menuVisible = ref(false)
+
+const navigateToEditor = () => {
+  router.push({ path: '/calendar/editor', query: { date: fnsFormat(selectedDate.value, 'yyyy-MM-dd') } })
+}
 
 const {
   selectedDate, monthYear, calendarGrid,
@@ -95,6 +101,7 @@ onMounted(() => {
       <span class="text-sm font-bold text-slate-700">{{ format(selectedDate, 'M 月 d 日') }}</span>
       <button
         v-if="canAddEvent"
+        @click="navigateToEditor"
         class="flex items-center gap-1 text-xs text-sky-500 font-bold hover:text-sky-600 transition-colors"
       >
         <span class="material-symbols-outlined text-base">add</span>
@@ -158,6 +165,7 @@ onMounted(() => {
     <div class="px-4 pb-6 space-y-2">
       <button
         v-if="canAddEvent"
+        @click="menuVisible = false; navigateToEditor()"
         class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-sky-50 hover:bg-sky-100 transition-colors text-sky-600 font-bold text-sm"
       >
         <span class="material-symbols-outlined text-lg">add</span>

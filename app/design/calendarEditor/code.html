@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "rgba(255, 255, 255, 0.2)",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#673d00",
+                        "primary-fixed": "#cfe5ff",
+                        "on-tertiary-container": "#472800",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#004a77",
+                        "on-background": "#101a22",
+                        "surface-bright": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#2b9dee",
+                        "outline": "rgba(255, 255, 255, 0.3)",
+                        "surface-container-high": "rgba(255, 255, 255, 0.3)",
+                        "background": "#f6f7f8",
+                        "on-error-container": "#93000a",
+                        "surface-container": "rgba(255, 255, 255, 0.2)",
+                        "inverse-primary": "#98cbff",
+                        "tertiary-fixed-dim": "#ffb869",
+                        "inverse-on-surface": "#f6f7f8",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffdcbb",
+                        "on-primary-container": "#ffffff",
+                        "tertiary-container": "#d78400",
+                        "surface-variant": "rgba(255, 255, 255, 0.15)",
+                        "on-primary-fixed": "#001d33",
+                        "surface-container-highest": "rgba(255, 255, 255, 0.4)",
+                        "secondary-fixed": "#cfe5ff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "rgba(255, 255, 255, 0.8)",
+                        "secondary-container": "#b9dbff",
+                        "on-tertiary-fixed": "#2b1700",
+                        "on-surface": "#ffffff",
+                        "tertiary": "#4CAF50",
+                        "secondary-fixed-dim": "#a9caee",
+                        "surface-tint": "#2b9dee",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#40607f",
+                        "secondary": "#87ceeb",
+                        "on-secondary-fixed-variant": "#284967",
+                        "inverse-surface": "#101a22",
+                        "surface-container-low": "rgba(255, 255, 255, 0.1)",
+                        "surface-dim": "#d7dae1",
+                        "surface": "rgba(255, 255, 255, 0.2)",
+                        "primary-fixed-dim": "#98cbff",
+                        "primary": "#2b9dee",
+                        "on-secondary-fixed": "#001d33"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            min-height: 100vh;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .input-well {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-slate-800">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-white/20 dark:bg-slate-900/20 backdrop-blur-md border-b border-white/10 shadow-[0_0_40px_10px_rgba(255,255,255,0.2)] rounded-b-[2rem]">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#2b9dee] active:opacity-70 active:scale-95 transition-all">arrow_back</button>
+<h1 class="text-xl font-bold tracking-widest text-[#2b9dee] uppercase">新增活動</h1>
+</div>
+<button class="text-[#2b9dee] font-['Plus_Jakarta_Sans'] tracking-widest uppercase text-sm font-bold active:opacity-70 active:scale-95 transition-all">儲存</button>
+</header>
+<main class="pt-24 pb-32 px-4 max-w-md mx-auto space-y-6">
+<!-- Hero Section Aesthetic -->
+<div class="relative h-32 w-full rounded-2xl overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Soft ethereal blue sky with gentle white wispy clouds at morning light, calm and spiritual atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGING3a9u5JrkfJpExvXVYLqkzARCPrnC_ShxQutK3mjy3uhQcgZLjJHMWUxqD-d8olc-n8hXLP12TfJ8J6hDrdxQjjs_yJVxiIL0o3aiKRobe-HX3t7mMV_4cZy8XIZXdanPp8UGVjxR6QVjfZNK7mWkHljTc5y0hOugAu5QTsTN5VzRckyTw1XOyQaWGCAIQC0LDMHa7jnR-ZEqXb5BUXG8hNNy6rn5VBQheAsQ-77BdCtbWIuZITkCVk5jT6VHn6mxb0rmKxjU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#F0F9FF]/80 to-transparent"></div>
+</div>
+<!-- Event Name Card -->
+<section class="glass-card rounded-2xl p-5 space-y-3">
+<label class="block text-[10px] font-bold tracking-widest uppercase text-slate-500">
+                活動名稱 <span class="text-red-500 ml-1">•</span>
+</label>
+<input class="w-full bg-transparent border-0 border-b border-slate-200 focus:ring-0 focus:border-[#2b9dee] text-lg font-bold placeholder:text-slate-300 placeholder:font-normal p-0 pb-2" placeholder="請輸入活動名稱" type="text"/>
+</section>
+<!-- Time & Settings Card -->
+<section class="glass-card rounded-2xl p-2 space-y-1">
+<!-- All Day Toggle -->
+<div class="flex items-center justify-between px-3 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">schedule</span>
+<span class="font-medium text-slate-700">全天活動</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2b9dee]"></div>
+</label>
+</div>
+<div class="h-[1px] bg-white/30 mx-3"></div>
+<!-- Start Time -->
+<div class="flex items-center justify-between px-3 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">calendar_today</span>
+<span class="text-sm font-medium text-slate-700">開始時間</span>
+</div>
+<div class="flex gap-2 text-sm">
+<span class="bg-white/40 px-2 py-1 rounded-lg text-[#2b9dee]">2024年5月20日</span>
+<span class="bg-white/40 px-2 py-1 rounded-lg text-[#2b9dee]">14:00</span>
+</div>
+</div>
+<div class="h-[1px] bg-white/30 mx-3"></div>
+<!-- End Time -->
+<div class="flex items-center justify-between px-3 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">event</span>
+<span class="text-sm font-medium text-slate-700">結束時間</span>
+</div>
+<div class="flex gap-2 text-sm">
+<span class="bg-white/40 px-2 py-1 rounded-lg text-slate-500">2024年5月20日</span>
+<span class="bg-white/40 px-2 py-1 rounded-lg text-slate-500">15:30</span>
+</div>
+</div>
+<div class="h-[1px] bg-white/30 mx-3"></div>
+<!-- Repeat -->
+<div class="flex items-center justify-between px-3 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">repeat</span>
+<span class="text-sm font-medium text-slate-700">重複</span>
+</div>
+<select class="bg-transparent border-0 text-sm text-[#2b9dee] font-medium focus:ring-0 text-right pr-8">
+<option>不重複</option>
+<option>每天</option>
+<option>每週</option>
+<option>每月</option>
+<option>每年</option>
+</select>
+</div>
+</section>
+<!-- Location & Notes Card -->
+<section class="glass-card rounded-2xl p-2 space-y-1">
+<!-- Location -->
+<div class="flex items-start gap-3 px-3 py-4">
+<span class="material-symbols-outlined text-slate-400 mt-0.5">location_on</span>
+<div class="flex-1">
+<input class="w-full bg-transparent border-0 p-0 text-sm focus:ring-0 placeholder:text-slate-300" placeholder="請輸入地點" type="text"/>
+</div>
+</div>
+<div class="h-[1px] bg-white/30 mx-3"></div>
+<!-- Notes -->
+<div class="flex items-start gap-3 px-3 py-4">
+<span class="material-symbols-outlined text-slate-400 mt-1">notes</span>
+<div class="flex-1">
+<textarea class="w-full bg-transparent border-0 p-0 text-sm focus:ring-0 placeholder:text-slate-300 resize-none" placeholder="新增說明" rows="3"></textarea>
+</div>
+</div>
+</section>
+<!-- Color Selection -->
+<section class="glass-card rounded-2xl p-5 space-y-4">
+<label class="block text-[10px] font-bold tracking-widest uppercase text-slate-500">
+                活動標記顏色
+            </label>
+<div class="flex justify-between items-center px-1">
+<!-- Sky Blue Checked -->
+<button class="w-8 h-8 rounded-full bg-[#2b9dee] ring-2 ring-offset-2 ring-[#2b9dee] flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-white text-lg" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+<!-- Teal -->
+<button class="w-8 h-8 rounded-full bg-[#14b8a6] hover:scale-110 transition-transform"></button>
+<!-- Violet -->
+<button class="w-8 h-8 rounded-full bg-[#8b5cf6] hover:scale-110 transition-transform"></button>
+<!-- Rose -->
+<button class="w-8 h-8 rounded-full bg-[#f43f5e] hover:scale-110 transition-transform"></button>
+<!-- Amber -->
+<button class="w-8 h-8 rounded-full bg-[#f59e0b] hover:scale-110 transition-transform"></button>
+<!-- Slate -->
+<button class="w-8 h-8 rounded-full bg-[#64748b] hover:scale-110 transition-transform"></button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-white/10 dark:bg-slate-900/30 backdrop-blur-xl border-t border-white/5 shadow-[0_-10px_30px_rgba(43,157,238,0.15)] rounded-t-[2.5rem]">
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#2b9dee] transition-all">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] tracking-widest uppercase font-bold mt-1">首頁</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#2b9dee]/20 text-[#2b9dee] rounded-full px-5 py-2 shadow-[0_0_20px_rgba(43,157,238,0.4)] transition-all scale-110">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] tracking-widest uppercase font-bold mt-1">行事曆</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#2b9dee] transition-all">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] tracking-widest uppercase font-bold mt-1">社團</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#2b9dee] transition-all">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] tracking-widest uppercase font-bold mt-1">個人</span>
+</div>
+</nav>
+</body></html>

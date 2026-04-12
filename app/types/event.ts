@@ -23,4 +23,5 @@ export interface CreateEventPayload {
   end_at: string    // ISO8601
   all_day?: boolean
   color?: string
+  recurrence?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
 }
