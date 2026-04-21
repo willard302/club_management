@@ -11,6 +11,7 @@ export function useLedger() {
   const monthIn = ref('+$0')
   const monthOut = ref('-$0')
   const transactions = ref<Transaction[]>([])
+  const reportData = ref<import('@/types/ledger').LedgerReportData | null>(null)
 
   const loadLedgerData = async () => {
     isLedgerLoading.value = true
@@ -25,6 +26,17 @@ export function useLedger() {
       transactions.value = transData
     } catch (error) {
       console.error('Failed to load ledger data', error)
+    } finally {
+      isLedgerLoading.value = false
+    }
+  }
+
+  const loadReportData = async () => {
+    isLedgerLoading.value = true
+    try {
+      reportData.value = await ledgerService.fetchReportData()
+    } catch (error) {
+      console.error('Failed to load report data', error)
     } finally {
       isLedgerLoading.value = false
     }
@@ -110,7 +122,9 @@ export function useLedger() {
     monthIn,
     monthOut,
     transactions,
+    reportData,
     loadLedgerData,
+    loadReportData,
     getTransaction,
     saveTransaction,
     removeTransaction,

@@ -81,13 +81,7 @@ onBeforeUnmount(async () => {
 <template>
   <div class="relative flex min-h-screen w-full flex-col bg-[#f0f9ff] overflow-x-hidden pb-16">
     <!-- Header -->
-    <header class="flex items-center justify-between px-4 py-4 bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b border-sky-500/10">
-      <button @click="goBack" class="flex items-center justify-center p-2 rounded-full hover:bg-sky-500/10 transition-colors">
-        <span class="material-symbols-outlined text-sky-500">arrow_back</span>
-      </button>
-      <h1 class="text-lg font-bold tracking-tight text-slate-800">編輯個人資料</h1>
-      <Zen-Logo size="sm" />
-    </header>
+    <AppPageHeader title="編輯個人資料" @back="goBack" />
 
     <main class="flex-1 w-full px-4 py-6 space-y-8">
       <!-- Profile Picture Section -->

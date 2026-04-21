@@ -46,9 +46,9 @@ const { t } = useI18n()
             <NuxtLink to="/ledger/new" class="flex-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white py-3.5 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-white/30 inline-flex">
               <span class="material-symbols-outlined text-lg">add_circle</span> {{ t('ledger.newEntry') }}
             </NuxtLink>
-            <button class="flex-1 bg-white text-sky-500 py-3.5 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 hover:shadow-lg">
+            <NuxtLink to="/ledger/report" class="flex-1 bg-white text-sky-500 py-3.5 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 hover:shadow-lg">
               <span class="material-symbols-outlined text-lg">ios_share</span> {{ t('ledger.report') }}
-            </button>
+            </NuxtLink>
           </div>
         </div>
       </div>

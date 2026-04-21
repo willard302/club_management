@@ -80,6 +80,35 @@ export interface LedgerSummary {
 }
 
 /**
+ * 帳務報表資料
+ */
+export interface LedgerReportData {
+  summary: {
+    totalBalance: string
+    monthlyIncome: string
+    monthlyExpenses: string
+    incomeGrowth: string
+  }
+  monthlyTrend: {
+    month: string
+    monthShort: string
+    income: number
+    expenses: number
+  }[]
+  expenseBreakdown: {
+    category: string
+    percentage: number
+    amount: number
+    color: string
+  }[]
+  topCategories: {
+    category: string
+    amount: number
+    percentage: number
+  }[]
+}
+
+/**
  * Mapper: 資料庫記錄 → 前端交易記錄
  * 轉換蛇形式欄位名為駝峰式，並計算顯示文字
  */

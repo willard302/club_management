@@ -51,20 +51,7 @@ const goBack = () => router.back()
 <template>
   <div class="relative flex h-full min-h-screen w-full flex-col sky-gradient overflow-x-hidden pb-24">
     <!-- Header -->
-    <header class="flex items-center glass-effect sticky top-0 z-10 p-4 justify-between border-b border-white/20">
-      <div class="flex items-center gap-3">
-        <button
-          @click="goBack"
-          class="flex items-center justify-center p-2 rounded-full hover:bg-slate-400/20 transition-colors"
-        >
-          <span class="material-symbols-outlined text-slate-900">arrow_back</span>
-        </button>
-        <div class="flex-1">
-          <h1 class="text-slate-900 text-lg font-bold leading-tight tracking-tight">冥想統計</h1>
-          <p class="text-xs text-primary font-medium">Statistics Overview</p>
-        </div>
-      </div>
-    </header>
+    <AppPageHeader title="冥想統計" @back="goBack" />
 
     <!-- Main Content -->
     <main class="flex flex-col gap-6 p-4">

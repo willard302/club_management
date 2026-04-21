@@ -115,18 +115,7 @@ const handleDelete = async () => {
 <template>
   <div class="relative flex min-h-screen w-full flex-col bg-gradient-to-b from-[#e0f2fe] to-white dark:from-slate-900 dark:to-slate-900 overflow-x-hidden pb-20 font-display">
     <!-- Header -->
-    <header class="flex items-center justify-between px-4 py-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10 border-b border-sky-500/10">
-      <div class="flex items-center gap-3">
-        <button @click="goBack" class="text-slate-900 dark:text-slate-100 flex items-center justify-center p-2 rounded-lg hover:bg-sky-500/10 transition-colors">
-          <span class="material-symbols-outlined">arrow_back</span>
-        </button>
-        <div class="flex flex-col">
-          <h1 class="text-xs font-bold text-sky-500 tracking-wider uppercase">{{ t('ledger.systemTitle') }}</h1>
-          <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">{{ isNew ? t('ledger.newRecord') : t('ledger.editRecord') }}</h2>
-        </div>
-      </div>
-      <!-- <ZenLogo size="sm" /> -->
-    </header>
+    <AppPageHeader :title="isNew ? t('ledger.newRecord') : t('ledger.editRecord')" @back="goBack" />
 
     <!-- Main Content -->
     <main class="flex-1 p-4 max-w-lg mx-auto w-full">

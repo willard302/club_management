@@ -63,21 +63,17 @@ const getTimeColumns = (timeStr: string) => {
 <template>
   <div class="min-h-screen editor-bg">
     <!-- Header -->
-    <header class="sticky top-0 z-50 flex justify-between items-center px-5 py-4 bg-white/30 backdrop-blur-md border-b border-white/10">
-      <div class="flex items-center gap-3">
-        <button @click="router.back()" class="material-symbols-outlined text-[#2b9dee] text-2xl active:opacity-70 active:scale-95 transition-all">
-          arrow_back
+    <AppPageHeader :title="isEditMode ? '編輯活動' : '新增活動'" @back="router.back()">
+      <template #right-actions>
+        <button
+          @click="saveEvent"
+          :disabled="isSaving || isInitializing"
+          class="text-slate-900 dark:text-slate-100 text-sm font-bold tracking-widest active:opacity-70 active:scale-95 transition-all disabled:opacity-40"
+        >
+          {{ isSaving ? '儲存中…' : (isEditMode ? '更新' : '儲存') }}
         </button>
-        <h1 class="text-lg font-bold tracking-widest text-[#2b9dee]">{{ isEditMode ? '編輯活動' : '新增活動' }}</h1>
-      </div>
-      <button
-        @click="saveEvent"
-        :disabled="isSaving || isInitializing"
-        class="text-[#2b9dee] text-sm font-bold tracking-widest active:opacity-70 active:scale-95 transition-all disabled:opacity-40"
-      >
-        {{ isSaving ? '儲存中…' : (isEditMode ? '更新' : '儲存') }}
-      </button>
-    </header>
+      </template>
+    </AppPageHeader>
 
     <!-- Content -->
     <main v-if="!isInitializing" class="px-4 pt-4 pb-24 space-y-5 max-w-md mx-auto">

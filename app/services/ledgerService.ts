@@ -217,5 +217,106 @@ export const ledgerService = {
       console.error('Error deleting transaction:', error)
       return false
     }
+  },
+
+  /**
+   * 取得分析報表資料
+   */
+  async fetchReportData(): Promise<import('@/types/ledger').LedgerReportData> {
+    try {
+      const supabase = useSupabaseClient()
+      const { data, error } = await supabase
+        .from('ledger')
+        .select('*')
+        .order('date', { ascending: true })
+        .throwOnError()
+
+      if (error) throw error
+      const transactions = data || []
+      const now = new Date()
+      const currentMonth = now.getMonth()
+      const currentYear = now.getFullYear()
+
+      // 1. Summary
+      const totalBalance = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0)
+      const thisMonthTxs = transactions.filter(tx => {
+        const d = new Date(tx.date)
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear
+      })
+      const lastMonthTxs = transactions.filter(tx => {
+        const d = new Date(tx.date)
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
+        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
+        return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear
+      })
+
+      const monthlyIncome = thisMonthTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0)
+      const monthlyExpenses = Math.abs(thisMonthTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0))
+      
+      const lastMonthIncome = lastMonthTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0)
+      const growth = lastMonthIncome > 0 ? ((monthlyIncome - lastMonthIncome) / lastMonthIncome * 100).toFixed(1) : '0.0'
+
+      // 2. Monthly Trend (Last 6 months)
+      const monthlyTrend = []
+      for (let i = 5; i >= 0; i--) {
+        const targetDate = new Date(currentYear, currentMonth - i, 1)
+        const m = targetDate.getMonth()
+        const y = targetDate.getFullYear()
+        const monthShort = targetDate.toLocaleString('en-US', { month: 'short' }).toUpperCase()
+        const monthFull = targetDate.toLocaleString('zh-TW', { month: 'long' })
+        
+        const txs = transactions.filter(tx => {
+          const d = new Date(tx.date)
+          return d.getMonth() === m && d.getFullYear() === y
+        })
+        
+        monthlyTrend.push({
+          month: monthFull,
+          monthShort,
+          income: txs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0),
+          expenses: Math.abs(txs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0))
+        })
+      }
+
+      // 3. Expense Breakdown (Current Month)
+      const expenseByCategory: Record<string, number> = {}
+      const currentExpenses = transactions.filter(tx => tx.type === 'expense')
+      currentExpenses.forEach(tx => {
+        expenseByCategory[tx.category] = (expenseByCategory[tx.category] || 0) + Math.abs(tx.amount)
+      })
+
+      const colors = ['#2b9dee', '#4CAF50', '#ffb869', '#cbd5e1', '#ba1a1a', '#87ceeb']
+      const totalExp = Object.values(expenseByCategory).reduce((s, a) => s + a, 0)
+      const expenseBreakdown = Object.entries(expenseByCategory)
+        .map(([category, amount], i) => ({
+          category,
+          amount,
+          percentage: totalExp > 0 ? Math.round((amount / totalExp) * 100) : 0,
+          color: colors[i % colors.length]
+        }))
+        .sort((a, b) => b.amount - a.amount)
+
+      // 4. Top Categories
+      const topCategories = expenseBreakdown.slice(0, 4).map(item => ({
+        category: item.category,
+        amount: item.amount,
+        percentage: item.percentage
+      }))
+
+      return {
+        summary: {
+          totalBalance: `$${totalBalance.toLocaleString()}`,
+          monthlyIncome: `$${monthlyIncome.toLocaleString()}`,
+          monthlyExpenses: `$${monthlyExpenses.toLocaleString()}`,
+          incomeGrowth: `${parseFloat(growth) >= 0 ? '+' : ''}${growth}%`
+        },
+        monthlyTrend,
+        expenseBreakdown,
+        topCategories
+      }
+    } catch (error) {
+      console.error('Error fetching report data:', error)
+      throw error
+    }
   }
 }

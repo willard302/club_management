@@ -14,11 +14,13 @@ withDefaults(defineProps<Props>(), {
 <template>
   <header :class="[bgClass, 'pt-6 px-4 sticky top-0 z-30', hasPadding ? 'pb-20' : 'pb-4']">
     <div class="relative z-10 flex items-center">
-      <!-- Left side: Logo -->
+      <!-- Left side: Logo or Custom Actions -->
       <div class="flex-1 flex justify-start">
-        <div class="flex items-center gap-2">
-          <ZenLogo size="sm" />
-        </div>
+        <slot name="left-actions">
+          <div class="flex items-center gap-2">
+            <ZenLogo size="sm" />
+          </div>
+        </slot>
       </div>
       <!-- Center: Title -->
       <div class="flex-1 flex justify-center">
