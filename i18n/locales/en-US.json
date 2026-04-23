@@ -72,6 +72,47 @@
     "statusSuccess": "Success",
     "statusSettled": "Settled",
     "saveRecord": "Save Record",
-    "deleteRecord": "Delete Record"
+    "deleteRecord": "Delete Record",
+    "totalBalance": "Total Balance Overview",
+    "fromLastMonth": "from last month",
+    "monthlyTrend": "Monthly Trend",
+    "trendDescription": "Income vs Expenses (Last 6 Months)",
+    "expenseBreakdown": "Expense Breakdown",
+    "topCategories": "Top Categories",
+    "currentMonth": "Current Month",
+    "calculatedTotal": "Calculated Total"
+  },
+  "meditation": {
+    "stats": "Meditation Stats",
+    "totalTime": "Total Meditation Time",
+    "recentSessions": "Recent Sessions",
+    "noStats": "No data for this period",
+    "noSessions": "No records yet. Start your first meditation!",
+    "meditationType": "Meditation Type",
+    "target": "Target",
+    "completed": "Completed",
+    "partial": "Partial"
+  },
+  "userInfo": {
+    "title": "Edit Profile",
+    "name": "Name",
+    "studentId": "Student ID",
+    "department": "Department",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderOther": "Other",
+    "bio": "Bio",
+    "bioPlaceholder": "Share your zen journey...",
+    "saveSuccess": "Profile updated",
+    "saveError": "Failed to save changes",
+    "avatarSuccess": "Avatar uploaded",
+    "avatarError": "Failed to upload avatar",
+    "placeholderName": "Enter name",
+    "placeholderStudentId": "Enter student ID",
+    "placeholderDepartment": "e.g. Computer Science",
+    "placeholderDOB": "Select date",
+    "placeholderGender": "Select gender"
   }
 }

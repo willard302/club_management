@@ -72,6 +72,47 @@
     "statusSuccess": "成功",
     "statusSettled": "已結算",
     "saveRecord": "儲存紀錄",
-    "deleteRecord": "刪除此筆紀錄"
+    "deleteRecord": "刪除此筆紀錄",
+    "totalBalance": "總餘額概覽",
+    "fromLastMonth": "較上月",
+    "monthlyTrend": "收支趨勢",
+    "trendDescription": "最近六個月收支對比",
+    "expenseBreakdown": "支出比例",
+    "topCategories": "主要支出類別",
+    "currentMonth": "本月統計中",
+    "calculatedTotal": "累計總額"
+  },
+  "meditation": {
+    "stats": "冥想統計",
+    "totalTime": "總冥想時間",
+    "recentSessions": "最近冥想記錄",
+    "noStats": "尚無本期冥想記錄",
+    "noSessions": "尚無冥想記錄，開始你的第一次冥想吧！",
+    "meditationType": "冥想類型",
+    "target": "目標",
+    "completed": "完成",
+    "partial": "部分完成"
+  },
+  "userInfo": {
+    "title": "編輯個人資料",
+    "name": "姓名",
+    "studentId": "學號",
+    "department": "系級",
+    "dateOfBirth": "出生年月日",
+    "gender": "性別",
+    "genderMale": "男",
+    "genderFemale": "女",
+    "genderOther": "其他",
+    "bio": "個人簡介",
+    "bioPlaceholder": "分享你的習禪心得...",
+    "saveSuccess": "個人資料已更新",
+    "saveError": "保存修改失敗",
+    "avatarSuccess": "大頭照上傳成功",
+    "avatarError": "上傳大頭照失敗",
+    "placeholderName": "請輸入姓名",
+    "placeholderStudentId": "請輸入學號",
+    "placeholderDepartment": "例：資工系三年級",
+    "placeholderDOB": "請選擇日期",
+    "placeholderGender": "請選擇性別"
   }
 }

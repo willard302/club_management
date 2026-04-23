@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 definePageMeta({
   layout: 'default'
 })
 
 const router = useRouter()
+const { t } = useI18n()
 
 const { selectedPeriod, stats, recentSessions, isLoading, loadStats } = useMeditationStats()
 
@@ -51,7 +53,7 @@ const goBack = () => router.back()
 <template>
   <div class="relative flex h-full min-h-screen w-full flex-col sky-gradient overflow-x-hidden pb-24">
     <!-- Header -->
-    <AppPageHeader title="冥想統計" @back="goBack" />
+    <AppPageHeader :title="t('meditation.stats')" @back="goBack" />
 
     <!-- Main Content -->
     <main class="flex flex-col gap-6 p-4">
@@ -87,7 +89,7 @@ const goBack = () => router.back()
         <section class="glass-effect rounded-xl p-5 shadow-sm">
           <div class="flex justify-between items-end mb-6">
             <div>
-              <p class="text-slate-500 text-sm font-medium">Total Meditation Time</p>
+              <p class="text-slate-500 text-sm font-medium">{{ t('meditation.totalTime') }}</p>
               <h2 class="text-slate-900 text-3xl font-extrabold tracking-tight">
                 {{ formattedTotalTime.value }}
                 <span class="text-lg font-medium text-slate-500">{{ formattedTotalTime.unit }}</span>
@@ -124,7 +126,7 @@ const goBack = () => router.back()
             </template>
             <!-- No data yet -->
             <div v-else class="flex-1 flex items-center justify-center text-slate-400 text-sm">
-              尚無本期冥想記錄
+              {{ t('meditation.noStats') }}
             </div>
           </div>
         </section>
@@ -132,7 +134,7 @@ const goBack = () => router.back()
         <!-- Recent Sessions -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-slate-900 text-lg font-bold">Recent Sessions</h3>
+            <h3 class="text-slate-900 text-lg font-bold">{{ t('meditation.recentSessions') }}</h3>
           </div>
 
           <!-- Empty state -->
@@ -141,7 +143,7 @@ const goBack = () => router.back()
             class="glass-effect rounded-xl p-8 flex flex-col items-center text-center gap-3"
           >
             <span class="material-symbols-outlined text-slate-300 text-5xl">self_improvement</span>
-            <p class="text-slate-500 text-sm">尚無冥想記錄，開始你的第一次冥想吧！</p>
+            <p class="text-slate-500 text-sm">{{ t('meditation.noSessions') }}</p>
           </div>
 
           <div v-else class="flex flex-col gap-3">
@@ -163,8 +165,8 @@ const goBack = () => router.back()
                   </span>
                 </div>
                 <p class="text-slate-400 text-xs mt-1">
-                  {{ session.completed ? '✓ 完成' : '⏸ 部分完成' }}
-                  · {{ Math.round(session.targetSeconds / 60) }}m 目標
+                  {{ session.completed ? t('meditation.completed') : t('meditation.partial') }}
+                  · {{ Math.round(session.targetSeconds / 60) }}m {{ t('meditation.target') }}
                 </p>
               </div>
               <div class="text-right flex-shrink-0">

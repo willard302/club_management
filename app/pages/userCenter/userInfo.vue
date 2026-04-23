@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const { t } = useI18n()
 
 definePageMeta({
   layout: 'default'
@@ -37,12 +39,12 @@ const handleAvatarUpload = async (event: Event) => {
     await uploadAvatar(file)
     // 重新載入用戶資料確保最新
     await loadUserData()
-    showSuccessToast('大頭照上傳成功')
+    showSuccessToast(t('userInfo.avatarSuccess'))
     if (avatarInput.value) {
       avatarInput.value.value = ''
     }
   } catch (err: any) {
-    showErrorToast(err.message || '上傳大頭照失敗')
+    showErrorToast(err.message || t('userInfo.avatarError'))
     if (avatarInput.value) {
       avatarInput.value.value = ''
     }
@@ -55,9 +57,9 @@ const handleSave = async () => {
     await updateUserInfo()
     // 重新載入用戶資料確保同步
     await loadUserData()
-    showSuccessToast('個人資料已更新')
+    showSuccessToast(t('userInfo.saveSuccess'))
   } catch (err: any) {
-    showErrorToast(err.message || '保存失敗')
+    showErrorToast(err.message || t('userInfo.saveError'))
   }
 }
 
@@ -81,7 +83,7 @@ onBeforeUnmount(async () => {
 <template>
   <div class="relative flex min-h-screen w-full flex-col bg-[#f0f9ff] overflow-x-hidden pb-16">
     <!-- Header -->
-    <AppPageHeader title="編輯個人資料" @back="goBack" />
+    <AppPageHeader :title="t('userInfo.title')" @back="goBack" />
 
     <main class="flex-1 w-full px-4 py-6 space-y-8">
       <!-- Profile Picture Section -->
@@ -118,7 +120,7 @@ onBeforeUnmount(async () => {
           @change="handleAvatarUpload"
         />
         <div class="text-center">
-          <p class="text-sky-500 font-semibold">社團管理系統</p>
+          <p class="text-sky-500 font-semibold">{{ t('ledger.systemTitle') }}</p>
         </div>
       </div>
 
@@ -133,68 +135,68 @@ onBeforeUnmount(async () => {
         <!-- Success Message -->
         <div v-if="success" class="p-3 bg-green-100 text-green-700 rounded-xl text-sm border border-green-200 flex items-center gap-2">
           <span class="material-symbols-outlined text-base">check_circle</span>
-          保存成功
+          {{ t('userInfo.saveSuccess') }}
         </div>
 
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">姓名</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.name') }}</label>
           <input 
             v-model="formData.name"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            placeholder="請輸入姓名" 
+            :placeholder="t('userInfo.placeholderName')" 
             type="text"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">學號</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.studentId') }}</label>
           <input 
             v-model="formData.studentId"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            placeholder="請輸入學號" 
+            :placeholder="t('userInfo.placeholderStudentId')" 
             type="text"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">系級</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.department') }}</label>
           <input 
             v-model="formData.department"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            placeholder="例如：資工系三年級" 
+            :placeholder="t('userInfo.placeholderDepartment')" 
             type="text"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">出生年月日</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.dateOfBirth') }}</label>
           <input 
             v-model="formData.dateOfBirth"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            placeholder="請選擇出生日期" 
+            :placeholder="t('userInfo.placeholderDOB')" 
             type="date"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">性別</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.gender') }}</label>
           <select 
             v-model="formData.gender"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm text-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="isLoading"
           >
-            <option value="">請選擇性別</option>
-            <option value="male">男</option>
-            <option value="female">女</option>
-            <option value="other">其他</option>
+            <option value="">{{ t('userInfo.placeholderGender') }}</option>
+            <option value="male">{{ t('userInfo.genderMale') }}</option>
+            <option value="female">{{ t('userInfo.genderFemale') }}</option>
+            <option value="other">{{ t('userInfo.genderOther') }}</option>
           </select>
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">個人簡介</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.bio') }}</label>
           <textarea 
             v-model="formData.bio"
             class="w-full p-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 resize-none text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed" 
-            placeholder="分享你的習禪心得..." 
+            :placeholder="t('userInfo.bioPlaceholder')" 
             rows="3"
             :disabled="isLoading"
           ></textarea>
@@ -210,7 +212,7 @@ onBeforeUnmount(async () => {
         >
           <span v-if="!isSaving" class="material-symbols-outlined">save</span>
           <span v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-          {{ isSaving ? '保存中...' : '保存修改' }}
+          {{ isSaving ? t('changePassword.submitting') : t('ledger.saveRecord') }}
         </button>
 
         <!-- Change Password Button -->
@@ -219,7 +221,7 @@ onBeforeUnmount(async () => {
           class="w-full h-14 bg-white/60 text-sky-600 font-bold rounded-2xl border-2 border-sky-500/30 hover:bg-white/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
         >
           <span class="material-symbols-outlined">lock</span>
-          修改密碼
+          {{ t('changePassword.title') }}
         </button>
       </div>
     </main>
