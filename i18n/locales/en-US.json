@@ -118,5 +118,10 @@
     "placeholderDepartment": "e.g. Computer Science",
     "placeholderDOB": "Select date",
     "placeholderGender": "Select gender"
+  },
+  "Role": {
+    "admin": "Admin",
+    "member": "Member",
+    "guest": "Guest"
   }
 }

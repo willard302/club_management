@@ -118,5 +118,10 @@
     "placeholderDepartment": "例：資工系三年級",
     "placeholderDOB": "請選擇日期",
     "placeholderGender": "請選擇性別"
+  },
+  "Role": {
+    "admin": "管理員",
+    "member": "會員",
+    "guest": "訪客"
   }
 }
