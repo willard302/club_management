@@ -35,6 +35,7 @@ const {
   selectedDate, monthYear, calendarGrid,
   isToday, isSelected, isCurrentMonth,
   selectDate, previousMonth, nextMonth,
+  goToToday,
   eventsForSelectedDate, eventsInMonth,
   format, loadEvents, loadCurrentUserRole, isCalendarLoading,
   canAddEvent, canEditEvent, canDeleteEvent,
@@ -57,17 +58,22 @@ onMounted(() => {
       </template>
     </AppHeader>
 
-    <div class="mt-8 flex flex-col items-center justify-between relative z-10 text-white">
+    <div class="mt-8 flex flex-col items-center relative z-10 text-white px-4">
       <span class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Club Calendar</span>
-      <div class="flex gap-1.5 items-center">
-        <button @click="previousMonth" class="mr-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
-          <span class="material-symbols-outlined text-xl">chevron_left</span>
-        </button>
-        <div>
-          <span class="text-2xl font-bold">{{ monthYear }}</span>
+      <div class="w-full flex items-center justify-center relative">
+        <div class="flex gap-1.5 items-center">
+          <button @click="previousMonth" class="mr-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
+            <span class="material-symbols-outlined text-xl">chevron_left</span>
+          </button>
+          <div>
+            <span class="text-2xl font-bold">{{ monthYear }}</span>
+          </div>
+          <button @click="nextMonth" class="ml-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
+            <span class="material-symbols-outlined text-xl">chevron_right</span>
+          </button>
         </div>
-        <button @click="nextMonth" class="ml-1 size-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors">
-          <span class="material-symbols-outlined text-xl">chevron_right</span>
+        <button @click="goToToday" class="absolute right-0 size-9 flex items-center justify-center rounded-xl bg-white/20 text-[10px] font-bold text-white backdrop-blur-sm hover:bg-white/30 transition-colors">
+          今日
         </button>
       </div>
     </div>

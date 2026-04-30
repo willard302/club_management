@@ -100,6 +100,12 @@ export function useCalendar() {
     currentDate.value = add(currentDate.value, { months: 1 })
   }
 
+  const goToToday = () => {
+    const now = new Date()
+    currentDate.value = now
+    selectedDate.value = now
+  }
+
   const eventsForSelectedDate = computed(() => {
     return allEvents.value.filter(event => isSameDay(event.date, selectedDate.value))
   })
@@ -143,6 +149,7 @@ export function useCalendar() {
     selectDate,
     previousMonth,
     nextMonth,
+    goToToday,
     eventsForSelectedDate,
     eventsInMonth,
     format,
