@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { COLOR_OPTIONS, RECURRENCE_OPTIONS } from '@/composables/useCalendarEditor'
 
 definePageMeta({ layout: 'default' })
@@ -9,10 +9,12 @@ const router = useRouter()
 const {
   formData,
   isSaving,
+  isDeleting,
   isInitializing,
   isEditMode,
   initEditor,
   saveEvent,
+  deleteEvent,
   formatDisplayDate,
   formatDisplayTime,
 } = useCalendarEditor()
@@ -26,6 +28,7 @@ const showStartDatePicker = ref(false)
 const showStartTimePicker = ref(false)
 const showEndDatePicker = ref(false)
 const showEndTimePicker = ref(false)
+const showRecurrenceEndDatePicker = ref(false)
 
 // Vant picker 確認處理
 const onStartDateConfirm = ({ selectedValues }: { selectedValues: string[] }) => {
@@ -48,6 +51,11 @@ const onEndTimeConfirm = ({ selectedValues }: { selectedValues: string[] }) => {
   showEndTimePicker.value = false
 }
 
+const onRecurrenceEndDateConfirm = ({ selectedValues }: { selectedValues: string[] }) => {
+  formData.value.recurrenceEndDate = selectedValues.join('-')
+  showRecurrenceEndDatePicker.value = false
+}
+
 // 預先計算 picker 預設值
 const getDateColumns = (dateStr: string) => {
   if (!dateStr) return undefined
@@ -67,7 +75,7 @@ const getTimeColumns = (timeStr: string) => {
       <template #right-actions>
         <button
           @click="saveEvent"
-          :disabled="isSaving || isInitializing"
+          :disabled="isSaving || isDeleting || isInitializing"
           class="text-slate-900 dark:text-slate-100 text-sm font-bold tracking-widest active:opacity-70 active:scale-95 transition-all disabled:opacity-40"
         >
           {{ isSaving ? '儲存中…' : (isEditMode ? '更新' : '儲存') }}
@@ -179,6 +187,21 @@ const getTimeColumns = (timeStr: string) => {
             </option>
           </select>
         </div>
+
+        <!-- 重複截止日期 (僅在選擇重複時顯示) -->
+        <div v-if="formData.recurrence !== 'none'" class="h-[1px] bg-white/30 mx-3"></div>
+        <div v-if="formData.recurrence !== 'none'" class="flex items-center justify-between px-3 py-4 animate-in fade-in slide-in-from-top-1 duration-300">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-slate-400">event_busy</span>
+            <span class="text-sm font-medium text-slate-700">截止日期</span>
+          </div>
+          <button
+            @click="showRecurrenceEndDatePicker = true"
+            class="bg-white/40 px-2 py-1 rounded-lg text-sky-500 text-sm hover:bg-white/60 transition-colors"
+          >
+            {{ formData.recurrenceEndDate ? formatDisplayDate(formData.recurrenceEndDate) : '設定截止日期' }}
+          </button>
+        </div>
       </section>
 
       <!-- 地點 & 說明 -->
@@ -231,6 +254,18 @@ const getTimeColumns = (timeStr: string) => {
           </button>
         </div>
       </section>
+
+      <!-- 刪除按鈕 (僅在編輯模式下顯示) -->
+      <section v-if="isEditMode" class="pt-4">
+        <button
+          @click="deleteEvent"
+          :disabled="isDeleting || isSaving"
+          class="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-red-50 text-red-500 font-bold text-sm active:bg-red-100 transition-colors disabled:opacity-50"
+        >
+          <span class="material-symbols-outlined text-lg">delete</span>
+          {{ isDeleting ? '刪除中…' : '刪除活動' }}
+        </button>
+      </section>
     </main>
 
     <main v-else class="px-4 pt-16 pb-24 max-w-md mx-auto">
@@ -274,6 +309,16 @@ const getTimeColumns = (timeStr: string) => {
         :model-value="getTimeColumns(formData.endTime)"
         @confirm="onEndTimeConfirm"
         @cancel="showEndTimePicker = false"
+      />
+    </van-popup>
+
+    <!-- 重複截止日期 Picker -->
+    <van-popup v-model:show="showRecurrenceEndDatePicker" position="bottom" round>
+      <van-date-picker
+        title="選擇截止日期"
+        :model-value="getDateColumns(formData.recurrenceEndDate || formData.startDate)"
+        @confirm="onRecurrenceEndDateConfirm"
+        @cancel="showRecurrenceEndDatePicker = false"
       />
     </van-popup>
   </div>

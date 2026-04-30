@@ -13,7 +13,10 @@ import {
   isSameDay,
   format,
   add,
-  sub
+  sub,
+  isAfter,
+  isBefore,
+  startOfDay
 } from 'date-fns'
 import { eventService } from '@/services/eventService'
 
@@ -86,6 +89,36 @@ export function useCalendar() {
   const isSelected = (date: Date) => isSameDay(date, selectedDate.value)
   const isCurrentMonth = (date: Date) => isSameMonth(date, currentDate.value)
 
+  // -- 重複邏輯判斷 --
+
+  const isEventOnDate = (event: Event, targetDate: Date): boolean => {
+    const start = startOfDay(event.startAt)
+    const target = startOfDay(targetDate)
+
+    // 如果目標日期在開始日期之前，絕對不可能
+    if (isAfter(start, target)) return false
+
+    // 如果有截止日期，且目標日期在截止日期之後，也不可能
+    if (event.recurrenceEndAt && isAfter(target, startOfDay(event.recurrenceEndAt))) return false
+
+    // 如果是同一天，一定是
+    if (isSameDay(start, target)) return true
+
+    // 根據重複類型判斷
+    switch (event.recurrence) {
+      case 'daily':
+        return true
+      case 'weekly':
+        return start.getDay() === target.getDay()
+      case 'monthly':
+        return start.getDate() === target.getDate()
+      case 'yearly':
+        return start.getDate() === target.getDate() && start.getMonth() === target.getMonth()
+      default:
+        return false
+    }
+  }
+
   // -- 互動處理 (Actions): View 觸發的事件 --
 
   const selectDate = (date: Date) => {
@@ -107,14 +140,19 @@ export function useCalendar() {
   }
 
   const eventsForSelectedDate = computed(() => {
-    return allEvents.value.filter(event => isSameDay(event.date, selectedDate.value))
+    return allEvents.value.filter(event => isEventOnDate(event, selectedDate.value))
   })
 
   const eventsInMonth = computed(() => {
     const eventsMap = new Map<number, boolean>()
-    allEvents.value.forEach(event => {
-      if (isSameMonth(event.date, currentDate.value)) {
-        eventsMap.set(event.date.getDate(), true)
+    const monthStart = startOfMonth(currentDate.value)
+    const monthEnd = endOfMonth(currentDate.value)
+    const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
+
+    daysInMonth.forEach(day => {
+      const hasEvent = allEvents.value.some(event => isEventOnDate(event, day))
+      if (hasEvent) {
+        eventsMap.set(day.getDate(), true)
       }
     })
     return eventsMap

@@ -21,6 +21,7 @@ export function useCalendarEditor() {
   const { addToast } = useToast()
 
   const isSaving = ref(false)
+  const isDeleting = ref(false)
   const isInitializing = ref(false)
   const editingEventId = computed(() => {
     const queryId = route.query.id
@@ -39,6 +40,7 @@ export function useCalendarEditor() {
     allDay: false,
     color: COLOR_OPTIONS[0] as string,
     recurrence: 'none' as CreateEventPayload['recurrence'],
+    recurrenceEndDate: '', // 新增重複截止日期
   })
 
   // 記住 allDay 切換前的時間
@@ -69,6 +71,7 @@ export function useCalendarEditor() {
     formData.value.allDay = event.allDay
     formData.value.color = event.color || COLOR_OPTIONS[0]
     formData.value.recurrence = event.recurrence || 'none'
+    formData.value.recurrenceEndDate = event.recurrenceEndAt ? format(event.recurrenceEndAt, 'yyyy-MM-dd') : ''
     savedStartTime = formData.value.startTime
     savedEndTime = formData.value.endTime
   }
@@ -122,6 +125,14 @@ export function useCalendarEditor() {
       return { valid: false, error: '活動跨度不能超過 7 天' }
     }
 
+    // 校驗重複截止日期
+    if (formData.value.recurrence !== 'none' && formData.value.recurrenceEndDate) {
+      const recEnd = parseISO(formData.value.recurrenceEndDate)
+      if (recEnd < start) {
+        return { valid: false, error: '重複截止日期不能早於開始日期' }
+      }
+    }
+
     return { valid: true }
   }
 
@@ -143,6 +154,9 @@ export function useCalendarEditor() {
         all_day: formData.value.allDay,
         color: formData.value.color,
         recurrence: formData.value.recurrence,
+        recurrence_end_at: formData.value.recurrence !== 'none' && formData.value.recurrenceEndDate 
+          ? new Date(`${formData.value.recurrenceEndDate}T23:59:59`).toISOString() 
+          : undefined,
       }
 
       if (editingEventId.value) {
@@ -161,8 +175,24 @@ export function useCalendarEditor() {
     }
   }
 
+  const deleteEvent = async () => {
+    if (!editingEventId.value) return
+    if (!window.confirm('確定要刪除此活動嗎？')) return
+
+    isDeleting.value = true
+    try {
+      await eventService.deleteEvent(editingEventId.value)
+      addToast('活動已刪除', 'success')
+      router.push('/calendar')
+    } catch (err: any) {
+      addToast(err.message || '刪除失敗', 'error')
+    } finally {
+      isDeleting.value = false
+    }
+  }
+
   const formatDisplayDate = (dateStr: string): string => {
-    if (!dateStr) return ''
+    if (!dateStr) return '未設定'
     const d = parseISO(dateStr)
     return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
   }
@@ -174,6 +204,7 @@ export function useCalendarEditor() {
   return {
     formData,
     isSaving,
+    isDeleting,
     isInitializing,
     isEditMode,
     COLOR_OPTIONS,
@@ -182,6 +213,7 @@ export function useCalendarEditor() {
     initEditor,
     validateForm,
     saveEvent,
+    deleteEvent,
     formatDisplayDate,
     formatDisplayTime,
   }

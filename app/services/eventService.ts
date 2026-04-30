@@ -17,6 +17,7 @@ function mapToEvent(row: EventRow): Event {
     allDay: row.all_day,
     color: row.color,
     recurrence: row.recurrence,
+    recurrenceEndAt: row.recurrence_end_at ? parseISO(row.recurrence_end_at) : undefined,
     createdBy: row.created_by,
     attendees: row.participants?.length ?? 0,
     date: startAt,
@@ -38,19 +39,18 @@ function validateTimeRange(start_at: string, end_at: string) {
  */
 export const eventService = {
   /**
-   * 取得指定月份的活動列表
+   * 取得指定月份的活動列表（含歷史重複活動）
    */
   async fetchEvents(yearMonth?: string): Promise<Event[]> {
     const supabase = useSupabaseClient<Database>()
     const base = yearMonth ?? format(new Date(), 'yyyy-MM')
     const pivot = parseISO(`${base}-01`)
-    const rangeStart = startOfMonth(pivot).toISOString()
     const rangeEnd = endOfMonth(pivot).toISOString()
 
+    // 抓取所有在月底前開始的活動，以便後續在前端計算重複實例
     const { data, error } = await supabase
       .from('events')
       .select('*')
-      .gte('start_at', rangeStart)
       .lte('start_at', rangeEnd)
       .order('start_at', { ascending: true })
 
