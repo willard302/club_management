@@ -6,7 +6,6 @@ import type { TabbarItem } from '@/types'
  */
 export const baseTabbarItems: Omit<TabbarItem, 'fill'>[] = [
   { label: 'Home', icon: 'home', path: '/' },
-  { label: 'Ledger', icon: 'account_balance_wallet', path: '/ledger' },
   { label: 'Meditation', icon: 'self_improvement', path: '/meditation' },
   { label: 'Calendar', icon: 'calendar_month', path: '/calendar' }
 ]

@@ -70,6 +70,7 @@ const stats = computed<StatCard[]>(() => [
 ])
 
 const menuItems = computed<MenuItem[]>(() => [
+  { icon: 'account_balance_wallet', label: t('ledger'), path: '/ledger' },
   { icon: 'person_edit', label: t('editProfile'), path: '/userCenter/userInfo' },
   { icon: 'lock_reset', label: t('changePassword.title'), path: '/userCenter/changePassword' }
 ])
@@ -123,7 +124,7 @@ const menuItems = computed<MenuItem[]>(() => [
           </h2>
           <div class="flex items-center justify-center gap-2 mt-2 flex-wrap">
             <span class="text-sm font-semibold px-3 py-1 rounded-full border bg-primary/10 text-primary border-primary/20">
-              {{ $t(`${userProfile?.role}`) || $t('Role.member') }}
+              {{ userProfile?.role ? $t(`${userProfile.role}`) : $t('Role.member') }}
             </span>
           </div>
         </div>
