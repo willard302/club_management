@@ -122,7 +122,7 @@ const { t } = useI18n()
 
 <style scoped>
 .sky-gradient-card {
-  background: linear-gradient(180deg, #0EA5E9 0%, #38BDF8 100%);
+  background: var(--sky-gradient-dark);
 }
 
 .transaction-item {

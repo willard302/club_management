@@ -188,7 +188,7 @@ const formatDuration = (seconds: number) => {
 }
 
 .sky-gradient {
-  background: linear-gradient(180deg, #87CEEB 0%, #E0F2F7 100%);
+  background: var(--sky-gradient);
 }
 
 .material-symbols-outlined {

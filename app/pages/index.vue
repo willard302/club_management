@@ -204,7 +204,7 @@ const menuItems = computed<MenuItem[]>(() => [
 }
 
 .sky-gradient {
-  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
+  background: var(--sky-gradient-dark)
 }
 
 .glass-card {

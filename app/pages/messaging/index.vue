@@ -38,7 +38,7 @@ const openConversation = (id: string) => {
 </script>
 
 <template>
-  <AppHeader title="即時訊息"></AppHeader>
+  <AppHeader title="即時訊息" bgClass="sky-gradient"></AppHeader>
 
   <main class="flex-1 px-4 pb-28 pt-4 bg-slate-50 dark:bg-slate-900 min-h-screen">
     <!-- 搜尋列 -->
@@ -146,7 +146,7 @@ const openConversation = (id: string) => {
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
-.bg-soft-sky {
-  background: #BAE6FD;
+.sky-gradient {
+  background: var(--sky-gradient-dark);
 }
 </style>
