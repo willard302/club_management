@@ -22,17 +22,22 @@ onMounted(() => {
 })
 
 const { t } = useI18n()
+
+const goBack = () => {
+  const router = useRouter()
+  router.back()
+}
 </script>
 
 <template>
   <!-- Header -->
-  <AppHeader :title="t('ledger.title')" bg-class="bg-sky-400">
+  <AppPageHeader :title="t('ledger.title')" @back="goBack">
     <template #right-actions>
       <button class="p-2 text-white hover:bg-white/20 rounded-lg transition-colors">
         <span class="material-symbols-outlined text-3xl">menu</span>
       </button>
     </template>
-  </AppHeader>
+  </AppPageHeader>
 
     <!-- Balance Card -->
     <section class="px-6 py-4">
