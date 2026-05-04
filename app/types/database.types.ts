@@ -49,6 +49,68 @@ export type Database = {
           },
         ]
       }
+      conversation_members: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_members_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          created_by: string
+          id: string
+          is_group: boolean
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          is_group?: boolean
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_group?: boolean
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           all_day: boolean
@@ -94,42 +156,6 @@ export type Database = {
         }
         Relationships: []
       }
-      meditation_sessions: {
-        Row: {
-          id: string
-          user_id: string
-          started_at: string
-          duration_seconds: number
-          target_seconds: number
-          completed: boolean
-          meditation_type: string | null
-          note: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id?: string
-          started_at: string
-          duration_seconds: number
-          target_seconds: number
-          completed?: boolean
-          meditation_type?: string | null
-          note?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          started_at?: string
-          duration_seconds?: number
-          target_seconds?: number
-          completed?: boolean
-          meditation_type?: string | null
-          note?: string | null
-          created_at?: string
-        }
-        Relationships: []
-      }
       ledger: {
         Row: {
           amount: number
@@ -149,11 +175,11 @@ export type Database = {
         }
         Insert: {
           amount: number
-          category: string
+          category?: string
           created_at?: string | null
           date: string
-          finance_id: string
-          icon: string
+          finance_id?: string
+          icon?: string
           id?: string
           is_approved?: boolean | null
           receipt_path?: string | null
@@ -181,98 +207,72 @@ export type Database = {
         }
         Relationships: []
       }
-      conversations: {
+      meditation_sessions: {
         Row: {
+          completed: boolean | null
+          created_at: string | null
+          duration_seconds: number
           id: string
-          name: string | null
-          is_group: boolean
-          avatar_url: string | null
-          created_by: string
-          created_at: string
-          updated_at: string
+          meditation_type: string | null
+          note: string | null
+          started_at: string
+          target_seconds: number
+          user_id: string
         }
         Insert: {
+          completed?: boolean | null
+          created_at?: string | null
+          duration_seconds: number
           id?: string
-          name?: string | null
-          is_group?: boolean
-          avatar_url?: string | null
-          created_by?: string
-          created_at?: string
-          updated_at?: string
+          meditation_type?: string | null
+          note?: string | null
+          started_at: string
+          target_seconds: number
+          user_id: string
         }
         Update: {
+          completed?: boolean | null
+          created_at?: string | null
+          duration_seconds?: number
           id?: string
-          name?: string | null
-          is_group?: boolean
-          avatar_url?: string | null
-          created_by?: string
-          created_at?: string
-          updated_at?: string
+          meditation_type?: string | null
+          note?: string | null
+          started_at?: string
+          target_seconds?: number
+          user_id?: string
         }
         Relationships: []
       }
-      conversation_members: {
-        Row: {
-          id: string
-          conversation_id: string
-          user_id: string
-          joined_at: string
-          last_read_at: string
-        }
-        Insert: {
-          id?: string
-          conversation_id: string
-          user_id?: string
-          joined_at?: string
-          last_read_at?: string
-        }
-        Update: {
-          id?: string
-          conversation_id?: string
-          user_id?: string
-          joined_at?: string
-          last_read_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "conversation_members_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       messages: {
         Row: {
-          id: string
-          conversation_id: string
-          sender_id: string
           content: string
-          message_type: string
+          conversation_id: string
+          created_at: string
+          id: string
           image_url: string | null
           is_deleted: boolean
-          created_at: string
+          message_type: string
+          sender_id: string
         }
         Insert: {
-          id?: string
-          conversation_id: string
-          sender_id?: string
           content: string
-          message_type?: string
+          conversation_id: string
+          created_at?: string
+          id?: string
           image_url?: string | null
           is_deleted?: boolean
-          created_at?: string
+          message_type?: string
+          sender_id: string
         }
         Update: {
-          id?: string
-          conversation_id?: string
-          sender_id?: string
           content?: string
-          message_type?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
           image_url?: string | null
           is_deleted?: boolean
-          created_at?: string
+          message_type?: string
+          sender_id?: string
         }
         Relationships: [
           {
@@ -281,7 +281,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "conversations"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
     }
@@ -289,10 +289,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_conversation_member: {
-        Args: { conv_id: string }
-        Returns: boolean
+      get_user_profiles: {
+        Args: { user_ids: string[] }
+        Returns: {
+          avatar_url: string
+          id: string
+          name: string
+        }[]
       }
+      is_conversation_member: { Args: { conv_id: string }; Returns: boolean }
     }
     Enums: {
       attendance_status: "attendance" | "lateness" | "leave" | "absence"
