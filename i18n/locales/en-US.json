@@ -48,9 +48,24 @@
   },
   "messaging": {
     "title": "Messages",
+    "tabMessages": "Messages",
+    "tabFriends": "Friends",
     "searchPlaceholder": "Search conversations or members...",
+    "searchFriendsPlaceholder": "Search friends...",
     "noResults": "No conversations found",
-    "inputPlaceholder": "Type a message..."
+    "noFriends": "No friends yet",
+    "inputPlaceholder": "Type a message...",
+    "addFriendTitle": "Add Friend",
+    "addFriendDesc": "Enter the email address to send a friend invitation.",
+    "emailPlaceholder": "Please enter an email address",
+    "invalidEmail": "Invalid email format",
+    "inviteError": "Failed to send invitation, please try again",
+    "inviteSent": "Invitation sent! Start chatting once they accept.",
+    "sendInvite": "Send Invite",
+    "cancel": "Cancel",
+    "close": "Close",
+    "pendingInvitations": "Friend Invitations",
+    "wantsToBeFriend": "wants to be friends"
   },
   "ledger": {
     "title": "Club Ledger",

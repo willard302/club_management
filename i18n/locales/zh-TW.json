@@ -48,9 +48,24 @@
   },
   "messaging": {
     "title": "訊息",
+    "tabMessages": "訊息",
+    "tabFriends": "好友",
     "searchPlaceholder": "搜尋對話或成員...",
+    "searchFriendsPlaceholder": "搜尋好友...",
     "noResults": "找不到相關對話",
-    "inputPlaceholder": "輸入訊息..."
+    "noFriends": "尚無好友",
+    "inputPlaceholder": "輸入訊息...",
+    "addFriendTitle": "新增好友",
+    "addFriendDesc": "輸入對方的 Email 來送出好友邀請。",
+    "emailPlaceholder": "請輸入對方的 Email",
+    "invalidEmail": "Email 格式不正確",
+    "inviteError": "邀請失敗，請稍後再試",
+    "inviteSent": "邀請已寄出！等對方接受後即可開始聊天。",
+    "sendInvite": "送出邀請",
+    "cancel": "取消",
+    "close": "關閉",
+    "pendingInvitations": "好友邀請",
+    "wantsToBeFriend": "想加你為好友"
   },
   "ledger": {
     "title": "社團帳務",
