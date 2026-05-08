@@ -339,6 +339,10 @@ export type Database = {
     Functions: {
       accept_friend_invitation: { Args: { invitation_id: string }; Returns: undefined }
       get_user_id_by_email: { Args: { email_addr: string }; Returns: string }
+      get_or_create_direct_conversation: {
+        Args: { other_user_id: string }
+        Returns: string
+      }
       get_user_profiles: {
         Args: { user_ids: string[] }
         Returns: {

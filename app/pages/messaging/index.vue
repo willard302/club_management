@@ -13,7 +13,8 @@ const {
   isLoading,
   sendInvitation,
   acceptInvitation,
-  rejectInvitation
+  rejectInvitation,
+  getOrCreateDirectConversation
 } = useMessaging()
 
 // 搜尋關鍵字
@@ -51,6 +52,15 @@ const filteredFriends = computed(() => {
 
 const openConversation = (id: string) => {
   router.push(`/messaging/${id}`)
+}
+
+const openFriendConversation = async (friendId: string) => {
+  try {
+    const conversationId = await getOrCreateDirectConversation(friendId)
+    openConversation(conversationId)
+  } catch (err) {
+    console.error('Open friend conversation failed:', err)
+  }
 }
 
 // Tabs
@@ -392,7 +402,8 @@ onBeforeUnmount(() => {
         <div
           v-for="friend in filteredFriends"
           :key="friend.id"
-          class="flex items-center gap-4 bg-white dark:bg-slate-800 px-4 py-4 cursor-pointer hover:bg-sky-50/60 dark:hover:bg-slate-700/60 transition-colors border-b border-slate-100 dark:border-slate-700/50 first:rounded-t-2xl last:rounded-b-2xl last:border-b-0"
+          class="group flex items-center gap-4 bg-white dark:bg-slate-800 px-4 py-4 cursor-pointer hover:bg-sky-50/60 dark:hover:bg-slate-700/60 transition-colors border-b border-slate-100 dark:border-slate-700/50 first:rounded-t-2xl last:rounded-b-2xl last:border-b-0"
+          @click="openFriendConversation(friend.userId)"
         >
           <div class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden flex items-center justify-center flex-shrink-0">
             <img
@@ -406,14 +417,15 @@ onBeforeUnmount(() => {
             </span>
           </div>
           <div class="flex-1 min-w-0">
-            <span class="font-bold text-slate-900 dark:text-slate-100 text-sm truncate">{{ friend.name }}</span>
+            <span
+              class="block max-w-full text-left font-bold text-slate-900 dark:text-slate-100 text-sm truncate group-hover:text-sky-500 transition-colors"
+            >
+              {{ friend.name }}
+            </span>
           </div>
-          <button
-            class="p-2 text-slate-400 hover:text-sky-500 transition-colors"
-            @click.stop="() => {}"
-          >
+          <span class="p-2 text-slate-400 group-hover:text-sky-500 transition-colors">
             <span class="material-symbols-outlined">chat_bubble</span>
-          </button>
+          </span>
         </div>
 
         <!-- 載入中 -->

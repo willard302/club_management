@@ -13,17 +13,6 @@ import type {
  */
 export const messagingService = {
   /**
-   * 兼容舊資料：優先 name，其次 display_name
-   */
-  resolveProfileName(profile: { name?: string | null; display_name?: string | null } | null | undefined, fallback = '未知用戶'): string {
-    const name = profile?.name?.trim()
-    if (name) return name
-    const displayName = profile?.display_name?.trim()
-    if (displayName) return displayName
-    return fallback
-  },
-
-  /**
    * 取得當前使用者的所有對話（含未讀數、最後一則訊息）
    */
   async fetchConversations(supabase: ReturnType<typeof useSupabaseClient<Database>>): Promise<ConversationItem[]> {
@@ -85,7 +74,6 @@ export const messagingService = {
       unreadCounts.set(convId, count ?? 0)
     }
 
-    // 私聊對話：找出「對方」成員 id（排除自己）
     const directConversationIds = conversations
       .filter(c => !c.is_group)
       .map(c => c.id)
@@ -97,7 +85,7 @@ export const messagingService = {
         .select('conversation_id, user_id')
         .in('conversation_id', directConversationIds)
         .neq('user_id', user.id)
-
+      
       if (memberListErr) throw memberListErr
 
       for (const m of (members ?? [])) {
@@ -107,29 +95,31 @@ export const messagingService = {
       }
     }
 
-    // 批次取得需要的用戶資料（最後訊息 sender + 私聊對方）
+    // 取得群組訊息的發送者名稱（只取需要的 user_id）
     const senderIds = [...new Set(
       [...lastMsgMap.values()].map(m => m.sender_id).filter(Boolean)
     )]
-    const directPartnerIds = [...new Set([...directPartnerMap.values()])]
-    const profileIds = [...new Set([...senderIds, ...directPartnerIds])]
+    const partnerIds = [...new Set([...directPartnerMap.values()])]
+    const profileIds = [...new Set([...senderIds, ...partnerIds])]
 
-    const profileMap = new Map<string, { name: string; avatar: string | null }>()
+    const profileMap = new Map<string, { name: string; avatar_url: string | null }>()
     if (profileIds.length) {
       const { data: profiles } = await supabase
         .rpc('get_user_profiles', { user_ids: profileIds })
 
       for (const p of (profiles ?? [])) {
-        profileMap.set(p.id, {
-          name: messagingService.resolveProfileName(p, p.id),
-          avatar: p.avatar_url ?? null
+        profileMap.set(p.id, { 
+          name: p.name ?? p.id, 
+          avatar_url: p.avatar_url ?? null 
         })
       }
     }
-
+    
     return conversations.map(conv => {
       const lastMsg = lastMsgMap.get(conv.id)
       const isGroup = conv.is_group
+      const partnerId = directPartnerMap.get(conv.id)
+      const partner = partnerId ? profileMap.get(partnerId) : null
 
       let lastMessageText = ''
       let lastMessageSender: string | null = null
@@ -140,15 +130,14 @@ export const messagingService = {
         }
       }
 
-      const directPartnerId = directPartnerMap.get(conv.id)
-      const directPartner = directPartnerId ? profileMap.get(directPartnerId) : null
-
       return {
         id: conv.id,
         name: isGroup
           ? (conv.name ?? '未命名對話')
-          : (conv.name ?? directPartner?.name ?? '未命名對話'),
-        avatarUrl: isGroup ? conv.avatar_url : (directPartner?.avatar ?? conv.avatar_url),
+          : (conv.name ?? partner?.name ?? '未命名對話'),
+        avatarUrl: isGroup
+          ? conv.avatar_url
+          : (partner?.avatar_url ?? conv.avatar_url),
         avatarIcon: isGroup ? 'groups' : null,
         isGroup,
         isOnline: false,  // 後續可透過 Presence 實作
@@ -194,10 +183,7 @@ export const messagingService = {
       const { data: profiles } = await supabase
         .rpc('get_user_profiles', { user_ids: senderIds })
       for (const p of (profiles ?? [])) {
-        senderMap.set(p.id, {
-          name: messagingService.resolveProfileName(p, p.id),
-          avatar: p.avatar_url ?? null
-        })
+        senderMap.set(p.id, { name: p.name ?? p.id, avatar: p.avatar_url ?? null })
       }
     }
 
@@ -246,17 +232,18 @@ export const messagingService = {
   ): Promise<string> {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
-
+    
+    const conversationId = crypto.randomUUID()
+    
     // 建立對話
-    const { data: conv, error: convErr } = await supabase
+    const { error: convErr } = await supabase
       .from('conversations')
       .insert({
+        id: conversationId,
         name: params.name ?? null,
         is_group: params.isGroup ?? false,
         created_by: user.id
       })
-      .select('id')
-      .single()
 
     if (convErr) throw convErr
 
@@ -265,13 +252,25 @@ export const messagingService = {
     const { error: memberErr } = await supabase
       .from('conversation_members')
       .insert(allMemberIds.map(uid => ({
-        conversation_id: conv.id,
+        conversation_id: conversationId,
         user_id: uid
       })))
 
     if (memberErr) throw memberErr
 
-    return conv.id
+    return conversationId
+  },
+
+  async findOrCreateDirectConversation(
+    supabase: ReturnType<typeof useSupabaseClient<Database>>,
+    friendUserId: string
+    ): Promise<string> {
+    const { data, error } = await supabase
+    .rpc('get_or_create_direct_conversation', { other_user_id: friendUserId })
+    if (error) throw error
+    if (!data) throw new Error('Failed to get or create direct conversation')
+
+    return data
   },
 
   /**
@@ -331,7 +330,6 @@ export const messagingService = {
     let name = conv.name ?? '未命名對話'
     let avatarUrl = conv.avatar_url
 
-    // 私聊名稱優先顯示對方暱稱
     if (!conv.is_group && user?.id) {
       const { data: members } = await supabase
         .from('conversation_members')
@@ -345,8 +343,8 @@ export const messagingService = {
         const { data: profiles } = await supabase
           .rpc('get_user_profiles', { user_ids: [partnerId] })
 
-        const partner = profiles?.[0] as { name?: string | null; display_name?: string | null; avatar_url?: string | null } | undefined
-        name = messagingService.resolveProfileName(partner, name)
+        const partner = profiles?.[0]
+        name = partner?.name ?? name
         avatarUrl = partner?.avatar_url ?? avatarUrl
       }
     }
@@ -385,7 +383,7 @@ export const messagingService = {
       return {
         id: f.friend_id,
         userId: f.friend_id,
-        name: messagingService.resolveProfileName(p, '未知用戶'),
+        name: p?.name ?? '未知用戶',
         avatarUrl: p?.avatar_url ?? null,
         createdAt: f.created_at
       }
@@ -420,7 +418,7 @@ export const messagingService = {
       return {
         id: i.id,
         senderId: i.sender_id,
-        senderName: messagingService.resolveProfileName(p, '未知用戶'),
+        senderName: p?.name ?? '未知用戶',
         senderAvatar: p?.avatar_url ?? null,
         receiverId: i.receiver_id,
         status: i.status as any,

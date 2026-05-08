@@ -18,6 +18,21 @@ export function useConversation(conversationId: string) {
   const error = ref<string | null>(null)
   const hasMore = ref(true)   // 是否還有更早的訊息可載入
   let currentUserId: string | null = null
+  const senderProfileCache = new Map<string, { name: string; avatar: string | null }>()
+  let markAsReadTimer: ReturnType<typeof setTimeout> | null = null
+
+  const scheduleMarkAsRead = () => {
+    if (markAsReadTimer) return
+
+    markAsReadTimer = setTimeout(async () => {
+      markAsReadTimer = null
+      try {
+        await messagingService.markAsRead(supabase, conversationId)
+      } catch (err) {
+        console.error('[useConversation] markAsRead:', err)
+      }
+    }, 300)
+  }
 
   // ── 載入訊息 ────────────────────────────────────────────────
 
@@ -118,19 +133,26 @@ export function useConversation(conversationId: string) {
           try {
             const raw = payload.new as DbMessage
 
-            // 取得 sender 資料
-            const { data: profiles } = await supabase
-              .rpc('get_user_profiles', { user_ids: [raw.sender_id] })
+            let profile = senderProfileCache.get(raw.sender_id)
+            if (!profile) {
+              const { data: profiles } = await supabase
+                .rpc('get_user_profiles', { user_ids: [raw.sender_id] })
 
-            const profile = profiles?.[0] ?? null
-            const senderName = (profile?.name ?? profile?.display_name ?? '').trim() || '未知成員'
+              const rawProfile = profiles?.[0] ?? null
+              const senderName = (rawProfile?.name ?? rawProfile?.display_name ?? '').trim() || '未知成員'
+              profile = {
+                name: senderName,
+                avatar: rawProfile?.avatar_url ?? null
+              }
+              senderProfileCache.set(raw.sender_id, profile)
+            }
 
             const newMsg: Message = {
               id: raw.id,
               conversationId: raw.conversation_id,
               senderId: raw.sender_id,
-              senderName,
-              senderAvatar: profile?.avatar_url ?? null,
+              senderName: profile.name,
+              senderAvatar: profile.avatar,
               content: raw.content,
               messageType: raw.message_type as 'text' | 'image' | 'system',
               imageUrl: raw.image_url,
@@ -145,7 +167,7 @@ export function useConversation(conversationId: string) {
             }
 
             // 更新已讀
-            await messagingService.markAsRead(supabase, conversationId)
+            scheduleMarkAsRead()
           } catch (err) {
             console.error('[useConversation] Realtime handler:', err)
           }
@@ -171,6 +193,10 @@ export function useConversation(conversationId: string) {
 
   onUnmounted(() => {
     unsubscribeRealtime()
+    if (markAsReadTimer) {
+      clearTimeout(markAsReadTimer)
+      markAsReadTimer = null
+    }
   })
 
   return {

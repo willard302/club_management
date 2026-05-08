@@ -15,12 +15,36 @@ export function useMessaging() {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
+  let isRefreshingConversations = false
+  let shouldRefreshConversationsAgain = false
+  let conversationsReloadTimer: ReturnType<typeof setTimeout> | null = null
+
   const loadConversations = async () => {
+    if (isRefreshingConversations) {
+      shouldRefreshConversationsAgain = true
+      return
+    }
+
+    isRefreshingConversations = true
     try {
-      conversations.value = await messagingService.fetchConversations(supabase)
+      do {
+        shouldRefreshConversationsAgain = false
+        conversations.value = await messagingService.fetchConversations(supabase)
+      } while (shouldRefreshConversationsAgain)
     } catch (err: any) {
       console.error('[useMessaging] loadConversations:', err)
+    } finally {
+      isRefreshingConversations = false
     }
+  }
+
+  const scheduleLoadConversations = () => {
+    if (conversationsReloadTimer) return
+
+    conversationsReloadTimer = setTimeout(() => {
+      conversationsReloadTimer = null
+      loadConversations()
+    }, 180)
   }
 
   const loadFriends = async () => {
@@ -65,7 +89,7 @@ export function useMessaging() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'conversations' },
-        () => { loadConversations() }
+        () => { scheduleLoadConversations() }
       )
       // 好友關係變動
       .on(
@@ -101,6 +125,11 @@ export function useMessaging() {
     await messagingService.rejectInvitation(supabase, id)
   }
 
+  const getOrCreateDirectConversation = async (friendUserId: string) => {
+    const conversationId = await messagingService.findOrCreateDirectConversation(supabase, friendUserId)
+    return conversationId
+  }
+
   onMounted(async () => {
     await loadAllData()
     subscribeRealtime()
@@ -108,6 +137,10 @@ export function useMessaging() {
 
   onUnmounted(() => {
     unsubscribeRealtime()
+    if (conversationsReloadTimer) {
+      clearTimeout(conversationsReloadTimer)
+      conversationsReloadTimer = null
+    }
   })
 
   return {
@@ -119,6 +152,7 @@ export function useMessaging() {
     loadAllData,
     sendInvitation,
     acceptInvitation,
-    rejectInvitation
+    rejectInvitation,
+    getOrCreateDirectConversation
   }
 }
