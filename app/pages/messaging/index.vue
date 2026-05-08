@@ -14,7 +14,9 @@ const {
   sendInvitation,
   acceptInvitation,
   rejectInvitation,
-  getOrCreateDirectConversation
+  getOrCreateDirectConversation,
+  deleteConversations,
+  deleteFriends
 } = useMessaging()
 
 // 搜尋關鍵字
@@ -65,6 +67,86 @@ const openFriendConversation = async (friendId: string) => {
 
 // Tabs
 const activeTab = ref<'messages' | 'friends'>('messages')
+const isEditMode = ref(false)
+const isDeletingSelected = ref(false)
+const selectedConversationIds = ref<string[]>([])
+const selectedFriendIds = ref<string[]>([])
+
+const selectedCount = computed(() => (
+  activeTab.value === 'messages'
+    ? selectedConversationIds.value.length
+    : selectedFriendIds.value.length
+))
+
+const canDeleteSelected = computed(() => selectedCount.value > 0 && !isDeletingSelected.value)
+
+const clearSelections = () => {
+  selectedConversationIds.value = []
+  selectedFriendIds.value = []
+}
+
+const toggleEditMode = () => {
+  if (isDeletingSelected.value) return
+  isEditMode.value = !isEditMode.value
+  clearSelections()
+}
+
+const toggleConversationSelection = (conversationId: string) => {
+  const exists = selectedConversationIds.value.includes(conversationId)
+  selectedConversationIds.value = exists
+    ? selectedConversationIds.value.filter(id => id !== conversationId)
+    : [...selectedConversationIds.value, conversationId]
+}
+
+const toggleFriendSelection = (friendUserId: string) => {
+  const exists = selectedFriendIds.value.includes(friendUserId)
+  selectedFriendIds.value = exists
+    ? selectedFriendIds.value.filter(id => id !== friendUserId)
+    : [...selectedFriendIds.value, friendUserId]
+}
+
+const handleConversationRowClick = (conversationId: string) => {
+  if (isEditMode.value) {
+    toggleConversationSelection(conversationId)
+    return
+  }
+  openConversation(conversationId)
+}
+
+const handleFriendRowClick = (friendUserId: string) => {
+  if (isEditMode.value) {
+    toggleFriendSelection(friendUserId)
+    return
+  }
+  openFriendConversation(friendUserId)
+}
+
+const handleDeleteSelected = async () => {
+  if (!canDeleteSelected.value) return
+
+  const targetText = activeTab.value === 'messages' ? '對話' : '好友'
+  if (!window.confirm(`確定要刪除已選取的${targetText}嗎？`)) return
+
+  isDeletingSelected.value = true
+  try {
+    if (activeTab.value === 'messages') {
+      await deleteConversations(selectedConversationIds.value)
+    } else {
+      await deleteFriends(selectedFriendIds.value)
+    }
+    clearSelections()
+    isEditMode.value = false
+  } catch (err) {
+    console.error('Delete selected items failed:', err)
+  } finally {
+    isDeletingSelected.value = false
+  }
+}
+
+watch(activeTab, () => {
+  isEditMode.value = false
+  clearSelections()
+})
 
 // 新增好友 Modal
 const showAddFriendModal = ref(false)
@@ -263,17 +345,35 @@ onBeforeUnmount(() => {
   </div>
 
   <main class="flex-1 px-4 pb-28 pt-4 bg-slate-50 dark:bg-slate-900 min-h-screen">
-    <!-- 搜尋列 -->
-    <div class="relative mb-4">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">
-        search
-      </span>
-      <input
-        v-model="searchQuery"
-        type="text"
-        :placeholder="activeTab === 'messages' ? t('messaging.searchPlaceholder') : t('messaging.searchFriendsPlaceholder')"
-        class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm shadow-sm border border-slate-100 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40 transition"
-      />
+    <!-- 搜尋列 + 編輯按鈕 -->
+    <div class="mb-4 flex items-center gap-2">
+      <div class="relative flex-1 min-w-0">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">
+          search
+        </span>
+        <input
+          v-model="searchQuery"
+          type="text"
+          :placeholder="activeTab === 'messages' ? t('messaging.searchPlaceholder') : t('messaging.searchFriendsPlaceholder')"
+          class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm shadow-sm border border-slate-100 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40 transition"
+        />
+      </div>
+
+      <button
+        class="px-3 py-3 rounded-full text-xs font-medium border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition whitespace-nowrap"
+        @click="toggleEditMode"
+      >
+        {{ isEditMode ? '完成' : '編輯' }}
+      </button>
+
+      <button
+        v-if="isEditMode"
+        class="px-3 py-2 rounded-full text-xs font-medium bg-red-500 text-white hover:bg-red-600 transition disabled:opacity-50 whitespace-nowrap"
+        :disabled="!canDeleteSelected"
+        @click="handleDeleteSelected"
+      >
+        {{ isDeletingSelected ? '刪除中...' : `刪除 (${selectedCount})` }}
+      </button>
     </div>
 
     <!-- 訊息 Tab -->
@@ -284,8 +384,19 @@ onBeforeUnmount(() => {
         v-for="conv in filteredConversations"
         :key="conv.id"
         class="flex items-center gap-4 bg-white dark:bg-slate-800 px-4 py-4 cursor-pointer hover:bg-sky-50/60 dark:hover:bg-slate-700/60 transition-colors border-b border-slate-100 dark:border-slate-700/50 first:rounded-t-2xl last:rounded-b-2xl last:border-b-0"
-        @click="openConversation(conv.id)"
+        @click="handleConversationRowClick(conv.id)"
       >
+        <button
+          v-if="isEditMode"
+          class="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors"
+          :class="selectedConversationIds.includes(conv.id)
+            ? 'border-sky-500 bg-sky-500 text-white'
+            : 'border-slate-300 bg-white dark:bg-slate-800 text-transparent'"
+          @click.stop="toggleConversationSelection(conv.id)"
+        >
+          <span class="material-symbols-outlined text-sm">check</span>
+        </button>
+
         <!-- 大頭貼 -->
         <div class="relative flex-shrink-0">
           <!-- 群組 icon 大頭貼 -->
@@ -403,8 +514,19 @@ onBeforeUnmount(() => {
           v-for="friend in filteredFriends"
           :key="friend.id"
           class="group flex items-center gap-4 bg-white dark:bg-slate-800 px-4 py-4 cursor-pointer hover:bg-sky-50/60 dark:hover:bg-slate-700/60 transition-colors border-b border-slate-100 dark:border-slate-700/50 first:rounded-t-2xl last:rounded-b-2xl last:border-b-0"
-          @click="openFriendConversation(friend.userId)"
+          @click="handleFriendRowClick(friend.userId)"
         >
+          <button
+            v-if="isEditMode"
+            class="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors"
+            :class="selectedFriendIds.includes(friend.userId)
+              ? 'border-sky-500 bg-sky-500 text-white'
+              : 'border-slate-300 bg-white dark:bg-slate-800 text-transparent'"
+            @click.stop="toggleFriendSelection(friend.userId)"
+          >
+            <span class="material-symbols-outlined text-sm">check</span>
+          </button>
+
           <div class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden flex items-center justify-center flex-shrink-0">
             <img
               v-if="friend.avatarUrl"
@@ -449,7 +571,7 @@ onBeforeUnmount(() => {
   <!-- FAB -->
   <!-- 好友 tab：新增好友 -->
   <button
-    v-if="activeTab === 'friends'"
+    v-if="activeTab === 'friends' && !isEditMode"
     ref="fabButton"
     class="fixed w-14 h-14 rounded-full bg-sky-500 text-white shadow-lg flex items-center justify-center hover:bg-sky-600 active:scale-95 transition-[background-color,box-shadow,transform] z-30 touch-none select-none cursor-grab"
     :class="{ 'cursor-grabbing scale-105 shadow-xl': isDraggingFab }"

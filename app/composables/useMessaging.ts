@@ -130,6 +130,16 @@ export function useMessaging() {
     return conversationId
   }
 
+  const deleteConversations = async (conversationIds: string[]) => {
+    await messagingService.deleteConversationsForCurrentUser(supabase, conversationIds)
+    await loadConversations()
+  }
+
+  const deleteFriends = async (friendUserIds: string[]) => {
+    await messagingService.deleteFriendsByIds(supabase, friendUserIds)
+    await loadFriends()
+  }
+
   onMounted(async () => {
     await loadAllData()
     subscribeRealtime()
@@ -153,6 +163,8 @@ export function useMessaging() {
     sendInvitation,
     acceptInvitation,
     rejectInvitation,
-    getOrCreateDirectConversation
+    getOrCreateDirectConversation,
+    deleteConversations,
+    deleteFriends
   }
 }

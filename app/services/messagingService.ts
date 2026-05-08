@@ -274,6 +274,46 @@ export const messagingService = {
   },
 
   /**
+   * 批次從對話中移除自己（列表刪除）
+   */
+  async deleteConversationsForCurrentUser(
+    supabase: ReturnType<typeof useSupabaseClient<Database>>,
+    conversationIds: string[]
+  ): Promise<void> {
+    if (!conversationIds.length) return
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const { error } = await supabase
+      .from('conversation_members')
+      .delete()
+      .eq('user_id', user.id)
+      .in('conversation_id', conversationIds)
+
+    if (error) throw error
+  },
+
+  /**
+   * 批次刪除好友（雙向）
+   */
+  async deleteFriendsByIds(
+    supabase: ReturnType<typeof useSupabaseClient<Database>>,
+    friendUserIds: string[]
+  ): Promise<void> {
+    if (!friendUserIds.length) return
+
+    const { error } = await (supabase as typeof supabase & {
+      rpc: (
+        fn: 'delete_friendships',
+        args: { friend_user_ids: string[] }
+      ) => Promise<{ data: null; error: unknown }>
+    }).rpc('delete_friendships', { friend_user_ids: friendUserIds })
+
+    if (error) throw error
+  },
+
+  /**
    * 更新已讀時間（進入對話時呼叫）
    */
   async markAsRead(
