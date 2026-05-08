@@ -105,6 +105,122 @@ const handleRejectInvitation = async (id: string) => {
     console.error('Reject invitation failed:', err)
   }
 }
+
+const FAB_SIZE = 56
+const FAB_MARGIN = 24
+const FAB_BOTTOM_OFFSET = 96
+const FAB_TOP_OFFSET = 88
+const APP_FRAME_MAX_WIDTH = 430
+
+const fabPosition = ref({ x: 0, y: 0 })
+const fabButton = ref<HTMLElement | null>(null)
+const isDraggingFab = ref(false)
+const suppressFabClick = ref(false)
+
+let fabPointerId: number | null = null
+let dragStartPointer = { x: 0, y: 0 }
+let dragStartFab = { x: 0, y: 0 }
+
+const getFabBounds = () => {
+  if (import.meta.client) {
+    const width = Math.min(window.innerWidth, APP_FRAME_MAX_WIDTH)
+    const left = (window.innerWidth - width) / 2
+    const right = left + width
+    const minX = left + FAB_MARGIN
+    const maxX = right - FAB_MARGIN - FAB_SIZE
+    const minY = FAB_TOP_OFFSET
+    const maxY = window.innerHeight - FAB_BOTTOM_OFFSET - FAB_SIZE
+
+    return {
+      minX,
+      maxX: Math.max(minX, maxX),
+      minY,
+      maxY: Math.max(minY, maxY)
+    }
+  }
+
+  return {
+    minX: FAB_MARGIN,
+    maxX: FAB_MARGIN,
+    minY: FAB_TOP_OFFSET,
+    maxY: FAB_TOP_OFFSET
+  }
+}
+
+const clampFabPosition = (position: { x: number, y: number }) => {
+  const bounds = getFabBounds()
+
+  return {
+    x: Math.min(Math.max(position.x, bounds.minX), bounds.maxX),
+    y: Math.min(Math.max(position.y, bounds.minY), bounds.maxY)
+  }
+}
+
+const resetFabPosition = () => {
+  const bounds = getFabBounds()
+  fabPosition.value = {
+    x: bounds.maxX,
+    y: bounds.maxY
+  }
+}
+
+const handleViewportResize = () => {
+  fabPosition.value = clampFabPosition(fabPosition.value)
+}
+
+const handleFabPointerDown = (event: PointerEvent) => {
+  fabPointerId = event.pointerId
+  dragStartPointer = { x: event.clientX, y: event.clientY }
+  dragStartFab = { ...fabPosition.value }
+  isDraggingFab.value = false
+  fabButton.value?.setPointerCapture(event.pointerId)
+}
+
+const handleFabPointerMove = (event: PointerEvent) => {
+  if (fabPointerId !== event.pointerId) return
+
+  const nextPosition = clampFabPosition({
+    x: dragStartFab.x + event.clientX - dragStartPointer.x,
+    y: dragStartFab.y + event.clientY - dragStartPointer.y
+  })
+
+  const movedDistance = Math.hypot(event.clientX - dragStartPointer.x, event.clientY - dragStartPointer.y)
+  if (movedDistance > 6) {
+    isDraggingFab.value = true
+    suppressFabClick.value = true
+  }
+
+  fabPosition.value = nextPosition
+}
+
+const finishFabDrag = (event: PointerEvent) => {
+  if (fabPointerId !== event.pointerId) return
+
+  fabButton.value?.releasePointerCapture(event.pointerId)
+  fabPointerId = null
+
+  if (isDraggingFab.value) {
+    window.setTimeout(() => {
+      suppressFabClick.value = false
+    }, 0)
+  }
+
+  isDraggingFab.value = false
+}
+
+const handleFabClick = () => {
+  if (suppressFabClick.value) return
+  openAddFriendModal()
+}
+
+onMounted(() => {
+  resetFabPosition()
+  window.addEventListener('resize', handleViewportResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleViewportResize)
+})
 </script>
 
 <template>
@@ -319,19 +435,18 @@ const handleRejectInvitation = async (id: string) => {
   </main>
 
   <!-- FAB -->
-  <!-- 訊息 tab：新增對話 -->
-  <button
-    v-if="activeTab === 'messages'"
-    class="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-sky-500 text-white shadow-lg flex items-center justify-center hover:bg-sky-600 active:scale-95 transition-all z-30"
-    @click="() => {}"
-  >
-    <span class="material-symbols-outlined text-2xl">edit_square</span>
-  </button>
   <!-- 好友 tab：新增好友 -->
   <button
-    v-else-if="activeTab === 'friends'"
-    class="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-sky-500 text-white shadow-lg flex items-center justify-center hover:bg-sky-600 active:scale-95 transition-all z-30"
-    @click="openAddFriendModal"
+    v-if="activeTab === 'friends'"
+    ref="fabButton"
+    class="fixed w-14 h-14 rounded-full bg-sky-500 text-white shadow-lg flex items-center justify-center hover:bg-sky-600 active:scale-95 transition-[background-color,box-shadow,transform] z-30 touch-none select-none cursor-grab"
+    :class="{ 'cursor-grabbing scale-105 shadow-xl': isDraggingFab }"
+    :style="{ left: `${fabPosition.x}px`, top: `${fabPosition.y}px` }"
+    @click="handleFabClick"
+    @pointerdown="handleFabPointerDown"
+    @pointermove="handleFabPointerMove"
+    @pointerup="finishFabDrag"
+    @pointercancel="finishFabDrag"
   >
     <span class="material-symbols-outlined text-2xl">person_add</span>
   </button>
