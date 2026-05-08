@@ -25,6 +25,18 @@ const {
 const inputText = ref('')
 const messagesEndRef = ref<HTMLElement | null>(null)
 const messagesContainerRef = ref<HTMLElement | null>(null)
+const isLoadingOlder = ref(false)
+const isUserNearBottom = ref(true)
+
+const getSenderDisplayName = (name?: string | null) => {
+  const trimmed = name?.trim()
+  return trimmed || '未知成員'
+}
+
+const isNearBottom = (el: HTMLElement, threshold = 100) => {
+  const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+  return distanceToBottom <= threshold
+}
 
 // 自動調整 textarea 高度
 const autoResize = (e: Event) => {
@@ -56,16 +68,33 @@ const scrollToBottom = () => {
 }
 
 // 監聽新訊息自動滾動
-watch(() => messages.value.length, () => {
-  nextTick(() => scrollToBottom())
+watch(() => messages.value.length, (newLen, oldLen) => {
+  // 上滑分頁時不要強制捲到底
+  if (isLoadingOlder.value) return
+  if (oldLen === 0 || isUserNearBottom.value || newLen > oldLen) {
+    nextTick(() => scrollToBottom())
+  }
 })
 
 // 上滑載入更多
-const handleScroll = () => {
+const handleScroll = async () => {
   const el = messagesContainerRef.value
   if (!el) return
-  if (el.scrollTop < 60 && hasMore.value && !isLoading.value) {
-    loadMore()
+
+  isUserNearBottom.value = isNearBottom(el)
+
+  if (el.scrollTop < 60 && hasMore.value && !isLoading.value && !isLoadingOlder.value) {
+    isLoadingOlder.value = true
+    const prevHeight = el.scrollHeight
+    const prevTop = el.scrollTop
+    try {
+      await loadMore()
+      await nextTick()
+      const heightDelta = el.scrollHeight - prevHeight
+      el.scrollTop = prevTop + heightDelta
+    } finally {
+      isLoadingOlder.value = false
+    }
   }
 }
 
@@ -116,6 +145,10 @@ const confirmDelete = async () => {
 }
 
 onMounted(() => {
+  const el = messagesContainerRef.value
+  if (el) {
+    isUserNearBottom.value = isNearBottom(el)
+  }
   nextTick(() => scrollToBottom())
 })
 </script>
@@ -191,10 +224,10 @@ onMounted(() => {
           <img
             v-if="msg.senderAvatar"
             :src="msg.senderAvatar"
-            :alt="msg.senderName"
+            :alt="getSenderDisplayName(msg.senderName)"
             class="w-full h-full rounded-full object-cover"
           />
-          <span v-else class="text-xs font-bold text-sky-500">{{ msg.senderName.charAt(0) }}</span>
+          <span v-else class="text-xs font-bold text-sky-500">{{ getSenderDisplayName(msg.senderName).charAt(0) }}</span>
         </div>
 
         <div
@@ -205,7 +238,7 @@ onMounted(() => {
           <span
             v-if="isGroup && !msg.isMine"
             class="text-xs text-slate-400 mb-0.5 ml-1"
-          >{{ msg.senderName }}</span>
+          >{{ getSenderDisplayName(msg.senderName) }}</span>
 
           <!-- 訊息泡泡 -->
           <div

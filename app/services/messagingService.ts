@@ -3,13 +3,26 @@ import type {
   ConversationItem,
   Message,
   CreateConversationParams,
-  SendMessageParams
+  SendMessageParams,
+  Friend,
+  FriendInvitation
 } from '@/types/messaging'
 
 /**
  * 即時通訊資料層：負責與 Supabase 互動
  */
 export const messagingService = {
+  /**
+   * 兼容舊資料：優先 name，其次 display_name
+   */
+  resolveProfileName(profile: { name?: string | null; display_name?: string | null } | null | undefined, fallback = '未知用戶'): string {
+    const name = profile?.name?.trim()
+    if (name) return name
+    const displayName = profile?.display_name?.trim()
+    if (displayName) return displayName
+    return fallback
+  },
+
   /**
    * 取得當前使用者的所有對話（含未讀數、最後一則訊息）
    */
@@ -72,17 +85,45 @@ export const messagingService = {
       unreadCounts.set(convId, count ?? 0)
     }
 
-    // 取得群組訊息的發送者名稱（只取需要的 user_id）
+    // 私聊對話：找出「對方」成員 id（排除自己）
+    const directConversationIds = conversations
+      .filter(c => !c.is_group)
+      .map(c => c.id)
+
+    const directPartnerMap = new Map<string, string>()
+    if (directConversationIds.length) {
+      const { data: members, error: memberListErr } = await supabase
+        .from('conversation_members')
+        .select('conversation_id, user_id')
+        .in('conversation_id', directConversationIds)
+        .neq('user_id', user.id)
+
+      if (memberListErr) throw memberListErr
+
+      for (const m of (members ?? [])) {
+        if (!directPartnerMap.has(m.conversation_id)) {
+          directPartnerMap.set(m.conversation_id, m.user_id)
+        }
+      }
+    }
+
+    // 批次取得需要的用戶資料（最後訊息 sender + 私聊對方）
     const senderIds = [...new Set(
       [...lastMsgMap.values()].map(m => m.sender_id).filter(Boolean)
     )]
-    const senderNames = new Map<string, string>()
-    if (senderIds.length) {
+    const directPartnerIds = [...new Set([...directPartnerMap.values()])]
+    const profileIds = [...new Set([...senderIds, ...directPartnerIds])]
+
+    const profileMap = new Map<string, { name: string; avatar: string | null }>()
+    if (profileIds.length) {
       const { data: profiles } = await supabase
-        .rpc('get_user_profiles', { user_ids: senderIds })
+        .rpc('get_user_profiles', { user_ids: profileIds })
 
       for (const p of (profiles ?? [])) {
-        senderNames.set(p.id, p.name ?? p.id)
+        profileMap.set(p.id, {
+          name: messagingService.resolveProfileName(p, p.id),
+          avatar: p.avatar_url ?? null
+        })
       }
     }
 
@@ -95,14 +136,19 @@ export const messagingService = {
       if (lastMsg) {
         lastMessageText = lastMsg.content
         if (isGroup && lastMsg.sender_id !== user.id) {
-          lastMessageSender = senderNames.get(lastMsg.sender_id) ?? null
+          lastMessageSender = profileMap.get(lastMsg.sender_id)?.name ?? null
         }
       }
 
+      const directPartnerId = directPartnerMap.get(conv.id)
+      const directPartner = directPartnerId ? profileMap.get(directPartnerId) : null
+
       return {
         id: conv.id,
-        name: conv.name ?? '未命名對話',
-        avatarUrl: conv.avatar_url,
+        name: isGroup
+          ? (conv.name ?? '未命名對話')
+          : (conv.name ?? directPartner?.name ?? '未命名對話'),
+        avatarUrl: isGroup ? conv.avatar_url : (directPartner?.avatar ?? conv.avatar_url),
         avatarIcon: isGroup ? 'groups' : null,
         isGroup,
         isOnline: false,  // 後續可透過 Presence 實作
@@ -148,7 +194,10 @@ export const messagingService = {
       const { data: profiles } = await supabase
         .rpc('get_user_profiles', { user_ids: senderIds })
       for (const p of (profiles ?? [])) {
-        senderMap.set(p.id, { name: p.name ?? p.id, avatar: p.avatar_url ?? null })
+        senderMap.set(p.id, {
+          name: messagingService.resolveProfileName(p, p.id),
+          avatar: p.avatar_url ?? null
+        })
       }
     }
 
@@ -264,6 +313,8 @@ export const messagingService = {
     supabase: ReturnType<typeof useSupabaseClient<Database>>,
     conversationId: string
   ): Promise<{ name: string; isGroup: boolean; avatarUrl: string | null; memberCount: number }> {
+    const { data: { user } } = await supabase.auth.getUser()
+
     const { data: conv, error } = await supabase
       .from('conversations')
       .select('name, is_group, avatar_url')
@@ -277,11 +328,164 @@ export const messagingService = {
       .select('id', { count: 'exact', head: true })
       .eq('conversation_id', conversationId)
 
+    let name = conv.name ?? '未命名對話'
+    let avatarUrl = conv.avatar_url
+
+    // 私聊名稱優先顯示對方暱稱
+    if (!conv.is_group && user?.id) {
+      const { data: members } = await supabase
+        .from('conversation_members')
+        .select('user_id')
+        .eq('conversation_id', conversationId)
+        .neq('user_id', user.id)
+        .limit(1)
+
+      const partnerId = members?.[0]?.user_id
+      if (partnerId) {
+        const { data: profiles } = await supabase
+          .rpc('get_user_profiles', { user_ids: [partnerId] })
+
+        const partner = profiles?.[0] as { name?: string | null; display_name?: string | null; avatar_url?: string | null } | undefined
+        name = messagingService.resolveProfileName(partner, name)
+        avatarUrl = partner?.avatar_url ?? avatarUrl
+      }
+    }
+
     return {
-      name: conv.name ?? '未命名對話',
+      name,
       isGroup: conv.is_group,
-      avatarUrl: conv.avatar_url,
+      avatarUrl,
       memberCount: count ?? 0
     }
+  },
+
+  /**
+   * 取得好友列表
+   */
+  async fetchFriends(supabase: ReturnType<typeof useSupabaseClient<Database>>): Promise<Friend[]> {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const { data: friends, error } = await supabase
+      .from('friends')
+      .select('friend_id, created_at')
+      .eq('user_id', user.id)
+
+    if (error) throw error
+    if (!friends?.length) return []
+
+    const friendIds = friends.map(f => f.friend_id)
+    const { data: profiles } = await supabase
+      .rpc('get_user_profiles', { user_ids: friendIds })
+
+    const profileMap = new Map(profiles?.map((p: any) => [p.id, p]))
+
+    return friends.map(f => {
+      const p = profileMap.get(f.friend_id)
+      return {
+        id: f.friend_id,
+        userId: f.friend_id,
+        name: messagingService.resolveProfileName(p, '未知用戶'),
+        avatarUrl: p?.avatar_url ?? null,
+        createdAt: f.created_at
+      }
+    })
+  },
+
+  /**
+   * 取得待處理的好友邀請 (我收到的)
+   */
+  async fetchPendingInvitations(supabase: ReturnType<typeof useSupabaseClient<Database>>): Promise<FriendInvitation[]> {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const { data: invites, error } = await supabase
+      .from('friend_invitations')
+      .select('*')
+      .eq('receiver_id', user.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    if (!invites?.length) return []
+
+    const senderIds = invites.map(i => i.sender_id)
+    const { data: profiles } = await supabase
+      .rpc('get_user_profiles', { user_ids: senderIds })
+
+    const profileMap = new Map(profiles?.map((p: any) => [p.id, p]))
+
+    return invites.map(i => {
+      const p = profileMap.get(i.sender_id)
+      return {
+        id: i.id,
+        senderId: i.sender_id,
+        senderName: messagingService.resolveProfileName(p, '未知用戶'),
+        senderAvatar: p?.avatar_url ?? null,
+        receiverId: i.receiver_id,
+        status: i.status as any,
+        createdAt: i.created_at
+      }
+    })
+  },
+
+  /**
+   * 發送好友邀請 (透過 Email)
+   */
+  async sendFriendInvitation(supabase: ReturnType<typeof useSupabaseClient<Database>>, email: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    // 1. 透過 Email 取得對方 ID
+    const { data: targetId, error: rpcError } = await supabase
+      .rpc('get_user_id_by_email', { email_addr: email })
+
+    if (rpcError) throw rpcError
+    if (!targetId) throw new Error('找不到該用戶')
+    if (targetId === user.id) throw new Error('不能加自己為好友')
+
+    // 2. 檢查是否已經是好友
+    const { data: existingFriend } = await supabase
+      .from('friends')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('friend_id', targetId)
+      .single()
+
+    if (existingFriend) throw new Error('對方已經是你的好友')
+
+    // 3. 建立邀請
+    const { error: inviteError } = await supabase
+      .from('friend_invitations')
+      .insert({
+        sender_id: user.id,
+        receiver_id: targetId,
+        status: 'pending'
+      })
+
+    if (inviteError) {
+      if (inviteError.code === '23505') throw new Error('已發送過邀請，待對方確認')
+      throw inviteError
+    }
+  },
+
+  /**
+   * 接受好友邀請
+   */
+  async acceptInvitation(supabase: ReturnType<typeof useSupabaseClient<Database>>, invitationId: string): Promise<void> {
+    const { error } = await supabase.rpc('accept_friend_invitation', { invitation_id: invitationId })
+    if (error) throw error
+  },
+
+  /**
+   * 拒絕好友邀請
+   */
+  async rejectInvitation(supabase: ReturnType<typeof useSupabaseClient<Database>>, invitationId: string): Promise<void> {
+    const { error } = await supabase
+      .from('friend_invitations')
+      .update({ status: 'rejected', updated_at: new Date().toISOString() })
+      .eq('id', invitationId)
+
+    if (error) throw error
   }
 }

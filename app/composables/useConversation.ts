@@ -123,12 +123,13 @@ export function useConversation(conversationId: string) {
               .rpc('get_user_profiles', { user_ids: [raw.sender_id] })
 
             const profile = profiles?.[0] ?? null
+            const senderName = (profile?.name ?? profile?.display_name ?? '').trim() || '未知成員'
 
             const newMsg: Message = {
               id: raw.id,
               conversationId: raw.conversation_id,
               senderId: raw.sender_id,
-              senderName: profile?.name ?? '未知成員',
+              senderName,
               senderAvatar: profile?.avatar_url ?? null,
               content: raw.content,
               messageType: raw.message_type as 'text' | 'image' | 'system',

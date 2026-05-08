@@ -76,3 +76,23 @@ export interface SendMessageParams {
   messageType?: MessageType
   imageUrl?: string
 }
+
+// ── 好友相關型別 ───────────────────────────────────────────────
+
+export interface Friend {
+  id: string
+  userId: string
+  name: string
+  avatarUrl: string | null
+  createdAt: string
+}
+
+export interface FriendInvitation {
+  id: string
+  senderId: string
+  senderName: string
+  senderAvatar: string | null
+  receiverId: string
+  status: 'pending' | 'accepted' | 'rejected'
+  createdAt: string
+}
