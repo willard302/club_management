@@ -16,6 +16,7 @@ export const messagingService = {
    * 取得當前使用者的所有對話（含未讀數、最後一則訊息）
    */
   async fetchConversations(supabase: ReturnType<typeof useSupabaseClient<Database>>): Promise<ConversationItem[]> {
+    const { t } = useI18n()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
@@ -134,7 +135,7 @@ export const messagingService = {
         id: conv.id,
         name: isGroup
           ? (conv.name ?? '未命名對話')
-          : (conv.name ?? partner?.name ?? '未命名對話'),
+          : (conv.name ?? partner?.name ?? t('messaging.emptyDirectConversation')),
         avatarUrl: isGroup
           ? conv.avatar_url
           : (partner?.avatar_url ?? conv.avatar_url),
@@ -352,6 +353,7 @@ export const messagingService = {
     supabase: ReturnType<typeof useSupabaseClient<Database>>,
     conversationId: string
   ): Promise<{ name: string; isGroup: boolean; avatarUrl: string | null; memberCount: number }> {
+    const { t } = useI18n()
     const { data: { user } } = await supabase.auth.getUser()
 
     const { data: conv, error } = await supabase
@@ -367,7 +369,7 @@ export const messagingService = {
       .select('id', { count: 'exact', head: true })
       .eq('conversation_id', conversationId)
 
-    let name = conv.name ?? '未命名對話'
+    let name = conv.name ?? t('messaging.emptyDirectConversation')
     let avatarUrl = conv.avatar_url
 
     if (!conv.is_group && user?.id) {
