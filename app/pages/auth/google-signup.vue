@@ -33,7 +33,7 @@ const loadGoogleUserInfo = async () => {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-      errorMessage.value = 'User not authenticated. Please login again.'
+      errorMessage.value = $t('auth.googleSignup.errorAuth')
       setTimeout(() => {
         router.push('/auth/login')
       }, 2000)
@@ -53,24 +53,24 @@ const loadGoogleUserInfo = async () => {
     }
   } catch (err: any) {
     console.error('Error loading Google user info:', err)
-    errorMessage.value = 'Failed to load user information'
+    errorMessage.value = $t('auth.googleSignup.errorLoadInfo')
   }
 }
 
 const handleSubmit = async () => {
   // 驗證必填欄位
   if (!formData.value.fullName.trim()) {
-    errorMessage.value = 'Please enter your full name'
+    errorMessage.value = $t('auth.googleSignup.errorName')
     return
   }
 
   if (!formData.value.studentId.trim()) {
-    errorMessage.value = 'Please enter your student ID'
+    errorMessage.value = $t('auth.googleSignup.errorStudentId')
     return
   }
 
   if (!formData.value.department.trim()) {
-    errorMessage.value = 'Please select your department'
+    errorMessage.value = $t('auth.googleSignup.errorDepartment')
     return
   }
 
@@ -110,7 +110,7 @@ const handleSubmit = async () => {
     // 重定向到首頁
     router.push('/')
   } catch (err: any) {
-    errorMessage.value = err.message || 'Failed to complete registration'
+    errorMessage.value = err.message || $t('auth.googleSignup.errorComplete')
     console.error(err)
   } finally {
     loading.value = false
@@ -138,7 +138,7 @@ onMounted(() => {
       <!-- Header -->
       <div class="flex flex-col items-center gap-4 w-full">
         <ZenLogo size="md" />
-        <h1 class="text-white text-2xl font-bold tracking-widest drop-shadow-md text-center">Complete Your Profile</h1>
+        <h1 class="text-white text-2xl font-bold tracking-widest drop-shadow-md text-center">{{ $t('auth.googleSignup.title') }}</h1>
       </div>
 
       <!-- Form -->
@@ -164,7 +164,7 @@ onMounted(() => {
           <input
             v-model="formData.fullName"
             type="text"
-            placeholder="Full Name"
+            :placeholder="$t('auth.googleSignup.fullNamePlaceholder')"
             class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
           />
         </div>
@@ -174,7 +174,7 @@ onMounted(() => {
           <input
             v-model="formData.studentId"
             type="text"
-            placeholder="Student ID"
+            :placeholder="$t('auth.googleSignup.studentIdPlaceholder')"
             class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
           />
         </div>
@@ -184,7 +184,7 @@ onMounted(() => {
           <input
             v-model="formData.department"
             type="text"
-            placeholder="Department (e.g., Engineering, Business)"
+            :placeholder="$t('auth.googleSignup.departmentPlaceholder')"
             class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
           />
         </div>
@@ -204,10 +204,10 @@ onMounted(() => {
             v-model="formData.gender"
             class="w-full bg-transparent border-none text-white focus:ring-0 text-base py-3 px-4 outline-none"
           >
-            <option value="Not specified" class="bg-gray-800">Not specified</option>
-            <option value="Male" class="bg-gray-800">Male</option>
-            <option value="Female" class="bg-gray-800">Female</option>
-            <option value="Other" class="bg-gray-800">Other</option>
+            <option value="Not specified" class="bg-gray-800">{{ $t('auth.googleSignup.genderNotSpecified') }}</option>
+            <option value="Male" class="bg-gray-800">{{ $t('auth.googleSignup.genderMale') }}</option>
+            <option value="Female" class="bg-gray-800">{{ $t('auth.googleSignup.genderFemale') }}</option>
+            <option value="Other" class="bg-gray-800">{{ $t('auth.googleSignup.genderOther') }}</option>
           </select>
         </div>
 
@@ -215,7 +215,7 @@ onMounted(() => {
         <div class="glass-effect rounded-xl p-1">
           <textarea
             v-model="formData.bio"
-            placeholder="Bio (optional)"
+            :placeholder="$t('auth.googleSignup.bioPlaceholder')"
             rows="3"
             class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none resize-none"
           ></textarea>
@@ -232,15 +232,15 @@ onMounted(() => {
           :disabled="loading"
           class="w-full bg-primary text-white font-bold py-3 rounded-xl glow-button text-lg tracking-wide hover:bg-primary/90 transition-all active:scale-[0.8] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {{ loading ? 'Completing...' : 'Complete Registration' }}
+          {{ loading ? $t('auth.googleSignup.completing') : $t('auth.googleSignup.submit') }}
         </button>
       </div>
 
       <!-- Footer -->
       <div class="text-center">
         <p class="text-white/50 text-sm">
-          Already completed?
-          <NuxtLink to="/" class="text-white/80 hover:text-white transition-colors">Go Home</NuxtLink>
+          {{ $t('auth.googleSignup.alreadyCompleted') }}
+          <NuxtLink to="/" class="text-white/80 hover:text-white transition-colors">{{ $t('auth.googleSignup.goHome') }}</NuxtLink>
         </p>
       </div>
     </div>

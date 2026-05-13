@@ -8,7 +8,6 @@ definePageMeta({
 })
 
 const router = useRouter()
-const { t } = useI18n()
 
 const { selectedPeriod, stats, recentSessions, isLoading, loadStats } = useMeditationStats()
 
@@ -52,7 +51,7 @@ const formatDuration = (seconds: number) => {
 <template>
   <div class="relative flex h-full min-h-screen w-full flex-col sky-gradient overflow-x-hidden pb-24">
     <!-- Header -->
-    <AppPageHeader :title="t('meditation.stats')" @back="router.back" />
+    <AppPageHeader :title="$t('meditation.stats')" @back="router.back" />
 
     <!-- Main Content -->
     <main class="flex flex-col gap-6 p-4">
@@ -88,7 +87,7 @@ const formatDuration = (seconds: number) => {
         <section class="glass-effect rounded-xl p-5 shadow-sm">
           <div class="flex justify-between items-end mb-6">
             <div>
-              <p class="text-slate-500 text-sm font-medium">{{ t('meditation.totalTime') }}</p>
+              <p class="text-slate-500 text-sm font-medium">{{ $t('meditation.totalTime') }}</p>
               <h2 class="text-slate-900 text-3xl font-extrabold tracking-tight">
                 {{ formattedTotalTime.value }}
                 <span class="text-lg font-medium text-slate-500">{{ formattedTotalTime.unit }}</span>
@@ -125,7 +124,7 @@ const formatDuration = (seconds: number) => {
             </template>
             <!-- No data yet -->
             <div v-else class="flex-1 flex items-center justify-center text-slate-400 text-sm">
-              {{ t('meditation.noStats') }}
+              {{ $t('meditation.noStats') }}
             </div>
           </div>
         </section>
@@ -133,7 +132,7 @@ const formatDuration = (seconds: number) => {
         <!-- Recent Sessions -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-slate-900 text-lg font-bold">{{ t('meditation.recentSessions') }}</h3>
+            <h3 class="text-slate-900 text-lg font-bold">{{ $t('meditation.recentSessions') }}</h3>
           </div>
 
           <!-- Empty state -->
@@ -142,7 +141,7 @@ const formatDuration = (seconds: number) => {
             class="glass-effect rounded-xl p-8 flex flex-col items-center text-center gap-3"
           >
             <span class="material-symbols-outlined text-slate-300 text-5xl">self_improvement</span>
-            <p class="text-slate-500 text-sm">{{ t('meditation.noSessions') }}</p>
+            <p class="text-slate-500 text-sm">{{ $t('meditation.noSessions') }}</p>
           </div>
 
           <div v-else class="flex flex-col gap-3">
@@ -164,8 +163,8 @@ const formatDuration = (seconds: number) => {
                   </span>
                 </div>
                 <p class="text-slate-400 text-xs mt-1">
-                  {{ session.completed ? t('meditation.completed') : t('meditation.partial') }}
-                  · {{ Math.round(session.targetSeconds / 60) }}m {{ t('meditation.target') }}
+                  {{ session.completed ? $t('meditation.completed') : $t('meditation.partial') }}
+                  · {{ Math.round(session.targetSeconds / 60) }}m {{ $t('meditation.target') }}
                 </p>
               </div>
               <div class="text-right flex-shrink-0">

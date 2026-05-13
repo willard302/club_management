@@ -12,8 +12,6 @@ const emit = defineEmits<{
   back: []
 }>()
 
-const { t } = useI18n()
-
 const handleBack = () => {
   emit('back')
 }
@@ -30,7 +28,7 @@ const handleBack = () => {
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <div class="flex flex-col">
-        <h1 class="text-xs font-bold text-sky-500 tracking-wider uppercase">{{ t('ledger.systemTitle') }}</h1>
+        <h1 class="text-xs font-bold text-sky-500 tracking-wider uppercase">{{ $t('ledger.systemTitle') }}</h1>
         <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">{{ title }}</h2>
       </div>
     </div>

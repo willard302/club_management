@@ -23,12 +23,12 @@ const successMessage = ref('')
 
 const handleRegister = async () => {
   if (formData.value.password !== formData.value.confirmPassword) {
-    errorMessage.value = 'Passwords do not match.'
+    errorMessage.value = $t('auth.register.errorMismatch')
     return
   }
   
   if (!formData.value.email || !formData.value.password || !formData.value.fullName) {
-    errorMessage.value = 'Please fill in all required fields.'
+    errorMessage.value = $t('auth.register.errorEmpty')
     return
   }
 
@@ -61,7 +61,7 @@ const handleRegister = async () => {
       )
     }
     
-    successMessage.value = 'Registration successful! Please check your email to verify your account.'
+    successMessage.value = $t('auth.register.successMessage')
 
     // 導向登入頁
     setTimeout(() => {
@@ -69,7 +69,7 @@ const handleRegister = async () => {
     }, 2000)
     
   } catch (error: any) {
-    errorMessage.value = error.message || 'An error occurred during registration.'
+    errorMessage.value = error.message || $t('auth.register.errorRegister')
   } finally {
     loading.value = false
   }
@@ -89,8 +89,8 @@ const handleRegister = async () => {
 
       <!-- Header Content in Hero Section -->
       <div class="relative p-6">
-        <h2 class="text-slate-900 text-2xl font-bold leading-tight tracking-tight">社團管理系統</h2>
-        <p class="text-slate-700 text-sm font-medium">Join our peaceful community</p>
+        <h2 class="text-slate-900 text-2xl font-bold leading-tight tracking-tight">{{ $t('appTitle') }}</h2>
+        <p class="text-slate-700 text-sm font-medium">{{ $t('auth.register.heroSubtitle') }}</p>
       </div>
     </div>
 
@@ -98,8 +98,8 @@ const handleRegister = async () => {
     <div class="flex-1">
       <!-- Header Text -->
       <div class="px-6 pt-6 pb-2">
-        <h2 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight">Create Account</h2>
-        <p class="text-slate-500 dark:text-slate-400 text-base font-normal mt-1">Start your journey to inner peace and mindfulness.</p>
+        <h2 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight">{{ $t('auth.register.title') }}</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-base font-normal mt-1">{{ $t('auth.register.description') }}</p>
       </div>
 
       <!-- Registration Form -->
@@ -111,7 +111,7 @@ const handleRegister = async () => {
             <input
               v-model="formData.email"
               type="email"
-              placeholder="name@email.com"
+              :placeholder="$t('auth.login.emailPlaceholder')"
               class="form-input block w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             />
           </div>
@@ -124,7 +124,7 @@ const handleRegister = async () => {
             <input
               v-model="formData.password"
               :type="showPassword ? 'text' : 'password'"
-              placeholder="Create a password"
+              :placeholder="$t('auth.register.passwordPlaceholder')"
               class="form-input block w-full pl-12 pr-12 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             />
             <button
@@ -144,7 +144,7 @@ const handleRegister = async () => {
             <input
               v-model="formData.confirmPassword"
               :type="showPassword ? 'text' : 'password'"
-              placeholder="Re-enter your password"
+              :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
               class="form-input block w-full pl-12 pr-12 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             />
             <button
@@ -173,11 +173,11 @@ const handleRegister = async () => {
           :disabled="loading"
           class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {{ loading ? 'Registering...' : 'Register' }}
+          {{ loading ? $t('auth.register.registering') : $t('auth.register.submit') }}
         </button>
         <div class="flex items-center justify-center gap-2 mt-2">
-          <p class="text-slate-500 dark:text-slate-400 text-sm">Already have an account?</p>
-          <NuxtLink to="/auth/login" class="text-primary font-semibold text-sm hover:underline">Back to Login</NuxtLink>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">{{ $t('auth.register.alreadyHaveAccount') }}</p>
+          <NuxtLink to="/auth/login" class="text-primary font-semibold text-sm hover:underline">{{ $t('auth.register.backToLogin') }}</NuxtLink>
         </div>
       </div>
     </div>

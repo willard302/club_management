@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
-const { t } = useI18n()
 
 definePageMeta({
   layout: 'default'
@@ -35,12 +34,12 @@ const handleAvatarUpload = async (event: Event) => {
     await uploadAvatar(file)
     // 重新載入用戶資料確保最新
     await loadUserData()
-    showSuccessToast(t('userInfo.avatarSuccess'))
+    showSuccessToast($t('userInfo.avatarSuccess'))
     if (avatarInput.value) {
       avatarInput.value.value = ''
     }
   } catch (err: any) {
-    showErrorToast(err.message || t('userInfo.avatarError'))
+    showErrorToast(err.message || $t('userInfo.avatarError'))
     if (avatarInput.value) {
       avatarInput.value.value = ''
     }
@@ -53,9 +52,9 @@ const handleSave = async () => {
     await updateUserInfo()
     // 重新載入用戶資料確保同步
     await loadUserData()
-    showSuccessToast(t('userInfo.saveSuccess'))
+    showSuccessToast($t('userInfo.saveSuccess'))
   } catch (err: any) {
-    showErrorToast(err.message || t('userInfo.saveError'))
+    showErrorToast(err.message || $t('userInfo.saveError'))
   }
 }
 
@@ -79,7 +78,7 @@ onBeforeUnmount(async () => {
 <template>
   <div class="relative flex min-h-screen w-full flex-col bg-[#f0f9ff] overflow-x-hidden pb-16">
     <!-- Header -->
-    <AppPageHeader :title="t('userInfo.title')" @back="router.back" />
+    <AppPageHeader :title="$t('userInfo.title')" @back="router.back" />
 
     <main class="flex-1 w-full px-4 py-6 space-y-8">
       <!-- Profile Picture Section -->
@@ -116,7 +115,7 @@ onBeforeUnmount(async () => {
           @change="handleAvatarUpload"
         />
         <div class="text-center">
-          <p class="text-sky-500 font-semibold">{{ t('ledger.systemTitle') }}</p>
+          <p class="text-sky-500 font-semibold">{{ $t('ledger.systemTitle') }}</p>
         </div>
       </div>
 
@@ -131,68 +130,68 @@ onBeforeUnmount(async () => {
         <!-- Success Message -->
         <div v-if="success" class="p-3 bg-green-100 text-green-700 rounded-xl text-sm border border-green-200 flex items-center gap-2">
           <span class="material-symbols-outlined text-base">check_circle</span>
-          {{ t('userInfo.saveSuccess') }}
+          {{ $t('userInfo.saveSuccess') }}
         </div>
 
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.name') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.name') }}</label>
           <input 
             v-model="formData.name"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            :placeholder="t('userInfo.placeholderName')" 
+            :placeholder="$t('userInfo.placeholderName')" 
             type="text"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.studentId') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.studentId') }}</label>
           <input 
             v-model="formData.studentId"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            :placeholder="t('userInfo.placeholderStudentId')" 
+            :placeholder="$t('userInfo.placeholderStudentId')" 
             type="text"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.department') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.department') }}</label>
           <input 
             v-model="formData.department"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            :placeholder="t('userInfo.placeholderDepartment')" 
+            :placeholder="$t('userInfo.placeholderDepartment')" 
             type="text"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.dateOfBirth') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.dateOfBirth') }}</label>
           <input 
             v-model="formData.dateOfBirth"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            :placeholder="t('userInfo.placeholderDOB')" 
+            :placeholder="$t('userInfo.placeholderDOB')" 
             type="date"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.gender') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.gender') }}</label>
           <select 
             v-model="formData.gender"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm text-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="isLoading"
           >
-            <option value="">{{ t('userInfo.placeholderGender') }}</option>
-            <option value="male">{{ t('userInfo.genderMale') }}</option>
-            <option value="female">{{ t('userInfo.genderFemale') }}</option>
-            <option value="other">{{ t('userInfo.genderOther') }}</option>
+            <option value="">{{ $t('userInfo.placeholderGender') }}</option>
+            <option value="male">{{ $t('userInfo.genderMale') }}</option>
+            <option value="female">{{ $t('userInfo.genderFemale') }}</option>
+            <option value="other">{{ $t('userInfo.genderOther') }}</option>
           </select>
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ t('userInfo.bio') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.bio') }}</label>
           <textarea 
             v-model="formData.bio"
             class="w-full p-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 resize-none text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed" 
-            :placeholder="t('userInfo.bioPlaceholder')" 
+            :placeholder="$t('userInfo.bioPlaceholder')" 
             rows="3"
             :disabled="isLoading"
           ></textarea>
@@ -208,7 +207,7 @@ onBeforeUnmount(async () => {
         >
           <span v-if="!isSaving" class="material-symbols-outlined">save</span>
           <span v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-          {{ isSaving ? t('changePassword.submitting') : t('ledger.saveRecord') }}
+          {{ isSaving ? $t('changePassword.submitting') : $t('ledger.saveRecord') }}
         </button>
 
         <!-- Change Password Button -->
@@ -217,7 +216,7 @@ onBeforeUnmount(async () => {
           class="w-full h-14 bg-white/60 text-sky-600 font-bold rounded-2xl border-2 border-sky-500/30 hover:bg-white/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
         >
           <span class="material-symbols-outlined">lock</span>
-          {{ t('changePassword.title') }}
+          {{ $t('changePassword.title') }}
         </button>
       </div>
     </main>

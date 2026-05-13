@@ -30,7 +30,7 @@ onMounted(async () => {
         errorMessage.value = error.message || 'Invalid or expired email confirmation link'
         console.error('Email verification error:', error)
       } else {
-        successMessage.value = 'Email verified successfully! Redirecting to home page...'
+        successMessage.value = $t('auth.confirm.successMessage')
         // 延遲 2 秒後重定向
         setTimeout(() => {
           router.push('/')
@@ -39,13 +39,13 @@ onMounted(async () => {
     } else {
       // 若無 token，這通常表示是 OAuth 回調（由伺服器端的 callback.ts 己經處理）
       // 顯示等待訊息或直接重定向
-      errorMessage.value = 'No confirmation token found. Redirecting to login...'
+        errorMessage.value = $t('auth.confirm.errorNoToken')
       setTimeout(() => {
         router.push('/auth/login')
       }, 2000)
     }
   } catch (err: any) {
-    errorMessage.value = err.message || 'An error occurred during email confirmation'
+    errorMessage.value = err.message || $t('auth.confirm.errorConfirm')
     console.error(err)
   } finally {
     loading.value = false
@@ -70,14 +70,14 @@ onMounted(async () => {
       <ZenLogo size="lg" />
 
       <!-- Title -->
-      <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md text-center">
-        Email Confirmation
+        <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md text-center">
+        {{ $t('auth.confirm.title') }}
       </h1>
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center">
         <div class="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-        <p class="text-white/70">Verifying your email...</p>
+        <p class="text-white/70">{{ $t('auth.confirm.verifying') }}</p>
       </div>
 
       <!-- Success State -->
@@ -94,7 +94,7 @@ onMounted(async () => {
           to="/auth/login"
           class="mt-6 inline-block bg-primary text-white font-bold py-2 px-6 rounded-xl hover:bg-primary/90 transition-all"
         >
-          Back to Login
+          {{ $t('auth.confirm.backToLogin') }}
         </NuxtLink>
       </div>
     </div>

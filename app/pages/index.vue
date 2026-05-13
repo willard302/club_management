@@ -65,20 +65,20 @@ const getAvatarUrl = () => {
 
 // 統計數據
 const stats = computed<StatCard[]>(() => [
-  { icon: 'avg_time', label: t('totalMeditation'), value: userProfile.value?.totalMeditation || '0h' },
-  { icon: 'calendar_month', label: t('monthlyCheckIns'), value: userProfile.value?.monthlyCheckIns || '0次' }
+  { icon: 'avg_time', label: $t('totalMeditation'), value: userProfile.value?.totalMeditation || '0h' },
+  { icon: 'calendar_month', label: $t('monthlyCheckIns'), value: userProfile.value?.monthlyCheckIns || '0次' }
 ])
 
 const menuItems = computed<MenuItem[]>(() => [
-  { icon: 'account_balance_wallet', label: t('ledger.title'), path: '/ledger' },
-  { icon: 'person_edit', label: t('editProfile'), path: '/userCenter/userInfo' },
-  { icon: 'lock_reset', label: t('changePassword.title'), path: '/userCenter/changePassword' }
+  { icon: 'account_balance_wallet', label: $t('ledger.title'), path: '/ledger' },
+  { icon: 'person_edit', label: $t('editProfile'), path: '/userCenter/userInfo' },
+  { icon: 'lock_reset', label: $t('changePassword.title'), path: '/userCenter/changePassword' }
 ])
 </script>
 
 <template>
   <!-- Header Section -->
-  <AppHeader :title="t('profile')" bg-class="sky-gradient" :has-padding="true"></AppHeader>
+  <AppHeader :title="$t('profile')" bg-class="sky-gradient" :has-padding="true"></AppHeader>
 
     <!-- Main Content -->
     <main class="flex-1 -mt-4 px-4 pb-24 relative z-40">
@@ -131,12 +131,12 @@ const menuItems = computed<MenuItem[]>(() => [
 
         <div class="w-full grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-700 pt-4">
           <div class="text-left">
-            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ t('department') }}</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department || t('loading') }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('department') }}</p>
+            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department || $t('loading') }}</p>
           </div>
           <div class="text-right">
-            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ t('studentId') }}</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.studentId || t('loading') }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('studentId') }}</p>
+            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.studentId || $t('loading') }}</p>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@ const menuItems = computed<MenuItem[]>(() => [
 
       <!-- Action Items List -->
       <div class="space-y-3 mb-8">
-        <h3 class="px-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ t('accountSettings') }}</h3>
+        <h3 class="px-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ $t('accountSettings') }}</h3>
         <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
           <div
             class="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors border-b border-slate-50 dark:border-slate-700 cursor-pointer"
@@ -164,7 +164,7 @@ const menuItems = computed<MenuItem[]>(() => [
           >
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-slate-400">language</span>
-              <span class="font-medium">{{ t('language') }} ({{ locale === 'zh-TW' ? '繁體中文' : 'English' }})</span>
+              <span class="font-medium">{{ $t('language') }} ({{ locale === 'zh-TW' ? '繁體中文' : 'English' }})</span>
             </div>
             <span class="material-symbols-outlined text-slate-300">swap_horiz</span>
           </div>
@@ -186,7 +186,7 @@ const menuItems = computed<MenuItem[]>(() => [
           >
             <div class="flex items-center gap-3 text-red-500">
               <span class="material-symbols-outlined">logout</span>
-              <span class="font-bold">{{ t('logout') }}</span>
+              <span class="font-bold">{{ $t('logout') }}</span>
             </div>
           </a>
         </div>

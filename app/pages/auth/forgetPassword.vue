@@ -28,7 +28,7 @@ const handleSendCode = () => {
           <span class="material-symbols-outlined text-[24px]">arrow_back</span>
         </button>
         <h1 class="text-[26px] font-extrabold tracking-widest text-white drop-shadow-md">
-          忘記密碼
+          {{ $t('auth.forgetPassword.title') }}
         </h1>
       </nav>
 
@@ -37,8 +37,8 @@ const handleSendCode = () => {
         <!-- Description Section -->
         <div class="flex flex-col items-center space-y-4">
           <p class="text-white/80 text-center px-4 tracking-wide leading-relaxed">
-            社團管理系統<br/>
-            請輸入您的電子郵件以重設密碼
+            {{ $t('appTitle') }}<br/>
+            {{ $t('auth.forgetPassword.description') }}
           </p>
         </div>
 
@@ -52,7 +52,7 @@ const handleSendCode = () => {
                 v-model="email"
                 class="w-full h-14 bg-white/10 border-none px-12 text-white placeholder:text-white/40 focus:ring-2 focus:ring-white/30 glass-panel transition-all outline-none" 
                 style="border-radius: 9999px;"
-                placeholder="輸入你的Email" 
+                :placeholder="$t('auth.forgetPassword.emailPlaceholder')" 
                 required 
                 type="email"
               />
@@ -64,14 +64,14 @@ const handleSendCode = () => {
             @click="handleSendCode"
             class="w-full h-16 bg-primary text-white font-bold text-[18px] tracking-wide shadow-[0_0_20px_rgba(43,157,238,0.4)] hover:shadow-[0_0_30px_rgba(43,157,238,0.6)] active:scale-[0.98] transition-all flex items-center justify-center"
             style="border-radius: 9999px;">
-            發送驗證碼
+            {{ $t('auth.forgetPassword.sendCode') }}
           </button>
 
           <!-- Secondary Action -->
           <div class="flex justify-center">
             <a class="text-white/70 hover:text-white text-[14px] font-medium tracking-wide transition-colors flex items-center gap-2" href="#">
               <span class="material-symbols-outlined text-[18px]">support_agent</span>
-              聯繫社團管理員
+              {{ $t('auth.forgetPassword.contactAdmin') }}
             </a>
           </div>
         </div>

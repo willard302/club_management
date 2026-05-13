@@ -3,7 +3,6 @@ definePageMeta({
   layout: 'default'
 })
 
-const { t } = useI18n()
 const router = useRouter()
 
 const {
@@ -167,7 +166,7 @@ const sendFriendInvite = async () => {
   if (!email) return
   const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailReg.test(email)) {
-    inviteError.value = t('messaging.invalidEmail')
+    inviteError.value = $t('messaging.invalidEmail')
     return
   }
   isSendingInvite.value = true
@@ -176,7 +175,7 @@ const sendFriendInvite = async () => {
     await sendInvitation(email)
     inviteSuccess.value = true
   } catch (err: any) {
-    inviteError.value = err.message || t('messaging.inviteError')
+    inviteError.value = err.message || $t('messaging.inviteError')
   } finally {
     isSendingInvite.value = false
   }
@@ -321,7 +320,7 @@ onBeforeUnmount(() => {
   <!-- Tabs -->
   <div class="flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10">
     <button
-      v-for="tab in [{ key: 'messages', label: t('messaging.tabMessages') }, { key: 'friends', label: t('messaging.tabFriends') }]"
+      v-for="tab in [{ key: 'messages', label: $t('messaging.tabMessages') }, { key: 'friends', label: $t('messaging.tabFriends') }]"
       :key="tab.key"
       class="flex-1 py-3 text-sm font-medium transition-colors relative"
       :class="activeTab === tab.key
@@ -354,7 +353,7 @@ onBeforeUnmount(() => {
         <input
           v-model="searchQuery"
           type="text"
-          :placeholder="activeTab === 'messages' ? t('messaging.searchPlaceholder') : t('messaging.searchFriendsPlaceholder')"
+          :placeholder="activeTab === 'messages' ? $t('messaging.searchPlaceholder') : $t('messaging.searchFriendsPlaceholder')"
           class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm shadow-sm border border-slate-100 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400/40 transition"
         />
       </div>
@@ -453,7 +452,7 @@ onBeforeUnmount(() => {
       <!-- 載入中 -->
       <div v-if="isLoading" class="flex flex-col items-center justify-center py-16 text-slate-400">
         <div class="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin mb-3"></div>
-        <p class="text-sm">{{ t('loading') }}</p>
+        <p class="text-sm">{{ $t('loading') }}</p>
       </div>
 
       <!-- 空白狀態 -->
@@ -462,7 +461,7 @@ onBeforeUnmount(() => {
         class="flex flex-col items-center justify-center py-16 text-slate-400"
       >
         <span class="material-symbols-outlined text-5xl mb-3">chat_bubble</span>
-        <p class="text-sm">{{ t('messaging.noResults') }}</p>
+        <p class="text-sm">{{ $t('messaging.noResults') }}</p>
       </div>
     </div>
     </template>
@@ -472,7 +471,7 @@ onBeforeUnmount(() => {
       <!-- 好友邀請區塊 -->
       <div v-if="pendingInvitations.length > 0" class="mb-6">
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">
-          {{ t('messaging.pendingInvitations') }} ({{ pendingInvitations.length }})
+          {{ $t('messaging.pendingInvitations') }} ({{ pendingInvitations.length }})
         </h3>
         <div class="space-y-2">
           <div
@@ -488,7 +487,7 @@ onBeforeUnmount(() => {
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ invite.senderName }}</p>
-              <p class="text-xs text-slate-400">{{ t('messaging.wantsToBeFriend') }}</p>
+              <p class="text-xs text-slate-400">{{ $t('messaging.wantsToBeFriend') }}</p>
             </div>
             <div class="flex gap-2">
               <button
@@ -553,7 +552,7 @@ onBeforeUnmount(() => {
         <!-- 載入中 -->
         <div v-if="isLoading" class="flex flex-col items-center justify-center py-16 text-slate-400">
           <div class="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin mb-3"></div>
-          <p class="text-sm">{{ t('loading') }}</p>
+          <p class="text-sm">{{ $t('loading') }}</p>
         </div>
 
         <!-- 空白狀態 -->
@@ -562,7 +561,7 @@ onBeforeUnmount(() => {
           class="flex flex-col items-center justify-center py-16 text-slate-400"
         >
           <span class="material-symbols-outlined text-5xl mb-3">group</span>
-          <p class="text-sm">{{ t('messaging.noFriends') }}</p>
+          <p class="text-sm">{{ $t('messaging.noFriends') }}</p>
         </div>
       </div>
     </template>
@@ -602,24 +601,24 @@ onBeforeUnmount(() => {
           <div class="w-10 h-1 bg-slate-200 dark:bg-slate-600 rounded-full mx-auto mb-5 sm:hidden" />
 
           <h2 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-4">
-            {{ t('messaging.addFriendTitle') }}
+            {{ $t('messaging.addFriendTitle') }}
           </h2>
 
           <!-- 成功狀態 -->
           <div v-if="inviteSuccess" class="flex flex-col items-center py-6 gap-3">
             <span class="material-symbols-outlined text-5xl text-sky-500">check_circle</span>
-            <p class="text-sm text-slate-600 dark:text-slate-300 text-center">{{ t('messaging.inviteSent') }}</p>
+            <p class="text-sm text-slate-600 dark:text-slate-300 text-center">{{ $t('messaging.inviteSent') }}</p>
             <button
               class="mt-2 px-6 py-2 rounded-full bg-sky-500 text-white text-sm font-medium"
               @click="showAddFriendModal = false"
             >
-              {{ t('messaging.close') }}
+              {{ $t('messaging.close') }}
             </button>
           </div>
 
           <!-- 輸入表單 -->
           <template v-else>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">{{ t('messaging.addFriendDesc') }}</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">{{ $t('messaging.addFriendDesc') }}</p>
 
             <div class="relative mb-3">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">mail</span>
@@ -628,7 +627,7 @@ onBeforeUnmount(() => {
                 type="email"
                 inputmode="email"
                 autocomplete="email"
-                :placeholder="t('messaging.emailPlaceholder')"
+                :placeholder="$t('messaging.emailPlaceholder')"
                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-400/40 transition"
                 @keydown.enter="sendFriendInvite"
               />
@@ -641,7 +640,7 @@ onBeforeUnmount(() => {
                 class="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                 @click="showAddFriendModal = false"
               >
-                {{ t('messaging.cancel') }}
+                {{ $t('messaging.cancel') }}
               </button>
               <button
                 class="flex-1 py-3 rounded-xl bg-sky-500 text-white text-sm font-medium flex items-center justify-center gap-1 hover:bg-sky-600 active:scale-95 transition disabled:opacity-50"
@@ -649,7 +648,7 @@ onBeforeUnmount(() => {
                 @click="sendFriendInvite"
               >
                 <div v-if="isSendingInvite" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <template v-else>{{ t('messaging.sendInvite') }}</template>
+                <template v-else>{{ $t('messaging.sendInvite') }}</template>
               </button>
             </div>
           </template>

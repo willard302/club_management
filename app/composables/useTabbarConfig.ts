@@ -6,7 +6,6 @@ import { baseTabbarItems } from '@/config/tabbar'
 
 export const useTabbarConfig = () => {
   const route = useRoute()
-  const { t } = useI18n()
 
   const routeToIndexMap: Record<string, number> = {
     '/': 0,
@@ -24,7 +23,7 @@ export const useTabbarConfig = () => {
   const tabbarItems = computed<TabbarItem[]>(() => {
     return baseTabbarItems.map((item, index) => ({
       ...item,
-      label: t(`tabbar.${item.label.toLowerCase()}`),
+      label: `tabbar.${item.label.toLowerCase()}`,
       fill: index === activeIndex.value
     }))
   })

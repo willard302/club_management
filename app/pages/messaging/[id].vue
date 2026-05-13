@@ -3,7 +3,6 @@ definePageMeta({
   layout: 'default'
 })
 
-const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const conversationId = route.params.id as string
@@ -193,7 +192,7 @@ onMounted(() => {
     <!-- 載入中（初次） -->
     <div v-if="isLoading && messages.length === 0" class="flex flex-col items-center justify-center h-full py-16 text-slate-400">
       <div class="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin mb-3"></div>
-      <p class="text-sm">{{ t('loading') }}</p>
+      <p class="text-sm">{{ $t('loading') }}</p>
     </div>
 
     <template v-for="(msg, index) in messages" :key="msg.id">
@@ -283,7 +282,7 @@ onMounted(() => {
       <textarea
         v-model="inputText"
         rows="1"
-        :placeholder="t('messaging.inputPlaceholder')"
+        :placeholder="$t('messaging.inputPlaceholder')"
         class="flex-1 resize-none rounded-2xl px-4 py-2.5 text-sm bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 border-0 focus:outline-none focus:ring-2 focus:ring-sky-400/40 max-h-32 overflow-y-auto transition"
         @keydown="handleKeydown"
         @input="autoResize"
