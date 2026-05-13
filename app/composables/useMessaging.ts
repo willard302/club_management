@@ -18,6 +18,10 @@ export function useMessaging() {
   let isRefreshingConversations = false
   let shouldRefreshConversationsAgain = false
   let conversationsReloadTimer: ReturnType<typeof setTimeout> | null = null
+  let isUnmounted = false;
+
+  const CHANNEL_NAME = 'messaging_realtime'
+  const CHANNEL_TOPIC = `realtime:${CHANNEL_NAME}`
 
   const loadConversations = async () => {
     if (isRefreshingConversations) {
@@ -83,8 +87,16 @@ export function useMessaging() {
   let realtimeChannel: ReturnType<typeof supabase.channel> | null = null
 
   const subscribeRealtime = () => {
+    if (realtimeChannel) return;
+
+    for (const ch of supabase.getChannels()) {
+      if ((ch as any).topic === CHANNEL_TOPIC) {
+        supabase.removeChannel(ch)
+      }
+    }
+
     realtimeChannel = supabase
-      .channel('messaging_realtime')
+      .channel('CHANNEL_NAME')
       // 對話變動
       .on(
         'postgres_changes',
@@ -103,7 +115,11 @@ export function useMessaging() {
         { event: '*', schema: 'public', table: 'friend_invitations' },
         () => { loadPendingInvitations() }
       )
-      .subscribe()
+      .subscribe((status) => {
+        if (status === 'CHANNEL_ERROR') {
+          console.error('[useMessaging] Realtime subscribe error.')
+        }
+      })
   }
 
   const unsubscribeRealtime = () => {
@@ -141,11 +157,14 @@ export function useMessaging() {
   }
 
   onMounted(async () => {
+    isUnmounted = false
     await loadAllData()
+    if (isUnmounted) return;
     subscribeRealtime()
   })
 
   onUnmounted(() => {
+    isUnmounted = true
     unsubscribeRealtime()
     if (conversationsReloadTimer) {
       clearTimeout(conversationsReloadTimer)
