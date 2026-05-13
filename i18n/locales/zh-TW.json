@@ -54,6 +54,8 @@
     "searchFriendsPlaceholder": "搜尋好友...",
     "noResults": "找不到相關對話",
     "noFriends": "尚無好友",
+    "emptyDirectConversation": "無人的對話",
+    "memberLeft": "{name} 已離開",
     "inputPlaceholder": "輸入訊息...",
     "addFriendTitle": "新增好友",
     "addFriendDesc": "輸入對方的 Email 來送出好友邀請。",

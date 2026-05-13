@@ -54,6 +54,8 @@
     "searchFriendsPlaceholder": "Search friends...",
     "noResults": "No conversations found",
     "noFriends": "No friends yet",
+    "emptyDirectConversation": "No one here",
+    "memberLeft": "{name} left the conversation",
     "inputPlaceholder": "Type a message...",
     "addFriendTitle": "Add Friend",
     "addFriendDesc": "Enter the email address to send a friend invitation.",
