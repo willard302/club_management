@@ -154,7 +154,7 @@ onMounted(() => {
 
 <template>
   <!-- Header -->
-  <header class="flex items-center gap-3 px-4 py-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-10 border-b border-sky-500/10">
+  <header class="w-full h-[var(--chat-header-h)] flex items-center gap-3 px-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md fixed top-0 z-10 border-b border-sky-500/10">
     <button
       class="p-2 rounded-lg hover:bg-sky-500/10 transition-colors text-slate-700 dark:text-slate-200"
       @click="router.back()"
@@ -181,7 +181,7 @@ onMounted(() => {
   <main
     ref="messagesContainerRef"
     class="flex-1 overflow-y-auto px-4 py-4 pb-28 space-y-1 bg-slate-50 dark:bg-slate-900 min-h-0"
-    style="height: calc(100dvh - 56px - 64px)"
+    style="margin-top: var(--chat-header-h); height: calc(100dvh - var(--chat-header-h) - var(--chat-input-h))"
     @scroll="handleScroll"
   >
     <!-- 載入更多 -->
@@ -330,6 +330,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
+:global(:root) {
+  --chat-header-h: 56px;
+  --chat-input-h: 64px;
+}
+
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
