@@ -106,7 +106,7 @@ onMounted(async () => {
     <!-- Content -->
     <div class="relative z-10 flex flex-col items-center justify-center gap-6 px-6 max-w-sm">
       <!-- Logo -->
-      <ZenLogo size="lg" />
+      <LogoIcon size="lg" />
 
       <!-- Title -->
         <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md text-center">

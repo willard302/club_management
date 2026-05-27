@@ -84,7 +84,7 @@ const handleRegister = async () => {
 
       <!-- Top Logo -->
       <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20">
-        <ZenLogo size="sm" />
+        <LogoIcon size="sm" />
       </div>
 
       <!-- Header Content in Hero Section -->

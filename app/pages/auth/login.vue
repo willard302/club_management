@@ -82,7 +82,7 @@ const handleGoogleLogin = async () => {
       <!-- Center Content -->
       <div class="flex flex-col items-center gap-6 w-full">
         <!-- Logo -->
-        <ZenLogo size="lg" />
+        <LogoIcon size="lg" />
 
         <!-- Title -->
         <div class="text-center">

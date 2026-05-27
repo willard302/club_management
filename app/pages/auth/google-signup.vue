@@ -151,7 +151,7 @@ onMounted(() => {
     <div class="relative z-10 flex flex-col items-center justify-between h-full px-6 py-12 overflow-y-auto">
       <!-- Header -->
       <div class="flex flex-col items-center gap-4 w-full">
-        <ZenLogo size="md" />
+        <LogoIcon size="md" />
         <h1 class="text-white text-2xl font-bold tracking-widest drop-shadow-md text-center">{{ $t('auth.googleSignup.title') }}</h1>
       </div>
 

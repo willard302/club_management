@@ -18,7 +18,7 @@ withDefaults(defineProps<Props>(), {
       <div class="flex-1 flex justify-start">
         <slot name="left-actions">
           <div class="flex items-center gap-2">
-            <ZenLogo size="sm" />
+            <LogoIcon size="sm" />
           </div>
         </slot>
       </div>
