@@ -163,7 +163,7 @@ const menuItems = computed<MenuItem[]>(() => [
           >
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-slate-400">language</span>
-              <span class="font-medium">{{ $t('language') }} ({{ locale === 'zh-TW' ? '繁體中文' : 'English' }})</span>
+              <span class="font-medium">{{ $t('language') }} ({{ locale === 'tw' ? '繁體中文' : 'English' }})</span>
             </div>
             <span class="material-symbols-outlined text-slate-300">swap_horiz</span>
           </div>
