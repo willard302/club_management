@@ -8,7 +8,7 @@ definePageMeta({
 const { t, locale, setLocale } = useI18n()
 
 const toggleLanguage = () => {
-  setLocale(locale.value === 'zh-TW' ? 'en-US' : 'zh-TW')
+  setLocale(locale.value === 'tw' ? 'en' : 'tw')
 }
 
 // 使用 useUser composable
