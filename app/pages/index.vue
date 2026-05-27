@@ -71,7 +71,7 @@ const stats = computed<StatCard[]>(() => [
 
 const menuItems = computed<MenuItem[]>(() => [
   { icon: 'person_edit', label: $t('editProfile'), path: '/userCenter/userInfo' },
-  { icon: 'lock_reset', label: $t('changePassword.title'), path: '/userCenter/changePassword' }
+  { icon: 'lock_reset', label: $t('auth.changePassword.title'), path: '/userCenter/changePassword' }
 ])
 </script>
 
