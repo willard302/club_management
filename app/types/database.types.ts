@@ -49,68 +49,6 @@ export type Database = {
           },
         ]
       }
-      conversation_members: {
-        Row: {
-          conversation_id: string
-          id: string
-          joined_at: string
-          last_read_at: string
-          user_id: string
-        }
-        Insert: {
-          conversation_id: string
-          id?: string
-          joined_at?: string
-          last_read_at?: string
-          user_id: string
-        }
-        Update: {
-          conversation_id?: string
-          id?: string
-          joined_at?: string
-          last_read_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "conversation_members_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      conversations: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          created_by: string
-          id: string
-          is_group: boolean
-          name: string | null
-          updated_at: string
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          created_by: string
-          id?: string
-          is_group?: boolean
-          name?: string | null
-          updated_at?: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          created_by?: string
-          id?: string
-          is_group?: boolean
-          name?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       events: {
         Row: {
           all_day: boolean
@@ -192,107 +130,12 @@ export type Database = {
         }
         Relationships: []
       }
-      friends: {
-        Row: {
-          created_at: string
-          friend_id: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          friend_id: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          friend_id?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      friend_invitations: {
-        Row: {
-          created_at: string
-          id: string
-          receiver_id: string
-          sender_id: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          receiver_id: string
-          sender_id: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          receiver_id?: string
-          sender_id?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      messages: {
-        Row: {
-          content: string
-          conversation_id: string
-          created_at: string
-          id: string
-          image_url: string | null
-          is_deleted: boolean
-          message_type: string
-          sender_id: string
-        }
-        Insert: {
-          content: string
-          conversation_id: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_deleted?: boolean
-          message_type?: string
-          sender_id: string
-        }
-        Update: {
-          content?: string
-          conversation_id?: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_deleted?: boolean
-          message_type?: string
-          sender_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      accept_friend_invitation: { Args: { invitation_id: string }; Returns: undefined }
-      delete_friendships: { Args: { friend_user_ids: string[] }; Returns: undefined }
       get_user_id_by_email: { Args: { email_addr: string }; Returns: string }
-      get_or_create_direct_conversation: {
-        Args: { other_user_id: string }
-        Returns: string
-      }
       get_user_profiles: {
         Args: { user_ids: string[] }
         Returns: {
@@ -302,6 +145,10 @@ export type Database = {
         }[]
       }
       is_conversation_member: { Args: { conv_id: string }; Returns: boolean }
+      reject_friend_invitation: {
+        Args: { invitation_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       attendance_status: "attendance" | "lateness" | "leave" | "absence"

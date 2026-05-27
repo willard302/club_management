@@ -9,9 +9,8 @@ export const useTabbarConfig = () => {
 
   const routeToIndexMap: Record<string, number> = {
     '/': 0,
-    '/messaging': 1,
-    '/meditation': 2,
-    '/calendar': 3,
+    '/meditation': 1,
+    '/calendar': 2,
     '/settings': 0,
     '/userCenter/userInfo': 0
   }
