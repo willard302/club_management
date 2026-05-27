@@ -115,7 +115,7 @@ onBeforeUnmount(async () => {
           @change="handleAvatarUpload"
         />
         <div class="text-center">
-          <p class="text-sky-500 font-semibold">{{ $t('systemTitle') }}</p>
+          <p class="text-sky-500 font-semibold">{{ $t('appTitle') }}</p>
         </div>
       </div>
 
