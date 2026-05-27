@@ -12,6 +12,12 @@
   "profile": "個人資料",
   "member": "會員",
   "loading": "載入中...",
+  "button": {
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "確認",
+    "change_password": "修改密碼"
+  },
   "changePassword": {
     "title": "修改密碼",
     "currentPassword": "當前密碼",

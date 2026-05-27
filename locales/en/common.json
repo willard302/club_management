@@ -12,6 +12,12 @@
   "profile": "Profile",
   "member": "Member",
   "loading": "Loading...",
+  "button": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "change_password": "Change Password"
+  },
   "changePassword": {
     "title": "Change Password",
     "currentPassword": "Current Password",

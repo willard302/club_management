@@ -266,7 +266,7 @@ const handleInput = () => {
             class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
           ></span>
           <span v-else class="material-symbols-outlined">save</span>
-          {{ isChangingPassword ? $t('changePassword.submitting') : $t('changePassword.submit') }}
+          {{ isChangingPassword ? $t('changePassword.submitting') : $t('button.confirm') }}
         </button>
       </div>
 
