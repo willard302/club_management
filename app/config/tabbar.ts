@@ -23,7 +23,6 @@ export const getTabbarItems = (currentPath: string): TabbarItem[] => {
 
 /**
  * 3. 自動生成 Index Map：透過基礎設定自動推導，不用手動維護數字
- * 結果依然會是 { '/': 0, '/ledger': 1, ... }
  */
 export const tabbarActiveIndexMap: Record<string, number> = baseTabbarItems.reduce(
   (map, item, index) => {

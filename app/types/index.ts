@@ -24,8 +24,6 @@ export interface Activity {
   icon: string
 }
 
-export * from './ledger'
-
 /**
  * Form Data
  */

@@ -115,7 +115,7 @@ onBeforeUnmount(async () => {
           @change="handleAvatarUpload"
         />
         <div class="text-center">
-          <p class="text-sky-500 font-semibold">{{ $t('ledger.systemTitle') }}</p>
+          <p class="text-sky-500 font-semibold">{{ $t('systemTitle') }}</p>
         </div>
       </div>
 
@@ -207,7 +207,7 @@ onBeforeUnmount(async () => {
         >
           <span v-if="!isSaving" class="material-symbols-outlined">save</span>
           <span v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-          {{ isSaving ? $t('changePassword.submitting') : $t('ledger.saveRecord') }}
+          {{ isSaving ? $t('changePassword.submitting') : 'ledger.saveRecord' }}
         </button>
 
         <!-- Change Password Button -->

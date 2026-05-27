@@ -70,7 +70,6 @@ const stats = computed<StatCard[]>(() => [
 ])
 
 const menuItems = computed<MenuItem[]>(() => [
-  { icon: 'account_balance_wallet', label: $t('ledger.title'), path: '/ledger' },
   { icon: 'person_edit', label: $t('editProfile'), path: '/userCenter/userInfo' },
   { icon: 'lock_reset', label: $t('changePassword.title'), path: '/userCenter/changePassword' }
 ])

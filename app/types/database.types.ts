@@ -156,57 +156,6 @@ export type Database = {
         }
         Relationships: []
       }
-      ledger: {
-        Row: {
-          amount: number
-          category: string
-          created_at: string | null
-          date: string
-          finance_id: string
-          icon: string
-          id: string
-          is_approved: boolean | null
-          receipt_path: string | null
-          requester_id: string
-          status: string
-          title: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          amount: number
-          category?: string
-          created_at?: string | null
-          date: string
-          finance_id?: string
-          icon?: string
-          id?: string
-          is_approved?: boolean | null
-          receipt_path?: string | null
-          requester_id: string
-          status?: string
-          title: string
-          type: string
-          updated_at?: string | null
-        }
-        Update: {
-          amount?: number
-          category?: string
-          created_at?: string | null
-          date?: string
-          finance_id?: string
-          icon?: string
-          id?: string
-          is_approved?: boolean | null
-          receipt_path?: string | null
-          requester_id?: string
-          status?: string
-          title?: string
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       meditation_sessions: {
         Row: {
           completed: boolean | null
