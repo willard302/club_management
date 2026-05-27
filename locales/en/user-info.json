@@ -1,0 +1,24 @@
+{
+  "userInfo": {
+    "title": "Edit Profile",
+    "name": "Name",
+    "studentId": "Student ID",
+    "department": "Department",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderOther": "Other",
+    "bio": "Bio",
+    "bioPlaceholder": "Share your zen journey...",
+    "saveSuccess": "Profile updated",
+    "saveError": "Failed to save changes",
+    "avatarSuccess": "Avatar uploaded",
+    "avatarError": "Failed to upload avatar",
+    "placeholderName": "Enter name",
+    "placeholderStudentId": "Enter student ID",
+    "placeholderDepartment": "e.g. Computer Science",
+    "placeholderDOB": "Select date",
+    "placeholderGender": "Select gender"
+  }
+}

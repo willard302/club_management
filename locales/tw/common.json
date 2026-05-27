@@ -18,33 +18,6 @@
     "confirm": "確認",
     "change_password": "修改密碼"
   },
-  "changePassword": {
-    "title": "修改密碼",
-    "currentPassword": "當前密碼",
-    "newPassword": "新密碼",
-    "confirmPassword": "確認新密碼",
-    "placeholderCurrent": "輸入當前密碼",
-    "placeholderNew": "輸入新密碼",
-    "placeholderConfirm": "確認新密碼",
-    "strength": "密碼強度",
-    "match": "密碼相符",
-    "noMatch": "密碼不相符",
-    "requirements": "密碼要求",
-    "reqLength": "至少6個字符",
-    "reqCase": "包含大小寫字母",
-    "reqNumber": "包含數字",
-    "submit": "確認修改",
-    "submitting": "修改中...",
-    "success": "密碼已成功修改",
-    "errorEmpty": "請填寫所有必填欄位",
-    "errorLength": "新密碼至少需要6個字符",
-    "errorNoMatch": "新密碼和確認密碼不相符",
-    "weak": "弱",
-    "medium": "中",
-    "strong": "強",
-    "veryStrong": "非常強",
-    "extremelyStrong": "極強"
-  },
   "tabbar": {
     "home": "首頁",
     "meditation": "禪定",
@@ -61,97 +34,10 @@
     "completed": "完成",
     "partial": "部分完成"
   },
-  "userInfo": {
-    "title": "編輯個人資料",
-    "name": "姓名",
-    "studentId": "學號",
-    "department": "系級",
-    "dateOfBirth": "出生年月日",
-    "gender": "性別",
-    "genderMale": "男",
-    "genderFemale": "女",
-    "genderOther": "其他",
-    "bio": "個人簡介",
-    "bioPlaceholder": "分享你的習禪心得...",
-    "saveSuccess": "個人資料已更新",
-    "saveError": "保存修改失敗",
-    "avatarSuccess": "大頭照上傳成功",
-    "avatarError": "上傳大頭照失敗",
-    "placeholderName": "請輸入姓名",
-    "placeholderStudentId": "請輸入學號",
-    "placeholderDepartment": "例：資工系三年級",
-    "placeholderDOB": "請選擇日期",
-    "placeholderGender": "請選擇性別"
-  },
   "Role": {
     "admin": "管理員",
     "member": "會員",
     "guest": "訪客"
   },
-  "appTitle": "領袖會社青團",
-  "auth": {
-    "login": {
-      "emailPlaceholder": "輸入你的 Email",
-      "passwordPlaceholder": "輸入你的密碼",
-      "submit": "登入",
-      "loggingIn": "登入中...",
-      "forgotPassword": "忘記密碼？",
-      "signUp": "註冊",
-      "orContinueWith": "或使用以下方式繼續",
-      "loginWithGoogle": "使用 Google 登入",
-      "errorEmpty": "請輸入 Email 和密碼。",
-      "errorLogin": "登入時發生錯誤。"
-    },
-    "register": {
-      "heroSubtitle": "加入我們的平靜社群",
-      "title": "建立帳號",
-      "description": "開始你的內心平靜與正念之旅。",
-      "passwordPlaceholder": "建立密碼",
-      "confirmPasswordPlaceholder": "再次輸入密碼",
-      "submit": "註冊",
-      "registering": "註冊中...",
-      "alreadyHaveAccount": "已有帳號？",
-      "backToLogin": "返回登入",
-      "errorMismatch": "密碼不相符。",
-      "errorEmpty": "請填寫所有必填欄位。",
-      "successMessage": "註冊成功！請確認您的電子郵件以啟用帳號。",
-      "errorRegister": "註冊時發生錯誤。"
-    },
-    "forgetPassword": {
-      "title": "忘記密碼",
-      "description": "請輸入您的電子郵件以重設密碼",
-      "emailPlaceholder": "輸入你的 Email",
-      "sendCode": "發送驗證碼",
-      "contactAdmin": "聯繫社團管理員"
-    },
-    "googleSignup": {
-      "title": "完善個人資料",
-      "fullNamePlaceholder": "全名",
-      "studentIdPlaceholder": "學號",
-      "departmentPlaceholder": "科系（例：工程、商管）",
-      "genderNotSpecified": "未指定",
-      "genderMale": "男",
-      "genderFemale": "女",
-      "genderOther": "其他",
-      "bioPlaceholder": "個人簡介（選填）",
-      "submit": "完成註冊",
-      "completing": "完成中...",
-      "alreadyCompleted": "已完成了？",
-      "goHome": "回首頁",
-      "errorName": "請輸入您的全名",
-      "errorStudentId": "請輸入您的學號",
-      "errorDepartment": "請選擇您的科系",
-      "errorAuth": "使用者未登入，請重新登入。",
-      "errorLoadInfo": "載入使用者資訊失敗",
-      "errorComplete": "完成註冊失敗"
-    },
-    "confirm": {
-      "title": "電子郵件確認",
-      "verifying": "正在驗證您的電子郵件...",
-      "backToLogin": "返回登入",
-      "successMessage": "電子郵件驗證成功！即將跳轉首頁...",
-      "errorNoToken": "找不到確認連結，即將跳轉登入頁...",
-      "errorConfirm": "電子郵件確認時發生錯誤"
-    }
-  }
+  "appTitle": "領袖會社青團"
 }
