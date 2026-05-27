@@ -2,7 +2,6 @@
   "userInfo": {
     "title": "編輯個人資料",
     "name": "姓名",
-    "department": "系級",
     "dateOfBirth": "出生年月日",
     "gender": "性別",
     "genderMale": "男",

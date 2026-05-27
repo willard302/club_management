@@ -2,7 +2,6 @@
   "userInfo": {
     "title": "Edit Profile",
     "name": "Name",
-    "department": "Department",
     "dateOfBirth": "Date of Birth",
     "gender": "Gender",
     "genderMale": "Male",
