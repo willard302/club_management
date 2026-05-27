@@ -1,4 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const sanitizedSupabaseUrl = process.env.SUPABASE_URL
+  ?.replace(/\/rest\/v1\/?$/, '')
+  .replace(/\/$/, '')
+
 export default defineNuxtConfig({
   srcDir: './app',
   compatibilityDate: '2025-07-15',
@@ -42,6 +46,8 @@ export default defineNuxtConfig({
     strategy: 'no_prefix'
   },
   supabase: {
+    url: sanitizedSupabaseUrl,
+    key: process.env.SUPABASE_KEY,
     redirectOptions: {
       login: '/auth/login',
       callback: '/auth/confirm',

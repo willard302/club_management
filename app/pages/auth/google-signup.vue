@@ -27,6 +27,14 @@ const googleUserInfo = ref<{
   picture?: string
 } | null>(null)
 
+const hasRequiredProfile = (metadata: Record<string, any>) => {
+  const studentId = metadata.student_id
+  const department = metadata.department
+
+  return Boolean(studentId && String(studentId).trim()) &&
+    Boolean(department && String(department).trim())
+}
+
 // 頁面載入時取得 Google 使用者資訊
 const loadGoogleUserInfo = async () => {
   try {
@@ -40,11 +48,17 @@ const loadGoogleUserInfo = async () => {
       return
     }
 
+    const metadata = user.user_metadata || {}
+    if (hasRequiredProfile(metadata)) {
+      router.push('/')
+      return
+    }
+
     // 從 user 物件取得 Google 提供的資訊
     googleUserInfo.value = {
-      name: user.user_metadata?.name || '',
+      name: metadata.name || metadata.full_name || '',
       email: user.email || '',
-      picture: user.user_metadata?.picture || ''
+      picture: metadata.picture || ''
     }
 
     // 預填名字

@@ -44,14 +44,24 @@ const handleLogin = async () => {
 }
 
 const handleGoogleLogin = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: 'https://vvbtzvedcvhxibozbryz.supabase.co/auth/v1/callback'
-    }
-  })
+  try {
+    loading.value = true
+    errorMessage.value = ''
 
-  if (error) errorMessage.value = error.message
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/confirm`
+      }
+    })
+
+    if (error) {
+      throw error
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || $t('auth.login.errorLogin')
+    loading.value = false
+  }
 }
 </script>
 

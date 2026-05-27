@@ -12,15 +12,43 @@ const supabase = useSupabaseClient()
 const router = useRouter()
 const route = useRoute()
 
+const hasRequiredProfile = (metadata: Record<string, any>) => {
+  const studentId = metadata.student_id
+  const department = metadata.department
+
+  return Boolean(studentId && String(studentId).trim()) &&
+    Boolean(department && String(department).trim())
+}
+
+const waitForAuthenticatedUser = async () => {
+  for (let i = 0; i < 5; i += 1) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      return user
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 300))
+  }
+
+  return null
+}
+
 onMounted(async () => {
   try {
+    const oauthError = route.query.error_description as string | undefined
+
+    if (oauthError) {
+      errorMessage.value = decodeURIComponent(oauthError)
+      return
+    }
+
     // 檢查是否有郵件確認 token
     const token = route.query.token as string | undefined
     const type = route.query.type as string | undefined
 
     if (token && type === 'email') {
       // 驗證郵件確認 token
-      const { data: { user }, error } = await supabase.auth.verifyOtp({
+      const { error } = await supabase.auth.verifyOtp({
         email: route.query.email as string,
         token: token,
         type: 'email'
@@ -37,12 +65,23 @@ onMounted(async () => {
         }, 2000)
       }
     } else {
-      // 若無 token，這通常表示是 OAuth 回調（由伺服器端的 callback.ts 己經處理）
-      // 顯示等待訊息或直接重定向
+      // 無 email token 視為 OAuth 回調
+      const user = await waitForAuthenticatedUser()
+
+      if (!user) {
         errorMessage.value = $t('auth.confirm.errorNoToken')
-      setTimeout(() => {
-        router.push('/auth/login')
-      }, 2000)
+        setTimeout(() => {
+          router.push('/auth/login')
+        }, 2000)
+        return
+      }
+
+      const metadata = user.user_metadata || {}
+      if (hasRequiredProfile(metadata)) {
+        router.push('/')
+      } else {
+        router.push('/auth/google-signup')
+      }
     }
   } catch (err: any) {
     errorMessage.value = err.message || $t('auth.confirm.errorConfirm')
