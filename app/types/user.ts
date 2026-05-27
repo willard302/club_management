@@ -40,7 +40,7 @@ export interface UserProfile {
   totalMeditation: string
   monthlyCheckIns: string
   department: string
-  studentId: string
+  points: number
   avatar?: string
   dateOfBirth?: string
   gender?: string

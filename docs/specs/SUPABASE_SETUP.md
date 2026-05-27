@@ -159,7 +159,7 @@ FOR DELETE USING (
 - **name**: 用戶名稱
 - **role**: 用戶角色
 - **department**: 學系
-- **student_id**: 學號
+- **points**: 點數
 - **join_date**: 加入日期
 - **total_meditation**: 總禪定時數
 - **monthly_checkins**: 本月打卡次數

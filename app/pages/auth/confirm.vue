@@ -13,10 +13,10 @@ const router = useRouter()
 const route = useRoute()
 
 const hasRequiredProfile = (metadata: Record<string, any>) => {
-  const studentId = metadata.student_id
+  const points = metadata.points
   const department = metadata.department
 
-  return Boolean(studentId && String(studentId).trim()) &&
+  return Boolean(points && String(points).trim()) &&
     Boolean(department && String(department).trim())
 }
 

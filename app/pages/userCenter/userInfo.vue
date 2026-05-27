@@ -144,11 +144,11 @@ onBeforeUnmount(async () => {
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.studentId') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.points') }}</label>
           <input 
-            v-model="formData.studentId"
+            v-model="formData.points"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            :placeholder="$t('userInfo.placeholderStudentId')" 
+            :placeholder="$t('userInfo.placeholderPoints')" 
             type="text"
             :disabled="isLoading"
           />

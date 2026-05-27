@@ -2,7 +2,6 @@
   "userInfo": {
     "title": "Edit Profile",
     "name": "Name",
-    "studentId": "Student ID",
     "department": "Department",
     "dateOfBirth": "Date of Birth",
     "gender": "Gender",
@@ -16,7 +15,7 @@
     "avatarSuccess": "Avatar uploaded",
     "avatarError": "Failed to upload avatar",
     "placeholderName": "Enter name",
-    "placeholderStudentId": "Enter student ID",
+    "placeholderPoints": "Enter points",
     "placeholderDepartment": "e.g. Computer Science",
     "placeholderDOB": "Select date",
     "placeholderGender": "Select gender"

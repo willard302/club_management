@@ -90,7 +90,7 @@ export function useUser() {
   const updateUserProfile = async (
     profileData: {
       name?: string
-      studentId?: string
+      points?: number
       role?: string
       department?: string
       dateOfBirth?: string
@@ -109,7 +109,7 @@ export function useUser() {
 
       // 更新本地狀態
       if (profileData.name !== undefined) userProfile.value.name = profileData.name
-      if (profileData.studentId !== undefined) userProfile.value.studentId = profileData.studentId
+      if (profileData.points !== undefined) userProfile.value.points = profileData.points
       if (profileData.role !== undefined) userProfile.value.role = profileData.role as Role
       if (profileData.department !== undefined) userProfile.value.department = profileData.department
       if (profileData.dateOfBirth !== undefined) userProfile.value.dateOfBirth = profileData.dateOfBirth
@@ -175,7 +175,7 @@ export function useUser() {
    */
   const completeGoogleSignup = async (googleSignupData: {
     fullName: string
-    studentId: string
+    points: number
     department: string
     dateOfBirth?: string
     gender?: string
@@ -189,7 +189,7 @@ export function useUser() {
       // 更新用戶個人資料
       await userService.updateUserProfile(supabase, {
         name: googleSignupData.fullName,
-        studentId: googleSignupData.studentId,
+        points: googleSignupData.points,
         department: googleSignupData.department,
         dateOfBirth: googleSignupData.dateOfBirth,
         gender: googleSignupData.gender,

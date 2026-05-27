@@ -12,7 +12,6 @@
 ```typescript
 await userService.updateUserProfile(supabase, {
   name: '新名字',
-  studentId: '學號',
   department: '系級',
   dateOfBirth: '生日',
   gender: '性別',
@@ -28,10 +27,10 @@ await userService.updateDisplayName(supabase, '新名字', {
 })
 ```
 
-#### `initializeUserMetadata(supabase, displayName, studentId)`
+#### `initializeUserMetadata(supabase, displayName)`
 **初始化方法** - 在註冊後調用
 ```typescript
-await userService.initializeUserMetadata(supabase, '全名', '學號')
+await userService.initializeUserMetadata(supabase, '全名')
 ```
 
 ---
@@ -45,8 +44,7 @@ await userService.initializeUserMetadata(supabase, '全名', '學號')
 const { updateUserProfile } = useUser()
 
 await updateUserProfile({
-  name: '新名字',
-  studentId: '學號'
+  name: '新名字'
 })
 ```
 
@@ -64,7 +62,7 @@ await updateDisplayName('新名字', {
 ```typescript
 const { updateUserInfo } = useUserInfo()
 
-// formData.value.name, studentId, department 等已自動綁定
+// formData.value.name, department 等已自動綁定
 
 await updateUserInfo() // 更新並反映在 formData 中
 ```
@@ -81,7 +79,7 @@ Supabase Auth metadata:
 {
   name: "fullName",
   display_name: "fullName",
-  student_id: "studentId",
+  points: 0,
   role: "Club Member",
   ...
 }

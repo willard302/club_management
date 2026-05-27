@@ -9,7 +9,7 @@ definePageMeta({
 
 const formData = ref<RegisterFormData>({
   fullName: '',
-  studentId: '',
+  points: 0,
   email: '',
   password: '',
   confirmPassword: ''
@@ -43,7 +43,7 @@ const handleRegister = async () => {
       password: formData.value.password,
       options: {
         data: {
-          student_id: formData.value.studentId,
+          points: formData.value.points,
           name: formData.value.fullName, // 暫時設定，之後會被 initializeUserMetadata 覆蓋
           display_name: formData.value.fullName
         }
@@ -56,8 +56,7 @@ const handleRegister = async () => {
     if (data.user) {
       await userService.initializeUserMetadata(
         supabase,
-        formData.value.fullName,
-        formData.value.studentId
+        formData.value.fullName
       )
     }
     

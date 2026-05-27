@@ -24,7 +24,7 @@ export const userService = {
         totalMeditation: metadata.total_meditation || '0h',
         monthlyCheckIns: metadata.monthly_checkins || '0次',
         department: metadata.department || 'Department',
-        studentId: metadata.student_id || '000000000',
+        points: metadata.points || 0,
         avatar: metadata.avatar_url || undefined,
         dateOfBirth: metadata.date_of_birth,
         gender: metadata.gender,
@@ -40,7 +40,7 @@ export const userService = {
         totalMeditation: '12.5h',
         monthlyCheckIns: '8次',
         department: 'Department Name',
-        studentId: '410012345',
+        points: 9999,
         avatar: undefined,
         dateOfBirth: undefined,
         gender: undefined,
@@ -170,7 +170,7 @@ export const userService = {
   async initializeUserMetadata(
     supabase: any,
     displayName: string,
-    studentId?: string
+    points: number = 0
   ): Promise<void> {
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -185,7 +185,7 @@ export const userService = {
           ...currentMetadata,
           name: displayName, // display_name 綁定
           display_name: displayName, // 備份字段
-          student_id: studentId || '',
+          points: points || 0,
           join_date: new Date().toISOString().split('T')[0],
           role: 'Club Member',
           department: 'Department',
@@ -210,7 +210,7 @@ export const userService = {
     supabase: any,
     profileData: {
       name?: string
-      studentId?: string
+      points?: number
       role?: string
       department?: string
       dateOfBirth?: string
@@ -235,8 +235,8 @@ export const userService = {
         updateData.display_name = profileData.name
       }
 
-      if (profileData.studentId !== undefined) {
-        updateData.student_id = profileData.studentId
+      if (profileData.points !== undefined) {
+        updateData.points = profileData.points
       }
 
       if (profileData.role !== undefined) {

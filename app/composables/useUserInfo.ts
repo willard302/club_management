@@ -11,7 +11,7 @@ export function useUserInfo() {
   // 表單狀態
   const formData = ref({
     name: '',
-    studentId: '',
+    points: 0,
     department: '',
     dateOfBirth: '',
     gender: '',
@@ -33,7 +33,7 @@ export function useUserInfo() {
 
       formData.value = {
         name: profile.name || '',
-        studentId: profile.studentId || '',
+        points: profile.points || 0,
         department: profile.department || '',
         dateOfBirth: profile.dateOfBirth || '',
         gender: profile.gender || '',
@@ -57,7 +57,7 @@ export function useUserInfo() {
       // 使用統一的 updateUserProfile 方法更新所有字段
       await userService.updateUserProfile(supabase, {
         name: formData.value.name,
-        studentId: formData.value.studentId,
+        points: formData.value.points,
         department: formData.value.department,
         dateOfBirth: formData.value.dateOfBirth,
         gender: formData.value.gender,

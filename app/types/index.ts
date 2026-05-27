@@ -33,7 +33,7 @@ export interface LoginFormData {
 
 export interface RegisterFormData {
   fullName: string
-  studentId: string
+  points: number
   email: string
   password: string
   confirmPassword: string
@@ -41,7 +41,7 @@ export interface RegisterFormData {
 
 export interface GoogleSignupFormData {
   fullName: string
-  studentId: string
+  points: number
   department: string
   dateOfBirth: string
   gender: string

@@ -12,7 +12,7 @@ const { completeGoogleSignup } = useUser()
 
 const formData = ref<GoogleSignupFormData>({
   fullName: '',
-  studentId: '',
+  points: 0,
   department: '',
   dateOfBirth: '',
   gender: 'Not specified',
@@ -28,10 +28,10 @@ const googleUserInfo = ref<{
 } | null>(null)
 
 const hasRequiredProfile = (metadata: Record<string, any>) => {
-  const studentId = metadata.student_id
+  const points = metadata.points
   const department = metadata.department
 
-  return Boolean(studentId && String(studentId).trim()) &&
+  return Boolean(points && String(points).trim()) &&
     Boolean(department && String(department).trim())
 }
 
@@ -78,8 +78,8 @@ const handleSubmit = async () => {
     return
   }
 
-  if (!formData.value.studentId.trim()) {
-    errorMessage.value = $t('auth.googleSignup.errorStudentId')
+  if (!formData.value.points) {
+    errorMessage.value = $t('auth.googleSignup.errorPoints')
     return
   }
 
@@ -113,7 +113,7 @@ const handleSubmit = async () => {
     // 完成用戶資料補填
     await completeGoogleSignup({
       fullName: formData.value.fullName,
-      studentId: formData.value.studentId,
+      points: formData.value.points,
       department: formData.value.department,
       dateOfBirth: formData.value.dateOfBirth,
       gender: formData.value.gender,
@@ -183,12 +183,12 @@ onMounted(() => {
           />
         </div>
 
-        <!-- Student ID Input -->
+        <!-- Points Input -->
         <div class="glass-effect rounded-xl p-1">
           <input
-            v-model="formData.studentId"
-            type="text"
-            :placeholder="$t('auth.googleSignup.studentIdPlaceholder')"
+            v-model="formData.points"
+            type="number"
+            :placeholder="$t('auth.googleSignup.pointsPlaceholder')"
             class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
           />
         </div>

@@ -134,8 +134,8 @@ const menuItems = computed<MenuItem[]>(() => [
             <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department || $t('loading') }}</p>
           </div>
           <div class="text-right">
-            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('studentId') }}</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.studentId || $t('loading') }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('points') }}</p>
+            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.points || $t('loading') }}</p>
           </div>
         </div>
       </div>
