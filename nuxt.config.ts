@@ -31,19 +31,33 @@ export default defineNuxtConfig({
   },
 
   imports: {
-    autoImport: true
+    dirs: ['app/stores', 'app/composables']
   },
 
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@vant/nuxt', '@nuxtjs/i18n'],
 
   i18n: {
+    langDir: '../locales/',
+    strategy: 'prefix_except_default',
     locales: [
-      { code: 'zh-TW', name: '繁體中文', file: 'zh-TW.json' },
-      { code: 'en-US', name: 'English', file: 'en-US.json' }
+      { 
+        code: 'tw', 
+        language: 'zh-TW',
+        name: '繁體中文', 
+        files: [
+          'tw/common.json'
+        ]
+      },
+      { 
+        code: 'en', 
+        language: 'en-US',
+        name: 'English', 
+        files: [
+          'en/common.json'
+        ]
+      }
     ],
-    langDir: 'locales/',
-    defaultLocale: 'zh-TW',
-    strategy: 'no_prefix'
+    defaultLocale: 'tw',
   },
   supabase: {
     url: sanitizedSupabaseUrl,
