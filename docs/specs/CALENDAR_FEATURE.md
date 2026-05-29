@@ -7,31 +7,35 @@
 - `title`: string (必填, max 50 chars)
 - `start_at`: ISO8601 DateTime
 - `end_at`: ISO8601 DateTime
-- `category`: 'meeting' | 'social' | 'official'
-- `created_by`: UserID (關聯至成員表)
+- `all_day`: boolean
+- `color`: string
+- `location`: string
+- `description`: string
+- `recurrence`: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
+- `recurrence_end_at`: ISO8601 DateTime
+- `created_by`: UserID (關聯至 auth.users)
 
 **Role 型別**（定義於 `app/types/user.ts`）：
-```ts
-type Role = '管理員' | '師資' | '輔導員' | '社長' | '副社長' | '家族長' | '社員'
-```
-- `SENIOR_ROLES`：可編輯/刪除所有活動（管理員、師資、輔導員、社長）
-- `EDITOR_ROLES`：可新增活動（SENIOR_ROLES + 副社長、家族長）
+對應 Supabase `user_metadata.role` 欄位：
+- `SENIOR_ROLES`：可編輯/刪除所有活動 (`Role.admin`, `Role.teacher`, `Role.counselor`, `Role.president`)
+- `EDITOR_ROLES`：可新增活動 (`SENIOR_ROLES` + `Role.vice_president`, `Role.team_director`)
 
-## 3. 行為邏輯 (Business Rules)
+## 3. 業務規則 (Business Rules)
 - **檢視權限**：所有社團成員皆可查看所有公開活動。
 - **編輯權限**：
-  - 只有角色為 `管理員`、`師資`、`輔導員`、`社長`、`副社長`、`家族長` 的用戶可新增活動。
-  - `管理員`、`師資`、`輔導員`、`社長`的用戶可以編輯所有創建的活動。
-  - `副社長`、`家族長`的用戶只能編輯自己創建的活動。
+  - 只有角色為 `EDITOR_ROLES` 的用戶可新增活動。
+  - `SENIOR_ROLES` 的用戶可以編輯所有活動。
+  - `Role.vice_president`、`Role.team_director` 的用戶只能編輯自己創建的活動。
 - **刪除權限**：
-  - 高層角色（`管理員` / `師資` / `輔導員` / `社長`）可刪除所有活動
-  - `副社長` / `家族長`只能刪除自己建立的
+  - `SENIOR_ROLES` 可刪除所有活動。
+  - `Role.vice_president`、`Role.team_director` 只能刪除自己建立的活動。
 - **時間校驗**：
   - `end_at` 必須晚於 `start_at`。
   - 禁止建立跨度超過 7 天的單一活動。
 - **狀態管理**：
   - 切換月份時，應自動觸發 API 讀取該月份起訖日內的資料。
 
-  ## 4. UI 互動規範 (現有格式改用 Vant 整合)
+## 4. UI 互動規範 (現有格式改用 Vant 整合)
 - 使用 `van-calendar` 展示。
 - 點擊有活動的日期時，下方彈出 `van-action-sheet` 顯示詳細清單。
+- 點擊清單中的活動，進入詳情或編輯頁面。

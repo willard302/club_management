@@ -4,8 +4,8 @@
 
 ### 角色對應表
 
-| 前端顯示 | DB enum (`members.club_role`) |
-|----------|-------------------------------|
+| 前端顯示 | DB enum (`club_role`) |
+|----------|-----------------------|
 | 管理員 | `Role.admin` |
 | 師資 | `Role.teacher` |
 | 輔導員 | `Role.counselor` |
@@ -14,16 +14,18 @@
 | 家族長 | `Role.team_director` |
 | 社員 | `Role.member` |
 
+> **重要：** 目前角色資訊存儲於 `auth.users.raw_user_meta_data->>'role'`。
+
 ### 1. 建立 Helper Function（SECURITY DEFINER）
 
-此 function 可繞過 members 表的 RLS，安全取得目前使用者的角色：
+此 function 負責安全取得目前使用者的角色：
 
 ```sql
 CREATE OR REPLACE FUNCTION public.get_my_club_role()
 RETURNS text
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public
 AS $$
-  SELECT club_role::text FROM public.members WHERE id = auth.uid() LIMIT 1;
+  SELECT (raw_user_meta_data->>'role')::text FROM auth.users WHERE id = auth.uid() LIMIT 1;
 $$;
 ```
 
