@@ -17,6 +17,7 @@
 | 全天活動 | `all_day` | `boolean` | — | 預設 `false` |
 | 重複 | `recurrence` | `event_recurrence` enum | — | 預設 `'none'` |
 | 地點 | `location` | `string` | — | |
+| 參與者 | `participants` | `string[]` | — | |
 | 說明 | `description` | `string` | — | |
 | 顏色 | `color` | `string` | — | 預設 `'#2b9dee'` |
 
@@ -30,13 +31,14 @@
 // app/types/event.ts
 interface CreateEventPayload {
   title: string
-  description?: string
-  location?: string
   start_at: string   // ISO8601
   end_at: string     // ISO8601
   all_day?: boolean
-  color?: string
   recurrence?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
+  location?: string
+  participants?: string[]
+  description?: string
+  color?: string
 }
 ```
 
