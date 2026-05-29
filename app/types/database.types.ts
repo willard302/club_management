@@ -109,38 +109,10 @@ export type Database = {
           name: string
         }[]
       }
-      is_conversation_member: { Args: { conv_id: string }; Returns: boolean }
-      reject_friend_invitation: {
-        Args: { invitation_id: string }
-        Returns: undefined
-      }
     }
     Enums: {
       attendance_status: "attendance" | "lateness" | "leave" | "absence"
-      club_role:
-        | "Role.admin"
-        | "Role.teacher"
-        | "Role.counselor"
-        | "Role.president"
-        | "Role.vice_president"
-        | "Role.team_director"
-        | "Role.deputy_team_director"
-        | "Role.committee_member"
-        | "Role.member"
-        | "Role.new_member"
-        | "Role.guest"
       event_recurrence: "none" | "daily" | "weekly" | "monthly" | "yearly"
-      grade:
-        | "Grade.freshman"
-        | "Grade.sophomore"
-        | "Grade.junior"
-        | "Grade.senior"
-        | "Grade.graduate"
-      hierarchy:
-        | "Hierarchy.core_officers"
-        | "Hierarchy.officers"
-        | "Hierarchy.members"
-        | "Hierarchy.associate_members"
     }
     CompositeTypes: {
       event_extended: {
@@ -281,33 +253,7 @@ export const Constants = {
   public: {
     Enums: {
       attendance_status: ["attendance", "lateness", "leave", "absence"],
-      club_role: [
-        "Role.admin",
-        "Role.teacher",
-        "Role.counselor",
-        "Role.president",
-        "Role.vice_president",
-        "Role.team_director",
-        "Role.deputy_team_director",
-        "Role.committee_member",
-        "Role.member",
-        "Role.new_member",
-        "Role.guest",
-      ],
       event_recurrence: ["none", "daily", "weekly", "monthly", "yearly"],
-      grade: [
-        "Grade.freshman",
-        "Grade.sophomore",
-        "Grade.junior",
-        "Grade.senior",
-        "Grade.graduate",
-      ],
-      hierarchy: [
-        "Hierarchy.core_officers",
-        "Hierarchy.officers",
-        "Hierarchy.members",
-        "Hierarchy.associate_members",
-      ],
     },
   },
 } as const
