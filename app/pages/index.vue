@@ -1,214 +1,621 @@
 <script setup lang="ts">
-import type { StatCard, MenuItem } from '@/types';
+import { onMounted, computed } from 'vue'
+import { format as fnsFormat } from 'date-fns'
+import { eventService } from '@/services/eventService'
 
 definePageMeta({
   layout: 'default'
 })
 
-const { t, locale, setLocale } = useI18n()
-
-const toggleLanguage = () => {
-  setLocale(locale.value === 'tw' ? 'en' : 'tw')
+interface AnnouncementItem {
+  id: string
+  category: '活動' | '公告'
+  title: string
+  date: string
+  time: string
+  content: string
 }
 
-// 使用 useUser composable
-const {
-  userProfile,
-  isUploadingAvatar,
-  loadUserData,
-  uploadAvatar
-} = useUser()
+const router = useRouter()
+const { addToast } = useToast()
 
-// 使用 Toast
-const { error: showErrorToast } = useToast()
+const { userProfile, loadUserData, isLoading: isUserLoading } = useUser()
+const { stats, loadStats, isLoading: isStatsLoading, selectedPeriod } = useMeditationStats()
 
-// 載入用戶資料
-onMounted(() => {
-  loadUserData()
+const meditationTargetMinutes = 40
+const isEventLoading = ref(false)
+const upcomingEventTitle = ref('2024 全球校友禪修大會')
+const upcomingEventMeta = ref('下週六 09:00，主禮堂')
+
+const announcements = ref<AnnouncementItem[]>([
+  {
+    id: '1',
+    category: '活動',
+    title: '北區校友聯誼會 - 報名開始',
+    date: '2024.10.24',
+    time: '14:30',
+    content: '誠摯邀請本會社員及校友參與 11 月聯誼活動，歡迎攜伴參加。報名截止日前完成登記即可獲得活動紀念品。'
+  },
+  {
+    id: '2',
+    category: '公告',
+    title: '113 學年度社團經費審核報告已公開',
+    date: '2024.10.23',
+    time: '18:20',
+    content: '本學期經費使用已完成第一階段審核，細項與執行成果已更新於社團公告區，歡迎社員檢視並提出建議。'
+  }
+])
+
+const userPoints = computed(() => userProfile.value?.points ?? 0)
+const todayMinutes = computed(() => stats.value?.totalMinutes ?? 0)
+const todayProgress = computed(() => Math.min(100, Math.round((todayMinutes.value / meditationTargetMinutes) * 100)))
+const remainingMinutes = computed(() => Math.max(meditationTargetMinutes - todayMinutes.value, 0))
+
+const isLoading = computed(() => isUserLoading.value || isStatsLoading.value)
+
+const progressStrokeOffset = computed(() => {
+  const radius = 32
+  const circumference = 2 * Math.PI * radius
+  return circumference - (todayProgress.value / 100) * circumference
 })
 
-// 檔案輸入引用
-const fileInput = ref<HTMLInputElement | null>(null)
-
-// 處理大頭照點擊
-const handleAvatarClick = () => {
-  fileInput.value?.click()
+const goToCalendar = () => {
+  router.push('/calendar')
 }
 
-// 處理檔案選擇
-const handleFileSelect = async (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-
-  if (!file) return
-
+const loadUpcomingEvent = async () => {
+  isEventLoading.value = true
   try {
-    await uploadAvatar(file)
-    // 成功上傳後清除檔案輸入
-    if (fileInput.value) {
-      fileInput.value.value = ''
+    const events = await eventService.fetchEvents()
+    const now = new Date()
+    const nextEvent = events
+      .filter(event => event.startAt.getTime() >= now.getTime())
+      .sort((a, b) => a.startAt.getTime() - b.startAt.getTime())[0]
+
+    if (nextEvent) {
+      upcomingEventTitle.value = nextEvent.title
+      upcomingEventMeta.value = `${fnsFormat(nextEvent.startAt, 'MM/dd HH:mm')}，${nextEvent.location || '待定地點'}`
     }
-  } catch (err: any) {
-    // 顯示錯誤Toast
-    showErrorToast(err.message || '上傳大頭照失敗')
-    // 清除檔案輸入
-    if (fileInput.value) {
-      fileInput.value.value = ''
-    }
+  } catch (error) {
+    console.error('Failed to load upcoming event', error)
+  } finally {
+    isEventLoading.value = false
   }
 }
 
-// 獲取大頭照URL，如果沒有則使用預設圖片
-const getAvatarUrl = () => {
-  return userProfile.value?.avatar || '/images/avatar_default.png'
+const goToMeditation = () => {
+  router.push('/meditation')
 }
 
-// 統計數據
-const stats = computed<StatCard[]>(() => [
-  { icon: 'avg_time', label: $t('totalMeditation'), value: userProfile.value?.totalMeditation || '0h' },
-  { icon: 'calendar_month', label: $t('monthlyCheckIns'), value: userProfile.value?.monthlyCheckIns || '0次' }
-])
+const goToProfile = () => {
+  router.push('/user-center')
+}
 
-const menuItems = computed<MenuItem[]>(() => [
-  { icon: 'person_edit', label: $t('editProfile'), path: '/user-center/user-info' },
-  { icon: 'lock_reset', label: $t('changePassword.title'), path: '/user-center/change-password' }
-])
+const goToAnnouncement = () => {
+  router.push('/calendar')
+}
+
+const openSupportAction = () => {
+  addToast('募款頁面建置中，將於近期開放', 'info')
+}
+
+const viewAllAnnouncements = () => {
+  addToast('完整公告列表建置中', 'info')
+}
+
+onMounted(async () => {
+  selectedPeriod.value = 'Day'
+  await Promise.all([loadUserData(), loadStats(), loadUpcomingEvent()])
+})
 </script>
 
 <template>
-  <!-- Header Section -->
-  <AppHeader :title="$t('profile')" bg-class="sky-gradient" :has-padding="true"></AppHeader>
+  <main class="home-page">
+    <section class="event-banner" @click="goToCalendar">
+      <div class="event-banner__mask"></div>
+      <div class="event-banner__content">
+        <p class="event-banner__label">UPCOMING EVENT</p>
+        <h1 class="event-banner__title">{{ isEventLoading ? '活動載入中...' : upcomingEventTitle }}</h1>
+        <p class="event-banner__meta">{{ upcomingEventMeta }}</p>
+        <button class="event-banner__cta" type="button">
+          了解更多
+        </button>
+      </div>
+    </section>
 
-    <!-- Main Content -->
-    <main class="flex-1 -mt-4 px-4 pb-24 relative z-40">
-      <!-- Profile Info Card -->
-      <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-6 flex flex-col items-center text-center mb-6">
-        <div class="relative -mt-20 mb-4 p-2 bg-white dark:bg-slate-800 rounded-full shadow-lg">
-          <div
-            class="w-32 h-32 rounded-full border-4 border-dashed border-primary/30 p-1 overflow-hidden cursor-pointer transition-transform hover:scale-105 relative"
-            @click="handleAvatarClick"
-          >
-            <!-- Loading overlay -->
-            <div
-              v-if="isUploadingAvatar"
-              class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center z-10"
-            >
-              <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            </div>
-
-            <div
-              class="w-full h-full rounded-full bg-cover bg-center"
-              :style="{ backgroundImage: `url('${getAvatarUrl()}')` }"
-            ></div>
-
-            <!-- Upload hint -->
-            <div class="absolute inset-0 bg-black/0 hover:bg-black/20 rounded-full flex items-center justify-center transition-colors">
-              <span class="material-symbols-outlined text-white opacity-0 hover:opacity-100 transition-opacity">photo_camera</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Hidden file input -->
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/*"
-          class="hidden"
-          @change="handleFileSelect"
-        />
-
-        <div class="mb-4">
-          <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ userProfile?.name || $t('loading') }}
-          </h2>
-          <div class="flex items-center justify-center gap-2 mt-2 flex-wrap">
-            <span class="text-sm font-semibold px-3 py-1 rounded-full border bg-primary/10 text-primary border-primary/20">
-              {{ userProfile?.role ? $t(`${userProfile.role}`) : $t('Role.member') }}
-            </span>
-          </div>
-        </div>
-
-        <div class="w-full grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-700 pt-4">
-          <div class="text-left">
-            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('department') }}</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department || $t('loading') }}</p>
-          </div>
-          <div class="text-right">
-            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('points') }}</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.points || $t('loading') }}</p>
-          </div>
-        </div>
+    <section class="progress-card">
+      <div class="progress-card__ring-wrap">
+        <svg viewBox="0 0 80 80" class="progress-ring" aria-hidden="true">
+          <circle cx="40" cy="40" r="32" class="progress-ring__track" />
+          <circle
+            cx="40"
+            cy="40"
+            r="32"
+            class="progress-ring__bar"
+            :stroke-dashoffset="progressStrokeOffset"
+          />
+        </svg>
+        <span class="material-symbols-outlined progress-card__icon">self_improvement</span>
       </div>
 
-      <!-- Stats Section -->
-      <div class="grid grid-cols-2 gap-4 mb-8">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="glass-card rounded-2xl p-4 flex flex-col items-center text-center shadow-sm"
+      <div class="progress-card__main">
+        <p class="progress-card__label">今日禪定進度</p>
+        <div class="progress-card__time-row">
+          <span class="progress-card__time">{{ todayMinutes }}</span>
+          <span class="progress-card__divider">/</span>
+          <span class="progress-card__target">{{ meditationTargetMinutes }} min</span>
+        </div>
+        <p v-if="remainingMinutes > 0" class="progress-card__hint">還差 {{ remainingMinutes }} 分鐘達標</p>
+        <p v-else class="progress-card__hint progress-card__hint--done">今日目標已達成</p>
+      </div>
+
+      <button class="progress-card__play" type="button" @click="goToMeditation">
+        <span class="material-symbols-outlined">play_arrow</span>
+      </button>
+    </section>
+
+    <section class="stats-grid">
+      <article class="points-card" @click="goToProfile">
+        <div class="points-card__icon-wrap">
+          <span class="material-symbols-outlined">stars</span>
+        </div>
+        <p class="points-card__label">目前累積點數</p>
+        <p class="points-card__value">{{ userPoints }} pts</p>
+      </article>
+
+      <article class="support-card">
+        <div class="support-card__top-icon">
+          <span class="material-symbols-outlined">volunteer_activism</span>
+        </div>
+        <h2 class="support-card__title">支持校友基金</h2>
+        <p class="support-card__text">每一份捐款都能照亮學弟妹</p>
+        <button type="button" class="support-card__button" @click="openSupportAction">贊助支持</button>
+      </article>
+    </section>
+
+    <section class="announcement-section">
+      <div class="section-title-row">
+        <h2 class="section-title">最新公告內容</h2>
+        <button type="button" class="section-link" @click="viewAllAnnouncements">查看全部</button>
+      </div>
+
+      <div v-if="isLoading" class="announcement-loading">
+        <span class="material-symbols-outlined spin">progress_activity</span>
+        資料載入中...
+      </div>
+
+      <div v-else class="announcement-list">
+        <button
+          v-for="item in announcements"
+          :key="item.id"
+          type="button"
+          class="announcement-item"
+          @click="goToAnnouncement"
         >
-          <span class="material-symbols-outlined text-primary mb-2">{{ stat.icon }}</span>
-          <p class="text-xs text-slate-600 dark:text-slate-300">{{ stat.label }}</p>
-          <p class="text-xl font-bold text-primary">{{ stat.value }}</p>
-        </div>
-      </div>
-
-      <!-- Action Items List -->
-      <div class="space-y-3 mb-8">
-        <h3 class="px-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ $t('accountSettings') }}</h3>
-        <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
-          <div
-            class="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors border-b border-slate-50 dark:border-slate-700 cursor-pointer"
-            @click="toggleLanguage"
-          >
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-slate-400">language</span>
-              <span class="font-medium">{{ $t('language') }} ({{ locale === 'tw' ? '繁體中文' : 'English' }})</span>
-            </div>
-            <span class="material-symbols-outlined text-slate-300">swap_horiz</span>
+          <div class="announcement-item__head">
+            <span class="announcement-item__category">【{{ item.category }}】</span>
+            <span class="announcement-item__meta">{{ item.date }} {{ item.time }}</span>
           </div>
-          <NuxtLink
-            v-for="(item, index) in menuItems"
-            :key="item.label"
-            :to="item.path || '#'"
-            class="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors border-b border-slate-50 dark:border-slate-700"
-          >
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-slate-400">{{ item.icon }}</span>
-              <span class="font-medium">{{ item.label }}</span>
-            </div>
-            <span class="material-symbols-outlined text-slate-300">chevron_right</span>
-          </NuxtLink>
-          <a
-            href="/auth/login"
-            class="flex items-center justify-between p-4 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-          >
-            <div class="flex items-center gap-3 text-red-500">
-              <span class="material-symbols-outlined">logout</span>
-              <span class="font-bold">{{ $t('logout') }}</span>
-            </div>
-          </a>
-        </div>
+          <h3 class="announcement-item__title">{{ item.title }}</h3>
+          <p class="announcement-item__content">{{ item.content }}</p>
+        </button>
       </div>
-    </main>
-
+    </section>
+  </main>
 </template>
 
 <style scoped>
-:root {
-  --primary: #0ea5e9;
-  --logo-red: #EF4444;
-  --logo-yellow: #FBBF24;
-  --logo-green: #22C55E;
+.home-page {
+  min-height: 100%;
+  padding: 22px 14px 98px;
+  background:
+    radial-gradient(150px 80px at 105% 2%, rgba(38, 173, 255, 0.2), transparent 70%),
+    radial-gradient(200px 130px at -8% 35%, rgba(124, 195, 241, 0.18), transparent 70%),
+    #edf2f7;
 }
 
-.sky-gradient {
-  background: var(--sky-gradient-dark)
+.event-banner {
+  position: relative;
+  min-height: 155px;
+  border-radius: 26px;
+  overflow: hidden;
+  background-image:
+    linear-gradient(110deg, rgba(9, 30, 60, 0.72), rgba(4, 53, 82, 0.38)),
+    linear-gradient(145deg, #193d56 10%, #1f5a7d 52%, #5aa2d4 100%);
+  box-shadow: 0 16px 28px rgba(30, 78, 108, 0.25);
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.event-banner__mask {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent 48%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 36px
+    );
+}
+
+.event-banner__content {
+  position: relative;
+  z-index: 1;
+  padding: 24px 18px 18px;
+}
+
+.event-banner__label {
+  color: #0bb2ff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  margin-bottom: 8px;
+}
+
+.event-banner__title {
+  color: #fff;
+  font-size: 26px;
+  line-height: 1.08;
+  font-weight: 800;
+  max-width: 78%;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.event-banner__meta {
+  margin: 8px 0 12px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.event-banner__cta {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #12b4ff 0%, #0b9fec 100%);
+  color: #fff;
+  font-size: 12px;
+  padding: 8px 18px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(7, 151, 225, 0.45);
+}
+
+.progress-card {
+  margin-top: 14px;
+  border-radius: 24px;
+  background: #f3f7fb;
+  border: 1px solid #e8f0f6;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.progress-card__ring-wrap {
+  width: 74px;
+  height: 74px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  width: 74px;
+  height: 74px;
+  transform: rotate(-90deg);
+}
+
+.progress-ring__track {
+  fill: none;
+  stroke: #dce8f2;
+  stroke-width: 7;
+}
+
+.progress-ring__bar {
+  fill: none;
+  stroke: #1ca6ea;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 201.06;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.progress-card__icon {
+  position: absolute;
+  color: #1ca6ea;
+  font-size: 20px;
+}
+
+.progress-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.progress-card__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a6b9;
+  margin: 0;
+}
+
+.progress-card__time-row {
+  margin-top: 2px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.progress-card__time {
+  font-size: 39px;
+  line-height: 0.95;
+  font-weight: 800;
+  color: #0f1e32;
+}
+
+.progress-card__divider,
+.progress-card__target {
+  font-size: 22px;
+  font-weight: 700;
+  color: #a3b2c0;
+}
+
+.progress-card__target {
+  font-size: 22px;
+}
+
+.progress-card__hint {
+  margin-top: 2px;
+  margin-bottom: 0;
+  color: #86a0b8;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.progress-card__hint--done {
+  color: #0ea5e9;
+}
+
+.progress-card__play {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(180deg, #13b2fa 0%, #0d98e4 100%);
+  box-shadow: 0 10px 18px rgba(10, 148, 222, 0.36);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-card__play .material-symbols-outlined {
+  font-size: 28px;
+  font-variation-settings: 'FILL' 1, 'wght' 560, 'GRAD' 0, 'opsz' 24;
+}
+
+.stats-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.points-card,
+.support-card {
+  border-radius: 22px;
+  background: #f4f7fb;
+  border: 1px solid #e8eff5;
+  min-height: 165px;
+  padding: 14px;
+}
+
+.points-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.points-card__icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffdd62, #f9bf1a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.points-card__label {
+  margin: 0;
+  color: #8ea1b4;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.points-card__value {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1;
+  font-weight: 800;
+  color: #18253b;
+}
+
+.support-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.support-card__top-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #e3f5ff;
+  color: #0ea5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.support-card__title {
+  margin: 0;
+  color: #1f3851;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.support-card__text {
+  margin: 6px 0 14px;
+  color: #89a1b5;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.support-card__button {
+  margin-top: auto;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #15b7ff, #0a9be7);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 19px;
+  box-shadow: 0 8px 16px rgba(14, 158, 235, 0.34);
+}
+
+.announcement-section {
+  margin-top: 16px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  margin: 0;
+  color: #182b41;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.section-link {
+  border: none;
+  background: transparent;
+  color: #2aa6e8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.announcement-loading {
+  border-radius: 20px;
+  background: #f7fafc;
+  border: 1px solid #e8eff4;
+  color: #8da2b5;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 120px;
+}
+
+.announcement-list {
+  border-radius: 22px;
+  background: #f8fafc;
+  border: 1px solid #e9eff4;
+  padding: 8px 12px;
+}
+
+.announcement-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 12px 0;
+}
+
+.announcement-item + .announcement-item {
+  border-top: 1px solid #ebf1f5;
+}
+
+.announcement-item__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.announcement-item__category {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2aa6e8;
+}
+
+.announcement-item__meta {
+  color: #9aa9b8;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.announcement-item__title {
+  margin: 3px 0;
+  color: #233349;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.announcement-item__content {
+  margin: 0;
+  color: #8ea2b6;
+  font-size: 11px;
+  line-height: 1.5;
+  line-clamp: 2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 360px) {
+  .event-banner__title {
+    font-size: 22px;
+    max-width: 85%;
+  }
+
+  .progress-card__time {
+    font-size: 35px;
+  }
+
+  .progress-card__target,
+  .progress-card__divider {
+    font-size: 18px;
+  }
 }
 </style>
