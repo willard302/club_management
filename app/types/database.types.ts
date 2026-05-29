@@ -14,41 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      attendance: {
-        Row: {
-          created_at: string
-          event_id: string
-          id: string
-          member_id: string
-          remark: string
-          status: Database["public"]["Enums"]["attendance_status"] | null
-        }
-        Insert: {
-          created_at?: string
-          event_id: string
-          id?: string
-          member_id: string
-          remark?: string
-          status?: Database["public"]["Enums"]["attendance_status"] | null
-        }
-        Update: {
-          created_at?: string
-          event_id?: string
-          id?: string
-          member_id?: string
-          remark?: string
-          status?: Database["public"]["Enums"]["attendance_status"] | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "attendance_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       events: {
         Row: {
           all_day: boolean
