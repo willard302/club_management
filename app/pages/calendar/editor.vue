@@ -51,11 +51,6 @@ const onEndTimeConfirm = ({ selectedValues }: { selectedValues: string[] }) => {
   showEndTimePicker.value = false
 }
 
-const onRecurrenceEndDateConfirm = ({ selectedValues }: { selectedValues: string[] }) => {
-  formData.value.recurrenceEndDate = selectedValues.join('-')
-  showRecurrenceEndDatePicker.value = false
-}
-
 // 預先計算 picker 預設值
 const getDateColumns = (dateStr: string) => {
   if (!dateStr) return undefined
@@ -169,39 +164,6 @@ const getTimeColumns = (timeStr: string) => {
             </button>
           </div>
         </div>
-
-        <div class="h-[1px] bg-white/30 mx-3"></div>
-
-        <!-- 重複 -->
-        <div class="flex items-center justify-between px-3 py-4">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-slate-400">repeat</span>
-            <span class="text-sm font-medium text-slate-700">重複</span>
-          </div>
-          <select
-            v-model="formData.recurrence"
-            class="bg-transparent border-0 text-sm text-[#2b9dee] font-medium focus:ring-0 text-right pr-6 cursor-pointer"
-          >
-            <option v-for="opt in RECURRENCE_OPTIONS" :key="opt.value" :value="opt.value">
-              {{ opt.label }}
-            </option>
-          </select>
-        </div>
-
-        <!-- 重複截止日期 (僅在選擇重複時顯示) -->
-        <div v-if="formData.recurrence !== 'none'" class="h-[1px] bg-white/30 mx-3"></div>
-        <div v-if="formData.recurrence !== 'none'" class="flex items-center justify-between px-3 py-4 animate-in fade-in slide-in-from-top-1 duration-300">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-slate-400">event_busy</span>
-            <span class="text-sm font-medium text-slate-700">截止日期</span>
-          </div>
-          <button
-            @click="showRecurrenceEndDatePicker = true"
-            class="bg-white/40 px-2 py-1 rounded-lg text-sky-500 text-sm hover:bg-white/60 transition-colors"
-          >
-            {{ formData.recurrenceEndDate ? formatDisplayDate(formData.recurrenceEndDate) : '設定截止日期' }}
-          </button>
-        </div>
       </section>
 
       <!-- 地點 & 說明 -->
@@ -309,16 +271,6 @@ const getTimeColumns = (timeStr: string) => {
         :model-value="getTimeColumns(formData.endTime)"
         @confirm="onEndTimeConfirm"
         @cancel="showEndTimePicker = false"
-      />
-    </van-popup>
-
-    <!-- 重複截止日期 Picker -->
-    <van-popup v-model:show="showRecurrenceEndDatePicker" position="bottom" round>
-      <van-date-picker
-        title="選擇截止日期"
-        :model-value="getDateColumns(formData.recurrenceEndDate || formData.startDate)"
-        @confirm="onRecurrenceEndDateConfirm"
-        @cancel="showRecurrenceEndDatePicker = false"
       />
     </van-popup>
   </div>

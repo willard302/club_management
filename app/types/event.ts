@@ -7,8 +7,6 @@ export interface Event {
   endAt: Date
   allDay: boolean
   color: string
-  recurrence: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
-  recurrenceEndAt?: Date
   createdBy: string
   attendees: number
   // Derived display fields
@@ -25,6 +23,4 @@ export interface CreateEventPayload {
   end_at: string    // ISO8601
   all_day?: boolean
   color?: string
-  recurrence?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly'
-  recurrence_end_at?: string // ISO8601 or Date string
 }

@@ -16,8 +16,6 @@ function mapToEvent(row: EventRow): Event {
     endAt: parseISO(row.end_at),
     allDay: row.all_day,
     color: row.color,
-    recurrence: row.recurrence,
-    recurrenceEndAt: row.recurrence_end_at ? parseISO(row.recurrence_end_at) : undefined,
     createdBy: row.created_by,
     attendees: row.participants?.length ?? 0,
     date: startAt,

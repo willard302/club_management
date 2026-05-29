@@ -25,7 +25,6 @@ export type Database = {
           id: string
           location: string
           participants: string[] | null
-          recurrence: Database["public"]["Enums"]["event_recurrence"]
           start_at: string
           title: string
         }
@@ -39,7 +38,6 @@ export type Database = {
           id?: string
           location?: string
           participants?: string[] | null
-          recurrence?: Database["public"]["Enums"]["event_recurrence"]
           start_at: string
           title?: string
         }
@@ -53,7 +51,6 @@ export type Database = {
           id?: string
           location?: string
           participants?: string[] | null
-          recurrence?: Database["public"]["Enums"]["event_recurrence"]
           start_at?: string
           title?: string
         }
@@ -112,7 +109,6 @@ export type Database = {
     }
     Enums: {
       attendance_status: "attendance" | "lateness" | "leave" | "absence"
-      event_recurrence: "none" | "daily" | "weekly" | "monthly" | "yearly"
     }
     CompositeTypes: {
       event_extended: {
@@ -253,7 +249,6 @@ export const Constants = {
   public: {
     Enums: {
       attendance_status: ["attendance", "lateness", "leave", "absence"],
-      event_recurrence: ["none", "daily", "weekly", "monthly", "yearly"],
     },
   },
 } as const

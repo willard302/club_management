@@ -1,7 +1,6 @@
 import { ref, computed, watch } from 'vue'
 import type { Event } from '@/types'
-import type { Role } from '@/types/user'
-import { SENIOR_ROLES, EDITOR_ROLES } from '@/types/user'
+import { type Role } from '@/types/user'
 import type { Database } from '@/types/database.types'
 import {
   startOfMonth,
@@ -15,7 +14,6 @@ import {
   add,
   sub,
   isAfter,
-  isBefore,
   startOfDay
 } from 'date-fns'
 import { eventService } from '@/services/eventService'
@@ -46,16 +44,13 @@ export function useCalendar() {
   }
 
   const canAddEvent = computed(() =>
-    currentRole.value !== null && EDITOR_ROLES.includes(currentRole.value)
+    currentRole.value === 'admin'
   )
 
   const canEditEvent = (createdBy: string): boolean => {
     if (!currentRole.value) return false
-    if (SENIOR_ROLES.includes(currentRole.value)) return true
-    return (
-      (currentRole.value === 'Role.vice_president' || currentRole.value === 'Role.team_director') &&
-      createdBy === currentUserId.value
-    )
+    if (currentRole.value === 'admin') return true
+    return false
   }
 
   const canDeleteEvent = (createdBy: string): boolean => canEditEvent(createdBy)
@@ -98,25 +93,10 @@ export function useCalendar() {
     // 如果目標日期在開始日期之前，絕對不可能
     if (isAfter(start, target)) return false
 
-    // 如果有截止日期，且目標日期在截止日期之後，也不可能
-    if (event.recurrenceEndAt && isAfter(target, startOfDay(event.recurrenceEndAt))) return false
-
     // 如果是同一天，一定是
     if (isSameDay(start, target)) return true
 
-    // 根據重複類型判斷
-    switch (event.recurrence) {
-      case 'daily':
-        return true
-      case 'weekly':
-        return start.getDay() === target.getDay()
-      case 'monthly':
-        return start.getDate() === target.getDate()
-      case 'yearly':
-        return start.getDate() === target.getDate() && start.getMonth() === target.getMonth()
-      default:
-        return false
-    }
+    return false
   }
 
   // -- 互動處理 (Actions): View 觸發的事件 --
