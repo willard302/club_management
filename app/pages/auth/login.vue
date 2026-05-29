@@ -136,7 +136,7 @@ const handleGoogleLogin = async () => {
 
           <!-- Links -->
           <div class="flex justify-between px-2">
-            <NuxtLink to="/auth/forgetPassword" class="text-white/80 text-sm hover:text-white transition-colors">{{ $t('auth.login.forgotPassword') }}</NuxtLink>
+            <NuxtLink to="/auth/forget-password" class="text-white/80 text-sm hover:text-white transition-colors">{{ $t('auth.login.forgotPassword') }}</NuxtLink>
             <NuxtLink to="/auth/register" class="text-white/80 text-sm font-semibold hover:text-white transition-colors border-b border-white/30">{{ $t('auth.login.signUp') }}</NuxtLink>
           </div>
         </div>
