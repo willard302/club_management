@@ -8,7 +8,7 @@ const { tabbarItems, activeIndex } = useTabbarConfig()
 const { toasts, removeToast } = useToast()
 
 // 检查当前路由是否隐藏 tabbar
-const hideTabbarRoutes = ['/userCenter/changePassword', '/userCenter/userInfo']
+const hideTabbarRoutes = ['/user-center/change-password', '/user-center/user-info']
 const showTabbar = computed(() => {
   const path = route.path
   // 检查完整路由路径

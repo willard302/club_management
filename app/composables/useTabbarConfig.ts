@@ -12,7 +12,7 @@ export const useTabbarConfig = () => {
     '/meditation': 1,
     '/calendar': 2,
     '/settings': 0,
-    '/userCenter/userInfo': 0
+    '/user-center/user-info': 0
   }
 
   const activeIndex = computed(() => {
