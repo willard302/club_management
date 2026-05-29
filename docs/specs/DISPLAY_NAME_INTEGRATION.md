@@ -128,7 +128,7 @@ UI Layer (Pages & Components)
 
 ### 場景1：用戶更改姓名
 ```typescript
-// 在 userCenter/userInfo.vue
+// 在 user-center/user-info.vue
 const { updateUserProfile } = useUser()
 
 await updateUserProfile({
@@ -150,7 +150,7 @@ await updateUserProfile({
 
 ### 場景3：編輯個人資料頁面
 ```typescript
-// 在 userCenter/userInfo.vue
+// 在 user-center/user-info.vue
 const { updateUserInfo } = useUserInfo()
 
 // 表單綁定已自動設置
@@ -165,7 +165,7 @@ await updateUserInfo() // 一次更新所有字段
 - ✅ `app/composables/useUser.ts` - 用戶狀態管理層
 - ✅ `app/composables/useUserInfo.ts` - 用戶信息編輯層
 - ✅ `app/pages/auth/register.vue` - 註冊頁面
-- ✅ `app/pages/userCenter/userInfo.vue` - 個人資料編輯頁面
+- ✅ `app/pages/user-center/user-info.vue` - 個人資料編輯頁面
 
 ---
 
