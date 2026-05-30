@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   points       INTEGER DEFAULT 0,
   bio          TEXT,
   gender       TEXT,
-  dob          DATE,
   updated_at   TIMESTAMPTZ DEFAULT NOW(),
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );

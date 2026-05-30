@@ -43,7 +43,6 @@
   - `department`: 校友會或所屬單位。
   - `points`: 成員點數。
   - `bio`: 個人簡介。
-  - `dob`: 出生年月日。
 - **`events`**: 儲存行事曆活動詳情。
   - `title`: 活動名稱。
   - `start_at` / `end_at`: 起迄時間。
