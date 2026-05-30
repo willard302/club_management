@@ -16,6 +16,7 @@ export interface UserProfile {
   monthlyCheckIns: string
   department: string
   points: number
+  phoneNumber?: string
   avatar?: string
   dateOfBirth?: string
   gender?: string
