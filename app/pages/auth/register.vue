@@ -21,13 +21,13 @@ const errorMessage = ref('')
 const successMessage = ref('')
 
 const handleRegister = async () => {
-  if (formData.value.password !== formData.value.confirmPassword) {
-    errorMessage.value = '密碼不相符。'
+  if (!formData.value.fullName.trim() || !formData.value.email.trim() || !formData.value.password) {
+    errorMessage.value = '請填寫所有必填欄位。'
     return
   }
-  
-  if (!formData.value.fullName || !formData.value.email || !formData.value.password) {
-    errorMessage.value = '請填寫所有必填欄位。'
+
+  if (formData.value.password !== formData.value.confirmPassword) {
+    errorMessage.value = '密碼不相符。'
     return
   }
 
@@ -95,6 +95,19 @@ const handleRegister = async () => {
 
       <!-- Registration Form -->
       <div class="flex flex-col gap-4 px-6 py-4">
+        <!-- Full Name -->
+        <label class="flex flex-col gap-2">
+          <div class="relative group">
+            <i class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">person</i>
+            <input
+              v-model="formData.fullName"
+              type="text"
+              placeholder="輸入你的姓名"
+              class="form-input block w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+            />
+          </div>
+        </label>
+
         <!-- Email -->
         <label class="flex flex-col gap-2">
           <div class="relative group">
