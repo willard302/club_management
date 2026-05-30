@@ -99,24 +99,13 @@ onMounted(async () => {
     <section class="event-banner" @click="goToCalendar">
       <div class="event-banner__mask"></div>
       <div class="event-banner__content">
-        <p class="event-banner__label">UPCOMING EVENT</p>
+        <p class="event-banner__label">即將到來活動</p>
         <h1 class="event-banner__title">{{ isEventLoading ? '活動載入中...' : upcomingEventTitle }}</h1>
         <p class="event-banner__meta">{{ upcomingEventMeta }}</p>
         <button class="event-banner__cta" type="button">
           了解更多
         </button>
       </div>
-    </section>
-
-    <section class="stats-grid">
-      <article class="points-card" @click="goToProfile">
-        <div class="points-card__overlay">
-          <div class="points-card__icon-wrap">
-            <span class="material-symbols-outlined">stars</span>
-          </div>
-        </div>
-        <p class="points-card__value">{{ userPoints }} pts</p>
-      </article>
     </section>
 
     <section class="announcement-section">
@@ -193,7 +182,7 @@ onMounted(async () => {
 
 .event-banner__label {
   color: #0bb2ff;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.16em;
   margin-bottom: 8px;
@@ -212,7 +201,7 @@ onMounted(async () => {
 .event-banner__meta {
   margin: 8px 0 12px;
   color: rgba(255, 255, 255, 0.72);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -411,7 +400,7 @@ onMounted(async () => {
   border: none;
   background: transparent;
   color: #2aa6e8;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -456,14 +445,14 @@ onMounted(async () => {
 }
 
 .announcement-item__category {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   color: #2aa6e8;
 }
 
 .announcement-item__meta {
   color: #9aa9b8;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -471,14 +460,14 @@ onMounted(async () => {
 .announcement-item__title {
   margin: 3px 0;
   color: #233349;
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 700;
 }
 
 .announcement-item__content {
   margin: 0;
   color: #8ea2b6;
-  font-size: 11px;
+  font-size: 16px;
   line-height: 1.5;
   line-clamp: 2;
   display: -webkit-box;
