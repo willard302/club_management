@@ -8,24 +8,20 @@ export const useTabbarConfig = () => {
 
   const routeToIndexMap: Record<string, number> = {
     '/': 0,
-    '/calendar': 1,
-    '/user-center/user-info': 2
+    '/meditation': 1,
+    '/user-center': 2
   }
 
   const activeIndex = computed(() => {
-    return routeToIndexMap[route.path] ?? 0
+    // 處理子路徑
+    if (route.path.startsWith('/meditation')) return 1
+    if (route.path.startsWith('/user-center')) return 2
+    return 0
   })
-
-  const labelsMap: Record<string, string> = {
-    'Home': '首頁',
-    'Calendar': '行事曆',
-    'User Center': '會員中心'
-  }
 
   const tabbarItems = computed<TabbarItem[]>(() => {
     return baseTabbarItems.map((item, index) => ({
       ...item,
-      label: labelsMap[item.label] || item.label,
       fill: index === activeIndex.value
     }))
   })

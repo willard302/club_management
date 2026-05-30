@@ -2,12 +2,10 @@ import type { TabbarItem } from '@/types'
 
 /**
  * 1. 基礎設定：只定義一次所有的 Tabbar 項目
- * (假設你的 TabbarItem 型別要求有 fill，我們在這邊先省略它，稍後動態補上)
  */
 export const baseTabbarItems: Omit<TabbarItem, 'fill'>[] = [
-  { label: 'Home', icon: 'home', path: '/' },
-  { label: 'Calendar', icon: 'calendar_month', path: '/calendar' },
-  { label: 'User Center', icon: 'person', path: '/user-center' }
+  { label: '首頁', icon: 'home', path: '/' },
+  { label: '個人中心', icon: 'person', path: '/user-center' }
 ]
 
 /**
@@ -16,12 +14,12 @@ export const baseTabbarItems: Omit<TabbarItem, 'fill'>[] = [
 export const getTabbarItems = (currentPath: string): TabbarItem[] => {
   return baseTabbarItems.map(item => ({
     ...item,
-    fill: item.path === currentPath // 只有當前路徑匹配時，fill 才是 true
+    fill: item.path === currentPath
   }))
 }
 
 /**
- * 3. 自動生成 Index Map：透過基礎設定自動推導，不用手動維護數字
+ * 3. 自動生成 Index Map
  */
 export const tabbarActiveIndexMap: Record<string, number> = baseTabbarItems.reduce(
   (map, item, index) => {

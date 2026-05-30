@@ -85,7 +85,7 @@ export function useCalendarEditor() {
       initForm(typeof queryDate === 'string' ? queryDate : undefined)
     } catch (err: any) {
       addToast(err.message || '載入活動失敗', 'error')
-      router.replace('/calendar')
+      router.replace('/')
     } finally {
       isInitializing.value = false
     }
@@ -151,7 +151,7 @@ export function useCalendarEditor() {
         addToast('活動已新增', 'success')
       }
 
-      router.push('/calendar')
+      router.push('/')
     } catch (err: any) {
       addToast(err.message || '儲存失敗', 'error')
     } finally {
@@ -167,7 +167,7 @@ export function useCalendarEditor() {
     try {
       await eventService.deleteEvent(editingEventId.value)
       addToast('活動已刪除', 'success')
-      router.push('/calendar')
+      router.push('/')
     } catch (err: any) {
       addToast(err.message || '刪除失敗', 'error')
     } finally {
