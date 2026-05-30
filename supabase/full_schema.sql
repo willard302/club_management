@@ -33,6 +33,11 @@ CREATE POLICY "Users can update own profile"
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
+CREATE POLICY "Users can insert own profile"
+  ON public.profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
 -- Trigger for updated_at
 CREATE OR REPLACE FUNCTION handle_updated_at()
 RETURNS TRIGGER AS $$
@@ -46,26 +51,9 @@ CREATE TRIGGER tr_profiles_updated_at
   BEFORE UPDATE ON public.profiles
   FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
--- Trigger for auto-creating profile on signup
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO public.profiles (id, name, avatar_url, role, points)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
-    NEW.raw_user_meta_data->>'avatar_url',
-    COALESCE(NEW.raw_user_meta_data->>'role', 'member'),
-    COALESCE((NEW.raw_user_meta_data->>'points')::integer, 0)
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
+-- Disable auto-creating profile on signup.
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+DROP FUNCTION IF EXISTS public.handle_new_user();
 
 -- 3. Meditation Sessions
 CREATE TABLE IF NOT EXISTS public.meditation_sessions (

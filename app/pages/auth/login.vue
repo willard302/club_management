@@ -34,10 +34,47 @@ const handleLogin = async () => {
     })
     
     if (error) throw error
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      throw new Error('User not authenticated')
+    }
+
+    const { data: existingProfile, error: profileQueryError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profileQueryError) {
+      throw profileQueryError
+    }
+
+    if (!existingProfile) {
+      const metadata = user.user_metadata || {}
+      const { error: createProfileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          name: metadata.name || metadata.display_name || user.email?.split('@')[0] || 'User',
+          avatar_url: metadata.avatar_url || null,
+          role: metadata.role || 'member',
+          points: Number(metadata.points ?? 0)
+        })
+
+      if (createProfileError) {
+        await supabase.auth.signOut()
+        throw new Error('首次登入初始化失敗，請聯絡管理員確認 profiles 權限設定')
+      }
+    }
     
     router.push('/')
   } catch (error: any) {
-    errorMessage.value = error.message || $t('auth.login.errorLogin')
+    if (error?.message?.includes('Invalid login credentials')) {
+      errorMessage.value = $t('auth.login.errorLogin')
+    } else {
+      errorMessage.value = error.message || $t('auth.login.errorLogin')
+    }
   } finally {
     loading.value = false
   }

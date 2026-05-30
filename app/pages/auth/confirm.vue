@@ -57,7 +57,7 @@ onMounted(async () => {
         successMessage.value = $t('auth.confirm.successMessage')
         // 延遲 2 秒後重定向
         setTimeout(() => {
-          router.push('/')
+          router.push('/auth/login')
         }, 2000)
       }
     } else {
