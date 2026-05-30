@@ -58,11 +58,6 @@ const getAvatarUrl = () => {
 }
 
 // 統計數據
-const stats = computed<StatCard[]>(() => [
-  { icon: 'avg_time', label: '總禪定時數', value: userProfile.value?.totalMeditation || '0h' },
-  { icon: 'calendar_month', label: '本月打卡', value: userProfile.value?.monthlyCheckIns || '0次' }
-])
-
 const menuItems = computed<MenuItem[]>(() => [
   { icon: 'person_edit', label: '編輯個人資料', path: '/user-center/user-info' },
   { icon: 'lock_reset', label: '修改密碼', path: '/user-center/change-password' }
@@ -137,19 +132,6 @@ const getRoleName = (role?: string) => {
             <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">點數</p>
             <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.points || '載入中...' }}</p>
           </div>
-        </div>
-      </div>
-
-      <!-- Stats Section -->
-      <div class="grid grid-cols-2 gap-4 mb-8">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="glass-card rounded-2xl p-4 flex flex-col items-center text-center shadow-sm"
-        >
-          <span class="material-symbols-outlined text-primary mb-2">{{ stat.icon }}</span>
-          <p class="text-xs text-slate-600 dark:text-slate-300">{{ stat.label }}</p>
-          <p class="text-xl font-bold text-primary">{{ stat.value }}</p>
         </div>
       </div>
 

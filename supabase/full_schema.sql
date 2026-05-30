@@ -55,31 +55,7 @@ CREATE TRIGGER tr_profiles_updated_at
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user();
 
--- 3. Meditation Sessions
-CREATE TABLE IF NOT EXISTS public.meditation_sessions (
-  id               UUID         DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id          UUID         REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  started_at       TIMESTAMPTZ  NOT NULL,
-  duration_seconds INTEGER      NOT NULL,
-  target_seconds   INTEGER      NOT NULL,
-  completed        BOOLEAN      DEFAULT false,
-  meditation_type  TEXT,
-  note             TEXT,
-  created_at       TIMESTAMPTZ  DEFAULT NOW()
-);
-
-ALTER TABLE public.meditation_sessions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "users can manage own sessions"
-  ON public.meditation_sessions
-  FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE INDEX IF NOT EXISTS idx_meditation_sessions_user_started
-  ON public.meditation_sessions (user_id, started_at DESC);
-
--- 4. Calendar Events
+-- 3. Calendar Events
 CREATE TABLE IF NOT EXISTS public.events (
   id           UUID         DEFAULT gen_random_uuid() PRIMARY KEY,
   title        TEXT         NOT NULL,

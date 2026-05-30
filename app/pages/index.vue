@@ -22,7 +22,6 @@ const { addToast } = useToast()
 
 const { userProfile, loadUserData, isLoading: isUserLoading } = useUser()
 
-const meditationTargetMinutes = 40
 const isEventLoading = ref(false)
 const upcomingEventTitle = ref('2024 全球校友禪修大會')
 const upcomingEventMeta = ref('下週六 09:00，主禮堂')

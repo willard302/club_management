@@ -18,7 +18,6 @@ export const useTabbarConfig = () => {
 
   const labelsMap: Record<string, string> = {
     'Home': '首頁',
-    'Meditation': '禪定',
     'Calendar': '行事曆',
     'User Center': '會員中心'
   }

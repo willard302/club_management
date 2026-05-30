@@ -21,7 +21,6 @@ export const userService = {
         name: metadata.name || user.email?.split('@')[0] || 'User',
         role: (metadata.role as Role) ?? 'Role.member',
         joinDate: metadata.join_date || 'Since 2024',
-        totalMeditation: metadata.total_meditation || '0h',
         monthlyCheckIns: metadata.monthly_checkins || '0次',
         department: metadata.department || '',
         points: metadata.points || 0,
@@ -161,7 +160,6 @@ export const userService = {
           join_date: new Date().toISOString().split('T')[0],
           role: 'Club Member',
           department: '',
-          total_meditation: '0h',
           monthly_checkins: '0次'
         }
       })

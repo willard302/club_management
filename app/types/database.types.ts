@@ -56,42 +56,6 @@ export type Database = {
         }
         Relationships: []
       }
-      meditation_sessions: {
-        Row: {
-          completed: boolean | null
-          created_at: string | null
-          duration_seconds: number
-          id: string
-          meditation_type: string | null
-          note: string | null
-          started_at: string
-          target_seconds: number
-          user_id: string
-        }
-        Insert: {
-          completed?: boolean | null
-          created_at?: string | null
-          duration_seconds: number
-          id?: string
-          meditation_type?: string | null
-          note?: string | null
-          started_at: string
-          target_seconds: number
-          user_id: string
-        }
-        Update: {
-          completed?: boolean | null
-          created_at?: string | null
-          duration_seconds?: number
-          id?: string
-          meditation_type?: string | null
-          note?: string | null
-          started_at?: string
-          target_seconds?: number
-          user_id?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -151,7 +115,6 @@ export type Database = {
           name: string
         }[]
       }
-      is_conversation_member: { Args: { conv_id: string }; Returns: boolean }
     }
     Enums: {
       attendance_status: "attendance" | "lateness" | "leave" | "absence"
