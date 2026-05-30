@@ -76,7 +76,50 @@ onMounted(async () => {
       if (hasCompletedGoogleSignup(metadata)) {
         router.push('/')
       } else {
-        router.push('/auth/google-signup')
+        const { data: existingProfile, error: profileQueryError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', user.id)
+          .maybeSingle()
+
+        if (profileQueryError) {
+          throw profileQueryError
+        }
+
+        if (!existingProfile) {
+          const { error: createProfileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              name: metadata.name || metadata.full_name || user.email?.split('@')[0] || 'User',
+              avatar_url: metadata.avatar_url || null,
+              role: metadata.role || 'member',
+              department: metadata.department || null,
+              points: Number(metadata.points ?? 0)
+            })
+
+          if (createProfileError) {
+            throw createProfileError
+          }
+        }
+
+        const { error: completionError } = await supabase.auth.updateUser({
+          data: {
+            ...metadata,
+            google_signup_completed: true
+          }
+        })
+
+        if (completionError) {
+          throw completionError
+        }
+
+        successMessage.value = '註冊成功，請至信箱收取認證信件'
+
+        setTimeout(async () => {
+          await supabase.auth.signOut()
+          router.push('/auth/login')
+        }, 2000)
       }
     }
   } catch (err: any) {

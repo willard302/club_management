@@ -199,9 +199,7 @@ export function useUser() {
 
       // 標記 Google 首次資料補填已完成
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        throw new Error('User not authenticated')
-      }
+      if (!user) throw new Error('User not authenticated')
 
       const { error: completionError } = await supabase.auth.updateUser({
         data: {
@@ -212,6 +210,34 @@ export function useUser() {
 
       if (completionError) {
         throw completionError
+      }
+
+      const { data: existingProfile, error: profileQueryError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (profileQueryError) {
+        throw profileQueryError
+      }
+
+      if (!existingProfile) {
+        const metadata = user.user_metadata || {}
+        const { error: createProfileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            name: metadata.name || metadata.display_name || user.email?.split('@')[0] || 'User',
+            avatar_url: metadata.avatar_url || null,
+            role: metadata.role || 'member',
+            department: metadata.department || null,
+            points: Number(metadata.points ?? 0)
+          })
+
+        if (createProfileError) {
+          throw createProfileError
+        }
       }
 
       // 重新載入用戶資料以確保本地狀態一致
