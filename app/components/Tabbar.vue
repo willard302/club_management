@@ -17,8 +17,8 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white/95 backdrop-blur-md px-8 pb-4 pt-4 z-50 border-t border-sky-50">
-    <div class="flex justify-between items-center">
+  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white/95 backdrop-blur-md px-4 pb-4 pt-4 z-50 border-t border-sky-50">
+    <div class="flex justify-around items-center">
       <NuxtLink
         v-for="(item, index) in items"
         :key="index"
