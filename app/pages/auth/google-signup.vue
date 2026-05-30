@@ -188,28 +188,6 @@ onMounted(() => {
           />
         </div>
 
-        <!-- Date of Birth Input -->
-        <div class="glass-effect rounded-xl p-1">
-          <input
-            v-model="formData.dateOfBirth"
-            type="date"
-            class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
-          />
-        </div>
-
-        <!-- Gender Select -->
-        <div class="glass-effect rounded-xl p-1">
-          <select
-            v-model="formData.gender"
-            class="w-full bg-transparent border-none text-white focus:ring-0 text-base py-3 px-4 outline-none"
-          >
-            <option value="Not specified" class="bg-gray-800">{{ $t('auth.googleSignup.genderNotSpecified') }}</option>
-            <option value="Male" class="bg-gray-800">{{ $t('auth.googleSignup.genderMale') }}</option>
-            <option value="Female" class="bg-gray-800">{{ $t('auth.googleSignup.genderFemale') }}</option>
-            <option value="Other" class="bg-gray-800">{{ $t('auth.googleSignup.genderOther') }}</option>
-          </select>
-        </div>
-
         <!-- Bio Textarea -->
         <div class="glass-effect rounded-xl p-1">
           <textarea

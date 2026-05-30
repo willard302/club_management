@@ -27,7 +27,7 @@ const handleRegister = async () => {
     return
   }
   
-  if (!formData.value.email || !formData.value.password || !formData.value.fullName) {
+  if (!formData.value.email || !formData.value.password) {
     errorMessage.value = $t('auth.register.errorEmpty')
     return
   }
