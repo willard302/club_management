@@ -22,7 +22,7 @@ export const useTabbarConfig = () => {
   const tabbarItems = computed<TabbarItem[]>(() => {
     return baseTabbarItems.map((item, index) => ({
       ...item,
-      label: `tabbar.${item.label.toLowerCase()}`,
+      label: `tabbar.${item.label.toLowerCase().replace(/\s+/g, '_')}`,
       fill: index === activeIndex.value
     }))
   })

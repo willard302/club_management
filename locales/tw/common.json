@@ -21,7 +21,8 @@
   "tabbar": {
     "home": "首頁",
     "meditation": "禪定",
-    "calendar": "行事曆"
+    "calendar": "行事曆",
+    "user_center": "會員中心"
   },
   "meditation": {
     "stats": "冥想統計",

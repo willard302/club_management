@@ -21,7 +21,8 @@
   "tabbar": {
     "home": "Home",
     "meditation": "Meditation",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "user_center": "User Center"
   },
   "meditation": {
     "stats": "Meditation Stats",
