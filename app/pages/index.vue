@@ -1,7 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: ['auth'],
+  middleware: ['auth']
 })
-
-await navigateTo('/home', { replace: true })
 </script>
+
+<template>
+  <div />
+</template>
+
+<style lang="scss" scoped></style>

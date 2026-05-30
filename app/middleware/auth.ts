@@ -25,4 +25,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
       return navigateTo('/auth/google-signup')
     }
   }
+
+  if (to.path === '/') {
+    return navigateTo('/home', { replace: true })
+  }
 })
