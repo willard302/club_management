@@ -103,15 +103,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_id_by_email: { Args: { email_addr: string }; Returns: string }
-      get_user_profiles: {
-        Args: { user_ids: string[] }
-        Returns: {
-          avatar_url: string
-          id: string
-          name: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       attendance_status: "attendance" | "lateness" | "leave" | "absence"
