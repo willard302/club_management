@@ -331,5 +331,55 @@ export const userService = {
       console.error('Error changing password:', error)
       throw new Error(error.message || '修改密碼失敗')
     }
+  },
+
+  /**
+   * 完成 Google 註冊後的基本資料設置
+   */
+  async completeGoogleSignup(data: {
+    id: string
+    name: string
+    department: string
+    gender?: string
+    bio?: string
+  }): Promise<void> {
+    try {
+      const supabase = useSupabaseClient<Database>()
+      
+      // 1. 在 profiles 表中創建或更新資料
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: data.id,
+          name: data.name,
+          department: data.department,
+          gender: data.gender,
+          bio: data.bio,
+          role: 'member',
+          points: 0,
+          updated_at: new Date().toISOString()
+        })
+
+      if (profileError) throw profileError
+
+      // 2. 更新 auth.users 的 metadata
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          name: data.name,
+          display_name: data.name,
+          department: data.department,
+          gender: data.gender,
+          bio: data.bio,
+          role: 'member',
+          points: 0,
+          join_date: new Date().toISOString().split('T')[0]
+        }
+      })
+
+      if (authError) throw authError
+    } catch (error: any) {
+      console.error('Error completing Google signup:', error)
+      throw new Error(error.message || '完成註冊失敗')
+    }
   }
 }

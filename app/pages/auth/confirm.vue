@@ -50,41 +50,38 @@ onMounted(async () => {
     if (userError) throw userError
 
     if (user) {
-      // If we have a user, it means the confirmation was successful
-      successMessage.value = '電子郵件驗證成功！即將跳轉首頁...'
-      loading.value = false
-      setTimeout(() => {
-        router.push('/')
-      }, 2000)
-    } else {
-      // Check if this is just a redirect back from a provider without a user session yet
-      errorMessage.value = '找不到確認連結，即將跳轉登入頁...'
-      loading.value = false
-      setTimeout(() => {
-        router.push('/auth/login')
-      }, 3000)
-    }
-
-    // Double check profiles
-    if (user) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('id')
+        .select('*')
         .eq('id', user.id)
         .maybeSingle()
 
-      if (!profile) {
-        // Initialize profile if it doesn't exist (e.g. first time Google login)
-        const metadata = user.user_metadata || {}
-        await supabase
-          .from('profiles')
-          .insert({
-            id: user.id,
-            name: metadata.name || metadata.full_name || user.email?.split('@')[0] || 'User',
-            avatar_url: metadata.avatar_url || null,
-            role: 'member',
-            points: 0
-          })
+      if (!profile || !profile.department) {
+        // Initialize profile if it doesn't exist
+        if (!profile) {
+          const metadata = user.user_metadata || {}
+          await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              name: metadata.name || metadata.full_name || user.email?.split('@')[0] || 'User',
+              avatar_url: metadata.avatar_url || null,
+              role: 'member',
+              points: 0
+            })
+        }
+        
+        successMessage.value = '登入成功！即將跳轉完善資料...'
+        loading.value = false
+        setTimeout(() => {
+          router.push('/auth/google-signup')
+        }, 1500)
+      } else {
+        successMessage.value = '驗證成功！即將跳轉首頁...'
+        loading.value = false
+        setTimeout(() => {
+          router.push('/')
+        }, 1500)
       }
     }
   } catch (err: any) {

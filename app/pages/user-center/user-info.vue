@@ -162,7 +162,6 @@ onBeforeUnmount(async () => {
             <option value="">請選擇性別</option>
             <option value="male">男</option>
             <option value="female">女</option>
-            <option value="other">其他</option>
           </select>
         </div>
         <div class="space-y-2">
