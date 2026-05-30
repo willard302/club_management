@@ -47,6 +47,7 @@ export default defineNuxtConfig({
         files: [
           'tw/common.json',
           'tw/user-info.json',
+          'tw/user-center.json',
           'tw/auth.json'
         ]
       },
@@ -57,6 +58,7 @@ export default defineNuxtConfig({
         files: [
           'en/common.json',
           'en/user-info.json',
+          'en/user-center.json',
           'en/auth.json'
         ]
       }
