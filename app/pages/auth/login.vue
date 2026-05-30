@@ -68,7 +68,7 @@ const handleLogin = async () => {
       }
     }
     
-    router.push('/')
+    router.push('/home')
   } catch (error: any) {
     if (error?.message?.includes('Invalid login credentials')) {
       errorMessage.value = '登入時發生錯誤。'

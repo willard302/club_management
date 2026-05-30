@@ -1,11 +1,8 @@
-// 對應 Supabase DB enum: public.club_role
-export type Role =
-  | 'admin'        // 管理員
-  | 'member'        // 訪客
+export type Role = 'admin' | 'member'
 
 export const ROLE_LABEL: Record<Role, string> = {
-  'admin': '管理員',
-  'member': '一般會員'
+  admin: '管理員',
+  member: '一般成員',
 }
 
 export interface UserProfile {

@@ -80,7 +80,7 @@ onMounted(async () => {
         successMessage.value = '驗證成功！即將跳轉首頁...'
         loading.value = false
         setTimeout(() => {
-          router.push('/')
+          router.push('/home')
         }, 1500)
       }
     }
@@ -89,7 +89,7 @@ onMounted(async () => {
     // If there's an error but we're already logged in, just redirect to home
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
-      router.push('/')
+      router.push('/home')
     } else {
       errorMessage.value = err.message || '電子郵件確認時發生錯誤'
       loading.value = false

@@ -53,7 +53,7 @@ const fetchUserData = async () => {
       
       // 如果資料已經完整，直接跳轉首頁
       if (profile.name && profile.department) {
-        router.push('/')
+        router.push('/home')
         return
       }
     } else {
@@ -97,7 +97,7 @@ const handleCompleteRegistration = async () => {
       bio: formData.value.bio.trim()
     })
 
-    router.push('/')
+    router.push('/home')
   } catch (err: any) {
     console.error('Error completing registration:', err)
     errorMessage.value = err.message || '完成註冊失敗'
@@ -226,7 +226,7 @@ onMounted(() => {
         </div>
 
         <div class="text-center pt-2">
-          <NuxtLink to="/" class="text-slate-400 text-sm font-bold hover:text-sky-500 transition-colors inline-flex items-center gap-1">
+          <NuxtLink to="/home" class="text-slate-400 text-sm font-bold hover:text-sky-500 transition-colors inline-flex items-center gap-1">
             <span>稍後再說，先回首頁</span>
             <span class="material-symbols-outlined text-base">arrow_forward</span>
           </NuxtLink>

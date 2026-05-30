@@ -1,26 +1,22 @@
 import { ref, computed, watch } from 'vue'
-import type { Event } from '@/types'
-import { type Role } from '@/types/user'
-import type { Database } from '@/types/database.types'
 import {
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
-  isSameMonth,
-  isSameDay,
-  format,
   add,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isSameMonth,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
   sub,
-  isAfter,
-  startOfDay
 } from 'date-fns'
+import type { Event } from '@/types'
+import type { Role } from '@/types/user'
+import type { Database } from '@/types/database.types'
 import { eventService } from '@/services/eventService'
 
-/**
- * Controller (邏輯層): 處理行事曆邏輯、UI 互動與資料層介接
- */
 export function useCalendar() {
   const isCalendarLoading = ref(false)
   const allEvents = ref<Event[]>([])
@@ -29,77 +25,56 @@ export function useCalendar() {
   const currentDate = ref(new Date())
   const selectedDate = ref(today.value)
 
-  // -- 權限狀態 --
-
   const currentUserId = ref<string | null>(null)
   const currentRole = ref<Role | null>(null)
 
   const loadCurrentUserRole = async () => {
     const supabase = useSupabaseClient<Database>()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    currentUserId.value = user.id
-    const metadata = user.user_metadata || {}
-    if (metadata.role) currentRole.value = metadata.role as Role
+    const { data: authData } = await supabase.auth.getUser()
+
+    if (!authData.user) return
+    currentUserId.value = authData.user.id
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', authData.user.id)
+      .maybeSingle()
+
+    currentRole.value = (profile?.role || authData.user.user_metadata?.role || 'member') as Role
   }
 
-  const canAddEvent = computed(() =>
-    currentRole.value === 'admin'
-  )
+  const canAddEvent = computed(() => currentRole.value === 'admin')
 
   const canEditEvent = (createdBy: string): boolean => {
-    if (!currentRole.value) return false
     if (currentRole.value === 'admin') return true
-    return false
+    return Boolean(currentUserId.value && createdBy === currentUserId.value)
   }
 
   const canDeleteEvent = (createdBy: string): boolean => canEditEvent(createdBy)
 
-  // -- Action Sheet 狀態 --
-
-  const actionSheetVisible = ref(false)
-
-  const openActionSheet = (date: Date) => {
-    selectedDate.value = date
-    if (eventsForSelectedDate.value.length > 0) {
-      actionSheetVisible.value = true
-    }
-  }
-
-  // -- Computed Properties: 負責提供處理好的資料給 View --
-  
-  const monthYear = computed(() => format(currentDate.value, 'MMMM yyyy'))
+  const monthYear = computed(() => format(currentDate.value, 'yyyy / MM'))
 
   const calendarGrid = computed(() => {
-    const startOfMonthDate = startOfMonth(currentDate.value)
-    const endOfMonthDate = endOfMonth(currentDate.value)
-    const startDate = startOfWeek(startOfMonthDate, { weekStartsOn: 1 })
-    const endDate = endOfWeek(endOfMonthDate, { weekStartsOn: 1 })
+    const monthStart = startOfMonth(currentDate.value)
+    const monthEnd = endOfMonth(currentDate.value)
+    const startDate = startOfWeek(monthStart, { weekStartsOn: 1 })
+    const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 })
+
     return eachDayOfInterval({ start: startDate, end: endDate })
   })
 
-  // -- 輔助檢驗: View 畫面上用來加上 CSS 狀態 --
-  
   const isToday = (date: Date) => isSameDay(date, today.value)
   const isSelected = (date: Date) => isSameDay(date, selectedDate.value)
   const isCurrentMonth = (date: Date) => isSameMonth(date, currentDate.value)
 
-  // -- 重複邏輯判斷 --
-
   const isEventOnDate = (event: Event, targetDate: Date): boolean => {
     const start = startOfDay(event.startAt)
+    const end = startOfDay(event.endAt)
     const target = startOfDay(targetDate)
 
-    // 如果目標日期在開始日期之前，絕對不可能
-    if (isAfter(start, target)) return false
-
-    // 如果是同一天，一定是
-    if (isSameDay(start, target)) return true
-
-    return false
+    return target >= start && target <= end
   }
-
-  // -- 互動處理 (Actions): View 觸發的事件 --
 
   const selectDate = (date: Date) => {
     selectedDate.value = date
@@ -129,19 +104,18 @@ export function useCalendar() {
     const monthEnd = endOfMonth(currentDate.value)
     const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
-    daysInMonth.forEach(day => {
-      const hasEvent = allEvents.value.some(event => isEventOnDate(event, day))
-      if (hasEvent) {
+    daysInMonth.forEach((day) => {
+      if (allEvents.value.some(event => isEventOnDate(event, day))) {
         eventsMap.set(day.getDate(), true)
       }
     })
+
     return eventsMap
   })
-  
-  // -- 初始化與撈取資料 --
 
   const loadEvents = async () => {
     isCalendarLoading.value = true
+
     try {
       allEvents.value = await eventService.fetchEvents(format(currentDate.value, 'yyyy-MM'))
     } catch (error) {
@@ -152,8 +126,9 @@ export function useCalendar() {
     }
   }
 
-  // 切換月份自動重新載入資料
-  watch(currentDate, () => loadEvents())
+  watch(currentDate, () => {
+    loadEvents()
+  })
 
   return {
     today,
@@ -177,7 +152,5 @@ export function useCalendar() {
     canAddEvent,
     canEditEvent,
     canDeleteEvent,
-    actionSheetVisible,
-    openActionSheet,
   }
 }
