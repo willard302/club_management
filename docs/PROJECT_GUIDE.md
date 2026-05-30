@@ -31,12 +31,27 @@ This is a comprehensive club management application built with **Nuxt 4**, **Tai
 ## 3. Database Schema (Supabase)
 
 ### Key Tables
-- **`auth.users`**: Managed by Supabase Auth (includes metadata for `name` and `avatar_url`).
+- **`auth.users`**: Managed by Supabase Auth (Private credentials).
+- **`public.profiles`**: **(Recommended Architecture)** Extends user information for public display and relational queries.
+  - `id`: UUID (Foreign Key to auth.users)
+  - `name`: User display name.
+  - `avatar_url`: Profile picture link.
+  - `department`: Club group or division.
+  - `phone_number`: Contact number.
+  - `points`: Membership reward points.
+  - `bio`: Short biography.
+  - `dob`: Date of birth.
 - **`meditation_sessions`**: Records each meditation activity.
 - **`events`**: Stores calendar event details.
 
+### Why Use a `profiles` Table?
+1. **Relational Power**: Allows joining user data with events and sessions easily.
+2. **Type Safety**: Enforces proper data types (DATE, INTEGER) instead of generic JSON.
+3. **Performance**: Indexed queries for rankings (points) or filtering (department).
+4. **Automation**: A PostgreSQL trigger automatically creates a profile when a new user signs up.
+
 ### Custom Functions
-- `get_user_profiles(user_ids UUID[])`: Returns user names and avatars from metadata.
+- `handle_new_user()`: Trigger function to sync Auth users to public profiles.
 
 ---
 
