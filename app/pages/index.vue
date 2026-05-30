@@ -135,7 +135,7 @@ onMounted(async () => {
         <div class="flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-sky-200 text-[10px] font-bold tracking-[0.2em] uppercase">Club Management</span>
-            <h2 class="text-xl font-bold tracking-tight">你好, {{ userProfile?.name || '會員' }}</h2>
+            <h2 class="text-xl font-bold tracking-tight">你好, {{ userProfile?.name ?? '會員' }}</h2>
           </div>
           <button @click="menuVisible = true" class="size-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/30 transition-all">
             <span class="material-symbols-outlined text-2xl">menu</span>

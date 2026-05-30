@@ -114,7 +114,7 @@ const getRoleName = (role?: string) => {
 
         <div class="mb-4">
           <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ userProfile?.name || '載入中...' }}
+            {{ userProfile?.name ?? '載入中...' }}
           </h2>
           <div class="flex items-center justify-center gap-2 mt-2 flex-wrap">
             <span class="text-sm font-semibold px-3 py-1 rounded-full border bg-primary/10 text-primary border-primary/20">
@@ -126,11 +126,11 @@ const getRoleName = (role?: string) => {
         <div class="w-full grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-700 pt-4">
           <div class="text-left">
             <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">校友會</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department || '載入中...' }}</p>
+            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department ?? '載入中...' }}</p>
           </div>
           <div class="text-right">
             <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">點數</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.points || '載入中...' }}</p>
+            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.points ?? '載入中...' }}</p>
           </div>
         </div>
       </div>
