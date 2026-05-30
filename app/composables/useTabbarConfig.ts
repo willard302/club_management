@@ -8,14 +8,12 @@ export const useTabbarConfig = () => {
 
   const routeToIndexMap: Record<string, number> = {
     '/': 0,
-    '/meditation': 1,
-    '/user-center': 2
+    '/user-center': 1
   }
 
   const activeIndex = computed(() => {
     // 處理子路徑
-    if (route.path.startsWith('/meditation')) return 1
-    if (route.path.startsWith('/user-center')) return 2
+    if (route.path.startsWith('/user-center')) return 1
     return 0
   })
 

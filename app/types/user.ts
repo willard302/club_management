@@ -12,7 +12,6 @@ export interface UserProfile {
   name: string
   role: Role
   joinDate: string
-  monthlyCheckIns: string
   department: string
   points: number
   phoneNumber?: string

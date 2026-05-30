@@ -21,7 +21,6 @@ export const userService = {
         name: metadata.name || user.email?.split('@')[0] || 'User',
         role: (metadata.role as Role) ?? 'Role.member',
         joinDate: metadata.join_date || 'Since 2024',
-        monthlyCheckIns: metadata.monthly_checkins || '0次',
         department: metadata.department || '',
         points: metadata.points || 0,
         avatar: metadata.avatar_url || undefined,
@@ -149,20 +148,19 @@ export const userService = {
       if (!user) throw new Error('User not authenticated')
 
       const currentMetadata = user.user_metadata || {}
+// 更新用戶 metadata
+const { error } = await supabase.auth.updateUser({
+  data: {
+    ...currentMetadata,
+    name: displayName, // display_name 綁定
+    display_name: displayName, // 備份字段
+    points: points || 0,
+    join_date: new Date().toISOString().split('T')[0],
+    role: 'Club Member',
+    department: ''
+  }
+})
 
-      // 更新用戶 metadata
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          ...currentMetadata,
-          name: displayName, // display_name 綁定
-          display_name: displayName, // 備份字段
-          points: points || 0,
-          join_date: new Date().toISOString().split('T')[0],
-          role: 'Club Member',
-          department: '',
-          monthly_checkins: '0次'
-        }
-      })
 
       if (error) throw error
     } catch (error: any) {
