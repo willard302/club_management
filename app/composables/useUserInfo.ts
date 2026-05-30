@@ -1,6 +1,5 @@
 import { ref, onMounted } from 'vue'
 import { userService } from '@/services/userService'
-import type { UserProfile } from '@/types'
 
 /**
  * 管理用戶信息編輯頁面的狀態與邏輯
@@ -11,9 +10,8 @@ export function useUserInfo() {
   // 表單狀態
   const formData = ref({
     name: '',
-    points: 0,
     department: '',
-    dateOfBirth: '',
+    phoneNumber: '',
     gender: '',
     bio: ''
   })
@@ -33,9 +31,8 @@ export function useUserInfo() {
 
       formData.value = {
         name: profile.name || '',
-        points: profile.points || 0,
         department: profile.department || '',
-        dateOfBirth: profile.dateOfBirth || '',
+        phoneNumber: profile.phoneNumber || '',
         gender: profile.gender || '',
         bio: profile.bio || ''
       }
@@ -57,9 +54,8 @@ export function useUserInfo() {
       // 使用統一的 updateUserProfile 方法更新所有字段
       await userService.updateUserProfile(supabase, {
         name: formData.value.name,
-        points: formData.value.points,
         department: formData.value.department,
-        dateOfBirth: formData.value.dateOfBirth,
+        phoneNumber: formData.value.phoneNumber,
         gender: formData.value.gender,
         bio: formData.value.bio
       })

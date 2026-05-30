@@ -16,7 +16,6 @@ export interface UserProfile {
   points: number
   phoneNumber?: string
   avatar?: string
-  dateOfBirth?: string
   gender?: string
   bio?: string
 }

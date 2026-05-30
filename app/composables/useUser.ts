@@ -24,7 +24,7 @@ export function useUser() {
     isLoading.value = true
     error.value = null
     try {
-      // 呼叫 Data Layer (這兩支可以放 Promise.all 提升效能)
+      // 呼叫 Data Layer
       const [profileData, activitiesData] = await Promise.all([
         userService.fetchUserProfile(),
         userService.fetchRecentActivities()
@@ -33,9 +33,9 @@ export function useUser() {
       userProfile.value = profileData
       recentActivities.value = activitiesData
     } catch (err: any) {
-      error.value = err.message || 'Failed to load user data'
+      error.value = err.message || '載入用戶資料失敗'
       console.error(err)
-      router.push('/auth/login') // 如果載入失敗，可能是未認證，跳轉到登入頁
+      router.push('/auth/login')
     } finally {
       isLoading.value = false
     }
@@ -57,7 +57,7 @@ export function useUser() {
       // 重新載入用戶資料確保資料一致性
       await loadUserData()
     } catch (err: any) {
-      error.value = err.message || 'Failed to upload avatar'
+      error.value = err.message || '上傳大頭照失敗'
       console.error(err)
       throw err
     } finally {
@@ -66,27 +66,7 @@ export function useUser() {
   }
 
   /**
-   * 更新使用者的 display_name 和其他個人資訊
-   * @deprecated 使用 updateUserProfile 代替，保留此方法以向後兼容
-   */
-  const updateDisplayName = async (
-    displayName: string,
-    additionalData?: {
-      role?: string
-      department?: string
-      dateOfBirth?: string
-      gender?: string
-      bio?: string
-    }
-  ) => {
-    await updateUserProfile({
-      name: displayName,
-      ...additionalData
-    })
-  }
-
-  /**
-   * 更新使用者個人資料（統一方法）
+   * 更新使用者的個人資訊
    */
   const updateUserProfile = async (
     profileData: {
@@ -94,7 +74,7 @@ export function useUser() {
       points?: number
       role?: string
       department?: string
-      dateOfBirth?: string
+      phoneNumber?: string
       gender?: string
       bio?: string
     }
@@ -105,22 +85,13 @@ export function useUser() {
     error.value = null
 
     try {
-      // 呼叫 userService 更新 metadata
+      // 呼叫 userService 更新資料 (包含 profiles 表與 auth metadata)
       await userService.updateUserProfile(supabase, profileData)
-
-      // 更新本地狀態
-      if (profileData.name !== undefined) userProfile.value.name = profileData.name
-      if (profileData.points !== undefined) userProfile.value.points = profileData.points
-      if (profileData.role !== undefined) userProfile.value.role = profileData.role as Role
-      if (profileData.department !== undefined) userProfile.value.department = profileData.department
-      if (profileData.dateOfBirth !== undefined) userProfile.value.dateOfBirth = profileData.dateOfBirth
-      if (profileData.gender !== undefined) userProfile.value.gender = profileData.gender
-      if (profileData.bio !== undefined) userProfile.value.bio = profileData.bio
 
       // 重新載入用戶資料確保資料一致性
       await loadUserData()
     } catch (err: any) {
-      error.value = err.message || 'Failed to update profile'
+      error.value = err.message || '更新個人資料失敗'
       console.error(err)
       throw err
     } finally {
@@ -129,10 +100,6 @@ export function useUser() {
   }
 
   const handleLogout = () => {
-    // 這裡可以處理清除 Token 等邏輯
-    // ...
-
-    // 跳轉回登入頁
     router.push('/auth/login')
   }
 
@@ -146,13 +113,11 @@ export function useUser() {
   ) => {
     error.value = null
 
-    // 驗證確認密碼是否相同
     if (newPassword !== confirmPassword) {
       error.value = '新密碼和確認密碼不相符'
       throw new Error(error.value)
     }
 
-    // 驗證新密碼和舊密碼是否不同
     if (currentPassword === newPassword) {
       error.value = '新密碼不能與當前密碼相同'
       throw new Error(error.value)
@@ -163,7 +128,7 @@ export function useUser() {
     try {
       await userService.changePassword(currentPassword, newPassword)
     } catch (err: any) {
-      error.value = err.message || 'Failed to change password'
+      error.value = err.message || '修改密碼失敗'
       console.error(err)
       throw err
     } finally {
@@ -172,16 +137,15 @@ export function useUser() {
   }
 
   /**
-   * 完成 Google OAuth 用戶註冊（首次登入時填寫額外資料）
+   * 完成 Google OAuth 用戶註冊
    */
   const completeGoogleSignup = async (googleSignupData: {
     fullName: string
     points: number
     department: string
-    dateOfBirth?: string
+    phoneNumber?: string
     gender?: string
     bio?: string
-    avatarPath?: string
   }) => {
     isUpdatingProfile.value = true
     error.value = null
@@ -192,7 +156,7 @@ export function useUser() {
         name: googleSignupData.fullName,
         points: googleSignupData.points,
         department: googleSignupData.department,
-        dateOfBirth: googleSignupData.dateOfBirth,
+        phoneNumber: googleSignupData.phoneNumber,
         gender: googleSignupData.gender,
         bio: googleSignupData.bio
       })
@@ -201,49 +165,17 @@ export function useUser() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
-      const { error: completionError } = await supabase.auth.updateUser({
+      await supabase.auth.updateUser({
         data: {
           ...(user.user_metadata || {}),
           google_signup_completed: true
         }
       })
 
-      if (completionError) {
-        throw completionError
-      }
-
-      const { data: existingProfile, error: profileQueryError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .maybeSingle()
-
-      if (profileQueryError) {
-        throw profileQueryError
-      }
-
-      if (!existingProfile) {
-        const metadata = user.user_metadata || {}
-        const { error: createProfileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: user.id,
-            name: metadata.name || metadata.display_name || user.email?.split('@')[0] || 'User',
-            avatar_url: metadata.avatar_url || null,
-            role: metadata.role || 'member',
-            department: metadata.department || null,
-            points: Number(metadata.points ?? 0)
-          })
-
-        if (createProfileError) {
-          throw createProfileError
-        }
-      }
-
-      // 重新載入用戶資料以確保本地狀態一致
+      // 重新載入用戶資料
       await loadUserData()
     } catch (err: any) {
-      error.value = err.message || 'Failed to complete Google signup'
+      error.value = err.message || '完成註冊失敗'
       console.error(err)
       throw err
     } finally {
@@ -261,7 +193,6 @@ export function useUser() {
     error,
     loadUserData,
     uploadAvatar,
-    updateDisplayName,
     updateUserProfile,
     changePassword,
     completeGoogleSignup,

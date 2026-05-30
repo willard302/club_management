@@ -15,18 +15,25 @@ export const userService = {
 
       if (!user) throw new Error('User not authenticated')
 
+      // 優先從 profiles 表獲取最新的詳細資料
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle()
+
       const metadata = user.user_metadata || {}
 
       return {
-        name: metadata.name || user.email?.split('@')[0] || 'User',
-        role: (metadata.role as Role) ?? 'Role.member',
-        joinDate: metadata.join_date || 'Since 2024',
-        department: metadata.department || '',
-        points: metadata.points || 0,
-        avatar: metadata.avatar_url || undefined,
-        dateOfBirth: metadata.date_of_birth,
-        gender: metadata.gender,
-        bio: metadata.bio
+        name: profile?.name || metadata.name || user.email?.split('@')[0] || 'User',
+        role: (profile?.role as Role) || (metadata.role as Role) || 'member',
+        joinDate: profile?.created_at || metadata.join_date || 'Since 2024',
+        department: profile?.department || metadata.department || '',
+        points: profile?.points || metadata.points || 0,
+        avatar: profile?.avatar_url || metadata.avatar_url || undefined,
+        phoneNumber: profile?.phone_number || metadata.phone_number || '',
+        gender: profile?.gender || metadata.gender || '',
+        bio: profile?.bio || metadata.bio || ''
       }
     } catch (error) {
       throw new Error('User not authenticated')
@@ -78,7 +85,13 @@ export const userService = {
         .getPublicUrl(fileName)
       const publicUrl = urlData.publicUrl
 
-      // 更新 metadata：同時儲存 avatar_path（供刪除用）與 avatar_url（直接存取用）
+      // 1. 更新 profiles 表
+      await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id)
+
+      // 2. 更新 auth metadata
       const { error: updateError } = await supabase.auth.updateUser({
         data: {
           ...currentMetadata,
@@ -116,9 +129,6 @@ export const userService = {
    * 取得使用者的近期活動
    */
   async fetchRecentActivities(): Promise<Activity[]> {
-    // 這裡通常會使用 $fetch 呼叫後端 API
-    // return await $fetch('/api/user/activities')
-
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
@@ -148,19 +158,19 @@ export const userService = {
       if (!user) throw new Error('User not authenticated')
 
       const currentMetadata = user.user_metadata || {}
-// 更新用戶 metadata
-const { error } = await supabase.auth.updateUser({
-  data: {
-    ...currentMetadata,
-    name: displayName, // display_name 綁定
-    display_name: displayName, // 備份字段
-    points: points || 0,
-    join_date: new Date().toISOString().split('T')[0],
-    role: 'Club Member',
-    department: ''
-  }
-})
-
+      
+      // 更新用戶 metadata
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          ...currentMetadata,
+          name: displayName,
+          display_name: displayName,
+          points: points || 0,
+          join_date: new Date().toISOString().split('T')[0],
+          role: 'member',
+          department: ''
+        }
+      })
 
       if (error) throw error
     } catch (error: any) {
@@ -170,7 +180,7 @@ const { error } = await supabase.auth.updateUser({
   },
 
   /**
-   * 更新使用者的完整資料（包含 display_name 和所有邊樣資訊）
+   * 更新使用者的完整資料
    * @param supabase Supabase 客戶端實例
    * @param profileData 用戶資料物件
    */
@@ -181,7 +191,7 @@ const { error } = await supabase.auth.updateUser({
       points?: number
       role?: string
       department?: string
-      dateOfBirth?: string
+      phoneNumber?: string
       gender?: string
       bio?: string
     }
@@ -193,91 +203,44 @@ const { error } = await supabase.auth.updateUser({
 
       const currentMetadata = user.user_metadata || {}
 
-      // 構建更新物件，只包含提供的字段
-      const updateData: Record<string, any> = {
-        ...currentMetadata
-      }
+      // 1. 更新 profiles 表
+      const dbUpdate: Record<string, any> = {}
+      if (profileData.name !== undefined) dbUpdate.name = profileData.name
+      if (profileData.points !== undefined) dbUpdate.points = profileData.points
+      if (profileData.role !== undefined) dbUpdate.role = profileData.role
+      if (profileData.department !== undefined) dbUpdate.department = profileData.department
+      if (profileData.phoneNumber !== undefined) dbUpdate.phone_number = profileData.phoneNumber
+      if (profileData.gender !== undefined) dbUpdate.gender = profileData.gender
+      if (profileData.bio !== undefined) dbUpdate.bio = profileData.bio
 
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .update(dbUpdate)
+        .eq('id', user.id)
+
+      if (dbError) throw dbError
+
+      // 2. 更新 auth metadata
+      const authUpdate: Record<string, any> = { ...currentMetadata }
       if (profileData.name !== undefined) {
-        updateData.name = profileData.name
-        updateData.display_name = profileData.name
+        authUpdate.name = profileData.name
+        authUpdate.display_name = profileData.name
       }
+      if (profileData.points !== undefined) authUpdate.points = profileData.points
+      if (profileData.role !== undefined) authUpdate.role = profileData.role
+      if (profileData.department !== undefined) authUpdate.department = profileData.department
+      if (profileData.phoneNumber !== undefined) authUpdate.phone_number = profileData.phoneNumber
+      if (profileData.gender !== undefined) authUpdate.gender = profileData.gender
+      if (profileData.bio !== undefined) authUpdate.bio = profileData.bio
 
-      if (profileData.points !== undefined) {
-        updateData.points = profileData.points
-      }
-
-      if (profileData.role !== undefined) {
-        updateData.role = profileData.role
-      }
-
-      if (profileData.department !== undefined) {
-        updateData.department = profileData.department
-      }
-
-      if (profileData.dateOfBirth !== undefined) {
-        updateData.date_of_birth = profileData.dateOfBirth
-      }
-
-      if (profileData.gender !== undefined) {
-        updateData.gender = profileData.gender
-      }
-
-      if (profileData.bio !== undefined) {
-        updateData.bio = profileData.bio
-      }
-
-      // 更新用戶 metadata
-      const { error } = await supabase.auth.updateUser({
-        data: updateData
+      const { error: authError } = await supabase.auth.updateUser({
+        data: authUpdate
       })
 
-      if (error) throw error
+      if (authError) throw authError
     } catch (error: any) {
       console.error('Error updating user profile:', error)
       throw new Error(error.message || 'Failed to update user profile')
-    }
-  },
-
-  /**
-   * 更新使用者 display_name 與相關資訊（便利方法）
-   * @deprecated 使用 updateUserProfile 代替，保留此方法以向後兼容
-   */
-  async updateDisplayName(
-    supabase: any,
-    displayName: string,
-    additionalData?: {
-      role?: string
-      department?: string
-      dateOfBirth?: string
-      gender?: string
-      bio?: string
-    }
-  ): Promise<void> {
-    await userService.updateUserProfile(supabase, {
-      name: displayName,
-      role: additionalData?.role,
-      department: additionalData?.department,
-      dateOfBirth: additionalData?.dateOfBirth,
-      gender: additionalData?.gender,
-      bio: additionalData?.bio
-    })
-  },
-
-  /**
-   * 取得使用者的認證 metadata
-   */
-  async getUserAuthMetadata(): Promise<Record<string, any>> {
-    try {
-      const supabase = useSupabaseClient()
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (!user) throw new Error('User not authenticated')
-
-      return user.user_metadata || {}
-    } catch (error: any) {
-      console.error('Error fetching user auth metadata:', error)
-      return {}
     }
   },
 

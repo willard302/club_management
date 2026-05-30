@@ -132,6 +132,7 @@ onBeforeUnmount(async () => {
           個人資料已更新
         </div>
 
+        <!-- 姓名 -->
         <div class="space-y-2">
           <label class="block text-sm font-semibold text-slate-700 ml-1">姓名</label>
           <input 
@@ -142,16 +143,32 @@ onBeforeUnmount(async () => {
             :disabled="isLoading"
           />
         </div>
+
+        <!-- 校友會 / 單位 -->
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">出生年月日</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">校友會 / 單位</label>
           <input 
-            v-model="formData.dateOfBirth"
+            v-model="formData.department"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            placeholder="請選擇日期" 
-            type="date"
+            placeholder="例：台北校友會" 
+            type="text"
             :disabled="isLoading"
           />
         </div>
+
+        <!-- 電話號碼 -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-slate-700 ml-1">電話號碼</label>
+          <input 
+            v-model="formData.phoneNumber"
+            class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
+            placeholder="請輸入電話號碼" 
+            type="tel"
+            :disabled="isLoading"
+          />
+        </div>
+
+        <!-- 性別 -->
         <div class="space-y-2">
           <label class="block text-sm font-semibold text-slate-700 ml-1">性別</label>
           <select 
@@ -162,14 +179,17 @@ onBeforeUnmount(async () => {
             <option value="">請選擇性別</option>
             <option value="male">男</option>
             <option value="female">女</option>
+            <option value="other">其他</option>
           </select>
         </div>
+
+        <!-- 個人簡介 -->
         <div class="space-y-2">
           <label class="block text-sm font-semibold text-slate-700 ml-1">個人簡介</label>
           <textarea 
             v-model="formData.bio"
             class="w-full p-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 resize-none text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed" 
-            placeholder="分享你的習禪心得..." 
+            placeholder="分享你的背景或習禪心得..." 
             rows="3"
             :disabled="isLoading"
           ></textarea>
