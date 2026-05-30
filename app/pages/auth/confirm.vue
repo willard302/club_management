@@ -1,182 +1,175 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 definePageMeta({
   layout: 'auth'
 })
 
+const router = useRouter()
+const route = useRoute()
+const supabase = useSupabaseClient()
+
 const loading = ref(true)
 const errorMessage = ref('')
 const successMessage = ref('')
-const supabase = useSupabaseClient()
-const router = useRouter()
-const route = useRoute()
-
-const hasCompletedGoogleSignup = (metadata: Record<string, any>) => {
-  return metadata.google_signup_completed === true
-}
-
-const waitForAuthenticatedUser = async () => {
-  for (let i = 0; i < 5; i += 1) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      return user
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 300))
-  }
-
-  return null
-}
 
 onMounted(async () => {
-  try {
-    const oauthError = route.query.error_description as string | undefined
+  // Wait a bit to ensure the auth state is ready
+  await new Promise((resolve) => setTimeout(resolve, 300))
 
-    if (oauthError) {
-      errorMessage.value = decodeURIComponent(oauthError)
-      return
+  const hash = route.hash
+  const error = route.query.error as string
+  const errorDescription = route.query.error_description as string
+
+  // Handle OAuth or PKCE errors from the URL
+  if (error) {
+    errorMessage.value = errorDescription || '驗證過程中發生錯誤'
+    loading.value = false
+    setTimeout(() => {
+      router.push('/auth/login')
+    }, 3000)
+    return
+  }
+
+  // Also check for error parameters in the hash (Supabase sometimes puts them there)
+  const hashParams = new URLSearchParams(hash.substring(1))
+  const oauthError = hashParams.get('error_description')
+  if (oauthError) {
+    errorMessage.value = decodeURIComponent(oauthError)
+    loading.value = false
+    setTimeout(() => {
+      router.push('/auth/login')
+    }, 3000)
+    return
+  }
+
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError) throw userError
+
+    if (user) {
+      // If we have a user, it means the confirmation was successful
+      successMessage.value = '電子郵件驗證成功！即將跳轉首頁...'
+      loading.value = false
+      setTimeout(() => {
+        router.push('/')
+      }, 2000)
+    } else {
+      // Check if this is just a redirect back from a provider without a user session yet
+      errorMessage.value = '找不到確認連結，即將跳轉登入頁...'
+      loading.value = false
+      setTimeout(() => {
+        router.push('/auth/login')
+      }, 3000)
     }
 
-    // 檢查是否有郵件確認 token
-    const token = route.query.token as string | undefined
-    const type = route.query.type as string | undefined
+    // Double check profiles
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
 
-    if (token && type === 'email') {
-      // 驗證郵件確認 token
-      const { error } = await supabase.auth.verifyOtp({
-        email: route.query.email as string,
-        token: token,
-        type: 'email'
-      })
-
-      if (error) {
-        errorMessage.value = error.message || 'Invalid or expired email confirmation link'
-        console.error('Email verification error:', error)
-      } else {
-        successMessage.value = $t('auth.confirm.successMessage')
-        // 延遲 2 秒後重定向
-        setTimeout(() => {
-          router.push('/auth/login')
-        }, 2000)
-      }
-    } else {
-      // 無 email token 視為 OAuth 回調
-      const user = await waitForAuthenticatedUser()
-
-      if (!user) {
-        errorMessage.value = $t('auth.confirm.errorNoToken')
-        setTimeout(() => {
-          router.push('/auth/login')
-        }, 2000)
-        return
-      }
-
-      const metadata = user.user_metadata || {}
-      if (hasCompletedGoogleSignup(metadata)) {
-        router.push('/')
-      } else {
-        const { data: existingProfile, error: profileQueryError } = await supabase
+      if (!profile) {
+        // Initialize profile if it doesn't exist (e.g. first time Google login)
+        const metadata = user.user_metadata || {}
+        await supabase
           .from('profiles')
-          .select('id')
-          .eq('id', user.id)
-          .maybeSingle()
-
-        if (profileQueryError) {
-          throw profileQueryError
-        }
-
-        if (!existingProfile) {
-          const { error: createProfileError } = await supabase
-            .from('profiles')
-            .insert({
-              id: user.id,
-              name: metadata.name || metadata.full_name || user.email?.split('@')[0] || 'User',
-              avatar_url: metadata.avatar_url || null,
-              role: metadata.role || 'member',
-              department: metadata.department || null,
-              points: Number(metadata.points ?? 0)
-            })
-
-          if (createProfileError) {
-            throw createProfileError
-          }
-        }
-
-        const { error: completionError } = await supabase.auth.updateUser({
-          data: {
-            ...metadata,
-            google_signup_completed: true
-          }
-        })
-
-        if (completionError) {
-          throw completionError
-        }
-
-        successMessage.value = '註冊成功，請至信箱收取認證信件'
-
-        setTimeout(async () => {
-          await supabase.auth.signOut()
-          router.push('/auth/login')
-        }, 2000)
+          .insert({
+            id: user.id,
+            name: metadata.name || metadata.full_name || user.email?.split('@')[0] || 'User',
+            avatar_url: metadata.avatar_url || null,
+            role: 'member',
+            points: 0
+          })
       }
     }
   } catch (err: any) {
-    errorMessage.value = err.message || $t('auth.confirm.errorConfirm')
-    console.error(err)
-  } finally {
-    loading.value = false
+    console.error('Confirmation error:', err)
+    // If there's an error but we're already logged in, just redirect to home
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) {
+      router.push('/')
+    } else {
+      errorMessage.value = err.message || '電子郵件確認時發生錯誤'
+      loading.value = false
+      setTimeout(async () => {
+        await supabase.auth.signOut()
+        router.push('/auth/login')
+      }, 3000)
+    }
   }
 })
 </script>
 
 <template>
-  <div class="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-background-light dark:bg-background-dark font-display">
-    <!-- Background Image with Overlay -->
-    <div class="absolute inset-0 z-0">
-      <div
-        class="h-full w-full bg-cover bg-center"
-        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKLqnX9ZXB6k4S_M2OiUzo28rwbVbB4qgtt-CuoJnz7esDmG4EipwCVb159pJxmBEUzY0SIMcJffb8sBWx7x0cCktLUUeogL4l_7CKhM4tw-WrZapPYOiXOJ_wFK0XCHI8tjk2PkDynPSxN-hiE_8DwZJ0-k355BY8O0Jn4yeAvRUuQ6juPcePLPZzromKaH4sAy7R06qG24jk8u4mJDZr3UbyPmicNP-tofDjENIMKDtGvnRYe5SgAVTeEDieQCXIlvpG11VqryQ')"
-      ></div>
-      <div class="absolute inset-0 bg-primary/10"></div>
+  <div class="relative flex h-screen w-full flex-col overflow-hidden bg-primary font-display">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute top-[60%] -right-[5%] w-[30%] h-[30%] bg-white/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s"></div>
     </div>
 
     <!-- Content -->
-    <div class="relative z-10 flex flex-col items-center justify-center gap-6 px-6 max-w-sm">
-      <!-- Logo -->
-      <LogoIcon size="lg" />
+    <div class="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+      <div class="w-full max-w-sm glass-effect rounded-[2.5rem] p-10 shadow-2xl space-y-8 border border-white/20">
+        <div class="size-24 bg-white rounded-3xl shadow-xl flex items-center justify-center mx-auto text-primary">
+          <span v-if="loading" class="material-symbols-outlined text-5xl animate-spin">progress_activity</span>
+          <span v-else-if="errorMessage" class="material-symbols-outlined text-5xl text-red-500">error</span>
+          <span v-else class="material-symbols-outlined text-5xl text-green-500">check_circle</span>
+        </div>
 
-      <!-- Title -->
-        <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md text-center">
-        {{ $t('auth.confirm.title') }}
-      </h1>
+        <div class="space-y-3">
+          <h1 class="text-white text-2xl font-bold tracking-tight">電子郵件確認</h1>
+          
+          <div v-if="loading" class="space-y-4">
+            <p class="text-white/70">正在驗證您的電子郵件...</p>
+            <div class="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+              <div class="bg-white h-full animate-progress-bar"></div>
+            </div>
+          </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="text-center">
-        <div class="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-        <p class="text-white/70">{{ $t('auth.confirm.verifying') }}</p>
-      </div>
+          <p v-else-if="errorMessage" class="text-red-200 font-medium">
+            {{ errorMessage }}
+          </p>
 
-      <!-- Success State -->
-      <div v-else-if="successMessage" class="text-center">
-        <div class="text-green-400 text-4xl mb-4">✓</div>
-        <p class="text-green-400 text-lg font-semibold">{{ successMessage }}</p>
-      </div>
+          <p v-else-if="successMessage" class="text-green-200 font-medium">
+            {{ successMessage }}
+          </p>
+        </div>
 
-      <!-- Error State -->
-      <div v-else-if="errorMessage" class="text-center">
-        <div class="text-red-400 text-4xl mb-4">⚠</div>
-        <p class="text-red-400 text-lg">{{ errorMessage }}</p>
-        <NuxtLink
-          to="/auth/login"
-          class="mt-6 inline-block bg-primary text-white font-bold py-2 px-6 rounded-xl hover:bg-primary/90 transition-all"
-        >
-          {{ $t('auth.confirm.backToLogin') }}
-        </NuxtLink>
+        <div class="pt-4">
+          <NuxtLink 
+            to="/auth/login" 
+            class="inline-flex items-center gap-2 text-white/60 hover:text-white font-bold transition-colors"
+          >
+            <span class="material-symbols-outlined text-xl">arrow_back</span>
+            <span>返回登入</span>
+          </NuxtLink>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@keyframes progress-bar {
+  0% { width: 0%; transform: translateX(-100%); }
+  50% { width: 70%; transform: translateX(0); }
+  100% { width: 100%; transform: translateX(100%); }
+}
+
+.animate-progress-bar {
+  width: 100%;
+  animation: progress-bar 2s infinite ease-in-out;
+}
+</style>

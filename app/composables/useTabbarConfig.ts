@@ -1,6 +1,5 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from '#imports'
 import type { TabbarItem } from '@/types'
 import { baseTabbarItems } from '@/config/tabbar'
 
@@ -9,20 +8,25 @@ export const useTabbarConfig = () => {
 
   const routeToIndexMap: Record<string, number> = {
     '/': 0,
-    '/meditation': 1,
-    '/calendar': 2,
-    '/settings': 0,
-    '/user-center/user-info': 0
+    '/calendar': 1,
+    '/user-center/user-info': 2
   }
 
   const activeIndex = computed(() => {
     return routeToIndexMap[route.path] ?? 0
   })
 
+  const labelsMap: Record<string, string> = {
+    'Home': '首頁',
+    'Meditation': '禪定',
+    'Calendar': '行事曆',
+    'User Center': '會員中心'
+  }
+
   const tabbarItems = computed<TabbarItem[]>(() => {
     return baseTabbarItems.map((item, index) => ({
       ...item,
-      label: `tabbar.${item.label.toLowerCase().replace(/\s+/g, '_')}`,
+      label: labelsMap[item.label] || item.label,
       fill: index === activeIndex.value
     }))
   })

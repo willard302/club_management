@@ -20,7 +20,7 @@ const handleLogin = async () => {
   const router = useRouter()
   
   if (!formData.value.email || !formData.value.password) {
-    errorMessage.value = $t('auth.login.errorEmpty')
+    errorMessage.value = '請輸入 Email 和密碼。'
     return
   }
 
@@ -71,9 +71,9 @@ const handleLogin = async () => {
     router.push('/')
   } catch (error: any) {
     if (error?.message?.includes('Invalid login credentials')) {
-      errorMessage.value = $t('auth.login.errorLogin')
+      errorMessage.value = '登入時發生錯誤。'
     } else {
-      errorMessage.value = error.message || $t('auth.login.errorLogin')
+      errorMessage.value = error.message || '登入時發生錯誤。'
     }
   } finally {
     loading.value = false
@@ -96,7 +96,7 @@ const handleGoogleLogin = async () => {
       throw error
     }
   } catch (error: any) {
-    errorMessage.value = error.message || $t('auth.login.errorLogin')
+    errorMessage.value = error.message || '登入時發生錯誤。'
     loading.value = false
   }
 }
@@ -123,7 +123,7 @@ const handleGoogleLogin = async () => {
 
         <!-- Title -->
         <div class="text-center">
-          <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md">{{ $t('appTitle') }}</h1>
+          <h1 class="text-white text-3xl font-bold tracking-widest drop-shadow-md">領袖會社青團</h1>
         </div>
 
         <!-- Form -->
@@ -133,7 +133,7 @@ const handleGoogleLogin = async () => {
             <input
               v-model="formData.email"
               type="email"
-              :placeholder="$t('auth.login.emailPlaceholder')"
+              placeholder="輸入你的 Email"
               class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
             />
           </div>
@@ -144,7 +144,7 @@ const handleGoogleLogin = async () => {
               <input
                 v-model="formData.password"
                 :type="showPassword ? 'text' : 'password'"
-                :placeholder="$t('auth.login.passwordPlaceholder')"
+                placeholder="輸入你的密碼"
                 class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
               />
               <button
@@ -168,13 +168,13 @@ const handleGoogleLogin = async () => {
             :disabled="loading"
             class="w-full bg-primary text-white font-bold py-3 rounded-xl glow-button text-lg tracking-wide hover:bg-primary/90 transition-all active:scale-[0.8] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ loading ? $t('auth.login.loggingIn') : $t('auth.login.submit') }}
+            {{ loading ? '登入中...' : '登入' }}
           </button>
 
           <!-- Links -->
           <div class="flex justify-between px-2">
-            <NuxtLink to="/auth/forget-password" class="text-white/80 text-sm hover:text-white transition-colors">{{ $t('auth.login.forgotPassword') }}</NuxtLink>
-            <NuxtLink to="/auth/register" class="text-white/80 text-sm font-semibold hover:text-white transition-colors border-b border-white/30">{{ $t('auth.login.signUp') }}</NuxtLink>
+            <NuxtLink to="/auth/forget-password" class="text-white/80 text-sm hover:text-white transition-colors">忘記密碼？</NuxtLink>
+            <NuxtLink to="/auth/register" class="text-white/80 text-sm font-semibold hover:text-white transition-colors border-b border-white/30">註冊</NuxtLink>
           </div>
         </div>
       </div>
@@ -183,7 +183,7 @@ const handleGoogleLogin = async () => {
       <div class="flex flex-col items-center gap-4 mt-4 w-full">
         <div class="flex items-center gap-4 w-full max-w-sm">
           <div class="h-[1px] flex-1 bg-white/20"></div>
-          <span class="text-white/40 text-xs uppercase tracking-widest">{{ $t('auth.login.orContinueWith') }}</span>
+          <span class="text-white/40 text-xs uppercase tracking-widest">或使用以下方式繼續</span>
           <div class="h-[1px] flex-1 bg-white/20"></div>
         </div>
         <div class="flex gap-4">
@@ -191,7 +191,7 @@ const handleGoogleLogin = async () => {
             @click="handleGoogleLogin"
             type="button"
             class="size-12 rounded-full glass-effect flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-            :title="$t('auth.login.loginWithGoogle')"
+            title="使用 Google 登入"
           >
             <!-- Google Icon (using Material Symbols or inline SVG) -->
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">

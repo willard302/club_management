@@ -21,7 +21,6 @@
     "vue-router": "^5.0.4"
   },
   "devDependencies": {
-    "@nuxtjs/i18n": "^10.2.4",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
     "supabase": "^2.87.2",

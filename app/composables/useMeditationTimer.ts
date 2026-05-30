@@ -31,8 +31,8 @@ export function useMeditationTimer() {
     }
   })
 
-  const meditationType = ref('Morning Meditation')
-  const meditationDescription = ref('Find your center in the clear blue sky')
+  const meditationType = ref('清晨禪定')
+  const meditationDescription = ref('在蔚藍天空中找到你的中心')
 
   const showDropdown = ref(false)
   const showChimeSettings = ref(false)

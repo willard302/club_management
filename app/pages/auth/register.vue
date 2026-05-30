@@ -22,12 +22,12 @@ const successMessage = ref('')
 
 const handleRegister = async () => {
   if (formData.value.password !== formData.value.confirmPassword) {
-    errorMessage.value = $t('auth.register.errorMismatch')
+    errorMessage.value = '密碼不相符。'
     return
   }
   
   if (!formData.value.fullName || !formData.value.email || !formData.value.password) {
-    errorMessage.value = $t('auth.register.errorEmpty')
+    errorMessage.value = '請填寫所有必填欄位。'
     return
   }
 
@@ -52,7 +52,7 @@ const handleRegister = async () => {
     
     if (error) throw error
     
-    successMessage.value = $t('auth.register.successMessage')
+    successMessage.value = '註冊成功！請確認您的電子郵件以啟用帳號。'
 
     // 導向登入頁
     setTimeout(() => {
@@ -60,7 +60,7 @@ const handleRegister = async () => {
     }, 2000)
     
   } catch (error: any) {
-    errorMessage.value = error.message || $t('auth.register.errorRegister')
+    errorMessage.value = error.message || '註冊時發生錯誤。'
   } finally {
     loading.value = false
   }
@@ -80,8 +80,8 @@ const handleRegister = async () => {
 
       <!-- Header Content in Hero Section -->
       <div class="relative p-6">
-        <h2 class="text-slate-900 text-2xl font-bold leading-tight tracking-tight">{{ $t('appTitle') }}</h2>
-        <p class="text-slate-700 text-sm font-medium">{{ $t('auth.register.heroSubtitle') }}</p>
+        <h2 class="text-slate-900 text-2xl font-bold leading-tight tracking-tight">領袖會社青團</h2>
+        <p class="text-slate-700 text-sm font-medium">加入我們的平靜社群</p>
       </div>
     </div>
 
@@ -89,8 +89,8 @@ const handleRegister = async () => {
     <div class="flex-1">
       <!-- Header Text -->
       <div class="px-6 pt-6 pb-2">
-        <h2 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight">{{ $t('auth.register.title') }}</h2>
-        <p class="text-slate-500 dark:text-slate-400 text-base font-normal mt-1">{{ $t('auth.register.description') }}</p>
+        <h2 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight">建立帳號</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-base font-normal mt-1">開始你的內心平靜與正念之旅。</p>
       </div>
 
       <!-- Registration Form -->
@@ -102,7 +102,7 @@ const handleRegister = async () => {
             <input
               v-model="formData.email"
               type="email"
-              :placeholder="$t('auth.login.emailPlaceholder')"
+              placeholder="輸入你的 Email"
               class="form-input block w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             />
           </div>
@@ -115,7 +115,7 @@ const handleRegister = async () => {
             <input
               v-model="formData.password"
               :type="showPassword ? 'text' : 'password'"
-              :placeholder="$t('auth.register.passwordPlaceholder')"
+              placeholder="建立密碼"
               class="form-input block w-full pl-12 pr-12 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             />
             <button
@@ -135,7 +135,7 @@ const handleRegister = async () => {
             <input
               v-model="formData.confirmPassword"
               :type="showPassword ? 'text' : 'password'"
-              :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
+              placeholder="再次輸入密碼"
               class="form-input block w-full pl-12 pr-12 py-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
             />
             <button
@@ -164,11 +164,11 @@ const handleRegister = async () => {
           :disabled="loading"
           class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {{ loading ? $t('auth.register.registering') : $t('auth.register.submit') }}
+          {{ loading ? '註冊中...' : '註冊' }}
         </button>
         <div class="flex items-center justify-center gap-2 mt-2">
-          <p class="text-slate-500 dark:text-slate-400 text-sm">{{ $t('auth.register.alreadyHaveAccount') }}</p>
-          <NuxtLink to="/auth/login" class="text-primary font-semibold text-sm hover:underline">{{ $t('auth.register.backToLogin') }}</NuxtLink>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">已有帳號？</p>
+          <NuxtLink to="/auth/login" class="text-primary font-semibold text-sm hover:underline">返回登入</NuxtLink>
         </div>
       </div>
     </div>

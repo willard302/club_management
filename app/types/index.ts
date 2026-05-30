@@ -1,5 +1,3 @@
-export * from './meditation'
-
 /**
  * Tabbar Items
  */
@@ -16,7 +14,7 @@ export interface TabbarItem {
 export * from './event'
 
 export interface Activity {
-  type: 'meditation' | 'event'
+  type: 'event'
   date: string
   title: string
   duration: string

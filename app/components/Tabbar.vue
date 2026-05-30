@@ -36,7 +36,7 @@ withDefaults(defineProps<Props>(), {
         >
           {{ item.icon }}
         </span>
-        <span class="text-[9px] font-bold uppercase tracking-tighter">{{ $t(item.label) }}</span>
+        <span class="text-[9px] font-bold uppercase tracking-tighter">{{ item.label }}</span>
       </NuxtLink>
     </div>
   </nav>

@@ -58,11 +58,11 @@ const passwordStrength = computed<{ level: number; text: string; color: string }
   
   const levels = [
     { level: 0, text: '', color: '' },
-    { level: 1, text: $t('changePassword.weak'), color: 'text-red-400' },
-    { level: 2, text: $t('changePassword.medium'), color: 'text-yellow-400' },
-    { level: 3, text: $t('changePassword.strong'), color: 'text-green-400' },
-    { level: 4, text: $t('changePassword.veryStrong'), color: 'text-green-500' },
-    { level: 5, text: $t('changePassword.extremelyStrong'), color: 'text-green-600' }
+    { level: 1, text: '弱', color: 'text-red-400' },
+    { level: 2, text: '中', color: 'text-yellow-400' },
+    { level: 3, text: '強', color: 'text-green-400' },
+    { level: 4, text: '非常強', color: 'text-green-500' },
+    { level: 5, text: '極強', color: 'text-green-600' }
   ]
   
   return levels[Math.min(strength, 5)]!
@@ -79,17 +79,17 @@ const handleSubmit = async () => {
   
   // 客戶端驗證
   if (!isFormValid.value) {
-    localError.value = $t('changePassword.errorEmpty')
+    localError.value = '請填寫所有必填欄位'
     return
   }
 
   if (!passwordsMatch.value) {
-    localError.value = $t('changePassword.errorNoMatch')
+    localError.value = '新密碼和確認密碼不相符'
     return
   }
 
   if (newPassword.value.length < 6) {
-    localError.value = $t('changePassword.errorLength')
+    localError.value = '新密碼至少需要6個字符'
     return
   }
 
@@ -101,14 +101,14 @@ const handleSubmit = async () => {
     newPassword.value = ''
     confirmPassword.value = ''
     
-    showSuccessToast($t('changePassword.success'))
+    showSuccessToast('密碼已成功修改')
     
     // 2秒後返回上一頁
     setTimeout(() => {
       router.back()
     }, 1500)
   } catch (err: any) {
-    localError.value = err.message || $t('changePassword.errorEmpty') // fallback
+    localError.value = err.message || '請填寫所有必填欄位' // fallback
     showErrorToast(localError.value as string)
   }
 }
@@ -124,7 +124,7 @@ const handleInput = () => {
 <template>
   <div class="relative flex min-h-screen w-full flex-col bg-[#f0f9ff] overflow-x-hidden pb-16">
     <!-- Header -->
-    <AppPageHeader :title="$t('changePassword.title')" @back="router.back" />
+    <AppPageHeader title="修改密碼" @back="router.back" />
 
     <!-- Main Content -->
     <main class="flex-1 w-full px-4 py-6 space-y-6">
@@ -142,7 +142,7 @@ const handleInput = () => {
         <!-- Current Password Field -->
         <div class="space-y-2">
           <label class="block text-sm font-semibold text-slate-700 ml-1">
-            {{ $t('changePassword.currentPassword') }}
+            當前密碼
           </label>
           <div class="relative flex items-center">
             <span class="material-symbols-outlined absolute left-4 text-slate-400">lock</span>
@@ -151,7 +151,7 @@ const handleInput = () => {
               @input="handleInput"
               :type="showCurrentPassword ? 'text' : 'password'"
               class="w-full h-12 pl-12 pr-12 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800"
-              :placeholder="$t('changePassword.placeholderCurrent')"
+              placeholder="輸入當前密碼"
             />
             <button
               type="button"
@@ -168,7 +168,7 @@ const handleInput = () => {
         <!-- New Password Field -->
         <div class="space-y-2">
           <label class="block text-sm font-semibold text-slate-700 ml-1">
-            {{ $t('changePassword.newPassword') }}
+            新密碼
           </label>
           <div class="relative flex items-center">
             <span class="material-symbols-outlined absolute left-4 text-slate-400">lock</span>
@@ -177,7 +177,7 @@ const handleInput = () => {
               @input="handleInput"
               :type="showNewPassword ? 'text' : 'password'"
               class="w-full h-12 pl-12 pr-12 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800"
-              :placeholder="$t('changePassword.placeholderNew')"
+              placeholder="輸入新密碼"
             />
             <button
               type="button"
@@ -213,7 +213,7 @@ const handleInput = () => {
         <!-- Confirm Password Field -->
         <div class="space-y-2">
           <label class="block text-sm font-semibold text-slate-700 ml-1">
-            {{ $t('changePassword.confirmPassword') }}
+            確認新密碼
           </label>
           <div class="relative flex items-center">
             <span class="material-symbols-outlined absolute left-4 text-slate-400">lock_reset</span>
@@ -223,7 +223,7 @@ const handleInput = () => {
               :type="showConfirmPassword ? 'text' : 'password'"
               class="w-full h-12 pl-12 pr-12 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800"
               :class="{ 'ring-2 ring-red-400/50': !passwordsMatch && confirmPassword.length > 0 }"
-              :placeholder="$t('changePassword.placeholderConfirm')"
+              placeholder="確認新密碼"
             />
             <button
               type="button"
@@ -248,7 +248,7 @@ const handleInput = () => {
               class="text-[12px] font-bold"
               :class="passwordsMatch ? 'text-green-600' : 'text-red-600'"
             >
-              {{ passwordsMatch ? $t('changePassword.match') : $t('changePassword.noMatch') }}
+              {{ passwordsMatch ? '密碼相符' : '密碼不相符' }}
             </span>
           </div>
         </div>
@@ -266,13 +266,13 @@ const handleInput = () => {
             class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
           ></span>
           <span v-else class="material-symbols-outlined">save</span>
-          {{ isChangingPassword ? $t('changePassword.submitting') : $t('button.confirm') }}
+          {{ isChangingPassword ? '修改中...' : '確認' }}
         </button>
       </div>
 
       <!-- Password Requirements -->
       <div class="bg-white/40 p-5 rounded-2xl border border-white">
-        <p class="text-[12px] text-slate-500 font-bold uppercase tracking-wider mb-3">{{ $t('changePassword.requirements') }}</p>
+        <p class="text-[12px] text-slate-500 font-bold uppercase tracking-wider mb-3">密碼要求</p>
         <ul class="space-y-2">
           <li class="flex items-center gap-3">
             <span 
@@ -281,7 +281,7 @@ const handleInput = () => {
             >
               {{ newPassword.length >= 6 ? 'check_circle' : 'circle' }}
             </span>
-            <span class="text-sm font-medium" :class="newPassword.length >= 6 ? 'text-slate-800' : 'text-slate-500'">{{ $t('changePassword.reqLength') }}</span>
+            <span class="text-sm font-medium" :class="newPassword.length >= 6 ? 'text-slate-800' : 'text-slate-500'">至少6個字符</span>
           </li>
           <li class="flex items-center gap-3">
             <span 
@@ -290,7 +290,7 @@ const handleInput = () => {
             >
               {{ /[A-Z]/.test(newPassword) && /[a-z]/.test(newPassword) ? 'check_circle' : 'circle' }}
             </span>
-            <span class="text-sm font-medium" :class="/[A-Z]/.test(newPassword) && /[a-z]/.test(newPassword) ? 'text-slate-800' : 'text-slate-500'">{{ $t('changePassword.reqCase') }}</span>
+            <span class="text-sm font-medium" :class="/[A-Z]/.test(newPassword) && /[a-z]/.test(newPassword) ? 'text-slate-800' : 'text-slate-500'">包含大小寫字母</span>
           </li>
           <li class="flex items-center gap-3">
             <span 
@@ -299,7 +299,7 @@ const handleInput = () => {
             >
               {{ /\d/.test(newPassword) ? 'check_circle' : 'circle' }}
             </span>
-            <span class="text-sm font-medium" :class="/\d/.test(newPassword) ? 'text-slate-800' : 'text-slate-500'">{{ $t('changePassword.reqNumber') }}</span>
+            <span class="text-sm font-medium" :class="/\d/.test(newPassword) ? 'text-slate-800' : 'text-slate-500'">包含數字</span>
           </li>
         </ul>
       </div>

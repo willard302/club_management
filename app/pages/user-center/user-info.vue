@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 
@@ -34,12 +33,12 @@ const handleAvatarUpload = async (event: Event) => {
     await uploadAvatar(file)
     // 重新載入用戶資料確保最新
     await loadUserData()
-    showSuccessToast($t('userInfo.avatarSuccess'))
+    showSuccessToast('大頭照上傳成功')
     if (avatarInput.value) {
       avatarInput.value.value = ''
     }
   } catch (err: any) {
-    showErrorToast(err.message || $t('userInfo.avatarError'))
+    showErrorToast(err.message || '上傳大頭照失敗')
     if (avatarInput.value) {
       avatarInput.value.value = ''
     }
@@ -52,9 +51,9 @@ const handleSave = async () => {
     await updateUserInfo()
     // 重新載入用戶資料確保同步
     await loadUserData()
-    showSuccessToast($t('userInfo.saveSuccess'))
+    showSuccessToast('個人資料已更新')
   } catch (err: any) {
-    showErrorToast(err.message || $t('userInfo.saveError'))
+    showErrorToast(err.message || '保存修改失敗')
   }
 }
 
@@ -78,7 +77,7 @@ onBeforeUnmount(async () => {
 <template>
   <div class="relative flex min-h-screen w-full flex-col bg-[#f0f9ff] overflow-x-hidden pb-16">
     <!-- Header -->
-    <AppPageHeader :title="$t('userInfo.title')" @back="router.back" />
+    <AppPageHeader title="編輯個人資料" @back="router.back" />
 
     <main class="flex-1 w-full px-4 py-6 space-y-8">
       <!-- Profile Picture Section -->
@@ -115,7 +114,7 @@ onBeforeUnmount(async () => {
           @change="handleAvatarUpload"
         />
         <div class="text-center">
-          <p class="text-sky-500 font-semibold">{{ $t('appTitle') }}</p>
+          <p class="text-sky-500 font-semibold">領袖會社青團</p>
         </div>
       </div>
 
@@ -130,48 +129,48 @@ onBeforeUnmount(async () => {
         <!-- Success Message -->
         <div v-if="success" class="p-3 bg-green-100 text-green-700 rounded-xl text-sm border border-green-200 flex items-center gap-2">
           <span class="material-symbols-outlined text-base">check_circle</span>
-          {{ $t('userInfo.saveSuccess') }}
+          個人資料已更新
         </div>
 
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.name') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">姓名</label>
           <input 
             v-model="formData.name"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            :placeholder="$t('userInfo.placeholderName')" 
+            placeholder="請輸入姓名" 
             type="text"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.dateOfBirth') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">出生年月日</label>
           <input 
             v-model="formData.dateOfBirth"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 text-slate-800" 
-            :placeholder="$t('userInfo.placeholderDOB')" 
+            placeholder="請選擇日期" 
             type="date"
             :disabled="isLoading"
           />
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.gender') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">性別</label>
           <select 
             v-model="formData.gender"
             class="w-full h-12 px-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm text-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="isLoading"
           >
-            <option value="">{{ $t('userInfo.placeholderGender') }}</option>
-            <option value="male">{{ $t('userInfo.genderMale') }}</option>
-            <option value="female">{{ $t('userInfo.genderFemale') }}</option>
-            <option value="other">{{ $t('userInfo.genderOther') }}</option>
+            <option value="">請選擇性別</option>
+            <option value="male">男</option>
+            <option value="female">女</option>
+            <option value="other">其他</option>
           </select>
         </div>
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-slate-700 ml-1">{{ $t('userInfo.bio') }}</label>
+          <label class="block text-sm font-semibold text-slate-700 ml-1">個人簡介</label>
           <textarea 
             v-model="formData.bio"
             class="w-full p-4 rounded-2xl border-none bg-white/80 focus:ring-2 focus:ring-sky-500/50 shadow-sm placeholder:text-slate-400 resize-none text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed" 
-            :placeholder="$t('userInfo.bioPlaceholder')" 
+            placeholder="分享你的習禪心得..." 
             rows="3"
             :disabled="isLoading"
           ></textarea>
@@ -187,7 +186,7 @@ onBeforeUnmount(async () => {
         >
           <span v-if="!isSaving" class="material-symbols-outlined">save</span>
           <span v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-          {{ isSaving ? $t('changePassword.submitting') : $t('button.save')  }}
+          {{ isSaving ? '修改中...' : '保存'  }}
         </button>
 
         <!-- Change Password Button -->
@@ -196,7 +195,7 @@ onBeforeUnmount(async () => {
           class="w-full h-14 bg-white/60 text-sky-600 font-bold rounded-2xl border-2 border-sky-500/30 hover:bg-white/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
         >
           <span class="material-symbols-outlined">lock</span>
-          {{ $t('button.change_password') }}
+          修改密碼
         </button>
       </div>
     </main>

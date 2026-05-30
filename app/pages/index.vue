@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { format as fnsFormat } from 'date-fns'
 import { eventService } from '@/services/eventService'
 
@@ -21,7 +21,6 @@ const router = useRouter()
 const { addToast } = useToast()
 
 const { userProfile, loadUserData, isLoading: isUserLoading } = useUser()
-const { stats, loadStats, isLoading: isStatsLoading, selectedPeriod } = useMeditationStats()
 
 const meditationTargetMinutes = 40
 const isEventLoading = ref(false)
@@ -48,17 +47,8 @@ const announcements = ref<AnnouncementItem[]>([
 ])
 
 const userPoints = computed(() => userProfile.value?.points ?? 0)
-const todayMinutes = computed(() => stats.value?.totalMinutes ?? 0)
-const todayProgress = computed(() => Math.min(100, Math.round((todayMinutes.value / meditationTargetMinutes) * 100)))
-const remainingMinutes = computed(() => Math.max(meditationTargetMinutes - todayMinutes.value, 0))
 
-const isLoading = computed(() => isUserLoading.value || isStatsLoading.value)
-
-const progressStrokeOffset = computed(() => {
-  const radius = 32
-  const circumference = 2 * Math.PI * radius
-  return circumference - (todayProgress.value / 100) * circumference
-})
+const isLoading = computed(() => isUserLoading.value)
 
 const goToCalendar = () => {
   router.push('/calendar')
@@ -84,10 +74,6 @@ const loadUpcomingEvent = async () => {
   }
 }
 
-const goToMeditation = () => {
-  router.push('/meditation')
-}
-
 const goToProfile = () => {
   router.push('/user-center')
 }
@@ -105,8 +91,7 @@ const viewAllAnnouncements = () => {
 }
 
 onMounted(async () => {
-  selectedPeriod.value = 'Day'
-  await Promise.all([loadUserData(), loadStats(), loadUpcomingEvent()])
+  await Promise.all([loadUserData(), loadUpcomingEvent()])
 })
 </script>
 
@@ -124,53 +109,14 @@ onMounted(async () => {
       </div>
     </section>
 
-    <section class="progress-card">
-      <div class="progress-card__ring-wrap">
-        <svg viewBox="0 0 80 80" class="progress-ring" aria-hidden="true">
-          <circle cx="40" cy="40" r="32" class="progress-ring__track" />
-          <circle
-            cx="40"
-            cy="40"
-            r="32"
-            class="progress-ring__bar"
-            :stroke-dashoffset="progressStrokeOffset"
-          />
-        </svg>
-        <span class="material-symbols-outlined progress-card__icon">self_improvement</span>
-      </div>
-
-      <div class="progress-card__main">
-        <p class="progress-card__label">今日禪定進度</p>
-        <div class="progress-card__time-row">
-          <span class="progress-card__time">{{ todayMinutes }}</span>
-          <span class="progress-card__divider">/</span>
-          <span class="progress-card__target">{{ meditationTargetMinutes }} min</span>
-        </div>
-        <p v-if="remainingMinutes > 0" class="progress-card__hint">還差 {{ remainingMinutes }} 分鐘達標</p>
-        <p v-else class="progress-card__hint progress-card__hint--done">今日目標已達成</p>
-      </div>
-
-      <button class="progress-card__play" type="button" @click="goToMeditation">
-        <span class="material-symbols-outlined">play_arrow</span>
-      </button>
-    </section>
-
     <section class="stats-grid">
       <article class="points-card" @click="goToProfile">
-        <div class="points-card__icon-wrap">
-          <span class="material-symbols-outlined">stars</span>
+        <div class="points-card__overlay">
+          <div class="points-card__icon-wrap">
+            <span class="material-symbols-outlined">stars</span>
+          </div>
         </div>
-        <p class="points-card__label">目前累積點數</p>
         <p class="points-card__value">{{ userPoints }} pts</p>
-      </article>
-
-      <article class="support-card">
-        <div class="support-card__top-icon">
-          <span class="material-symbols-outlined">volunteer_activism</span>
-        </div>
-        <h2 class="support-card__title">支持校友基金</h2>
-        <p class="support-card__text">每一份捐款都能照亮學弟妹</p>
-        <button type="button" class="support-card__button" @click="openSupportAction">贊助支持</button>
       </article>
     </section>
 
@@ -400,8 +346,6 @@ onMounted(async () => {
 .stats-grid {
   margin-top: 14px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
 }
 
 .points-card,
@@ -409,17 +353,15 @@ onMounted(async () => {
   border-radius: 22px;
   background: #f4f7fb;
   border: 1px solid #e8eff5;
-  min-height: 165px;
   padding: 14px;
 }
 
 .points-card {
   cursor: pointer;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 12px;
 }
 
 .points-card__icon-wrap {
@@ -436,7 +378,7 @@ onMounted(async () => {
 .points-card__label {
   margin: 0;
   color: #8ea1b4;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -446,51 +388,6 @@ onMounted(async () => {
   line-height: 1;
   font-weight: 800;
   color: #18253b;
-}
-
-.support-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.support-card__top-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  background: #e3f5ff;
-  color: #0ea5e9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.support-card__title {
-  margin: 0;
-  color: #1f3851;
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.support-card__text {
-  margin: 6px 0 14px;
-  color: #89a1b5;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.support-card__button {
-  margin-top: auto;
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #15b7ff, #0a9be7);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 8px 19px;
-  box-shadow: 0 8px 16px rgba(14, 158, 235, 0.34);
 }
 
 .announcement-section {

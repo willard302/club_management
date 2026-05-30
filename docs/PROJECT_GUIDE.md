@@ -1,7 +1,7 @@
 # Club Management Project Documentation
 
 ## 1. Project Overview
-This is a comprehensive club management application built with **Nuxt 4**, **TailwindCSS**, **Vant UI**, and **Supabase**. It provides features for meditation tracking and event scheduling.
+This is a comprehensive club management application built with **Nuxt 4**, **TailwindCSS**, **Vant UI**, and **Supabase**. It provides features for event scheduling and user management.
 
 ### Core Tech Stack
 - **Frontend Framework**: Nuxt 4 (Vue 3)
@@ -13,12 +13,6 @@ This is a comprehensive club management application built with **Nuxt 4**, **Tai
 ---
 
 ## 2. Main Features
-
-### 🧘 Meditation Tracking
-- **Meditation Timer**: Users can set target durations and record actual meditation time.
-- **Statistics**: Visual representation of meditation history and consistency.
-- **Service**: `app/services/meditationService.ts`
-- **Composables**: `useMeditationTimer.ts`, `useMeditationStats.ts`
 
 ### 📅 Event Calendar
 - **Monthly View**: Display events in a calendar grid.
@@ -41,7 +35,6 @@ This is a comprehensive club management application built with **Nuxt 4**, **Tai
   - `points`: Membership reward points.
   - `bio`: Short biography.
   - `dob`: Date of birth.
-- **`meditation_sessions`**: Records each meditation activity.
 - **`events`**: Stores calendar event details.
 
 ### Why Use a `profiles` Table?

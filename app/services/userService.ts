@@ -125,25 +125,11 @@ export const userService = {
       setTimeout(() => {
         resolve([
           {
-            type: 'meditation',
-            date: 'Today',
-            title: 'Morning Meditation',
-            duration: '30 mins',
-            icon: 'self_improvement'
-          },
-          {
             type: 'event',
             date: 'Yesterday',
             title: 'Weekly Gathering',
             duration: '1 hour',
             icon: 'groups'
-          },
-          {
-            type: 'meditation',
-            date: 'Mar 28',
-            title: 'Evening Session',
-            duration: '45 mins',
-            icon: 'self_improvement'
           }
         ])
       }, 300)

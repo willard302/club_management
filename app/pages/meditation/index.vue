@@ -115,7 +115,7 @@ onUnmounted(() => {
               maxlength="5"
               class="text-6xl font-light text-white tracking-tighter bg-transparent border-none text-center outline-none w-48 p-0 focus:ring-0"
             />
-            <p class="text-white/70 text-sm font-medium mt-2 tracking-widest uppercase">Remaining</p>
+            <p class="text-white/70 text-sm font-medium mt-2 tracking-widest uppercase">剩餘時間</p>
           </div>
           <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 size-4 bg-white rounded-full shadow-lg"></div>
         </div>

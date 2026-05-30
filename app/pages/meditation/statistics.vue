@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
 definePageMeta({
   layout: 'default'
@@ -26,13 +25,13 @@ const chartDataWithHeight = computed(() => {
 // 格式化總時間：< 60 分鐘顯示 "Xm"，否則顯示 "X.Xh"
 const formattedTotalTime = computed(() => {
   const m = stats.value?.totalMinutes ?? 0
-  if (m < 60) return { value: String(m), unit: 'm' }
-  return { value: (m / 60).toFixed(1), unit: 'h' }
+  if (m < 60) return { value: String(m), unit: '分' }
+  return { value: (m / 60).toFixed(1), unit: '小時' }
 })
 
 // 格式化 session 起始時間
 const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString('en-US', {
+  new Date(iso).toLocaleDateString('zh-TW', {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -42,8 +41,18 @@ const formatDate = (iso: string) =>
 // 格式化持續時間（秒 → "Xm" 或 "Xh Ym"）
 const formatDuration = (seconds: number) => {
   const m = Math.round(seconds / 60)
-  if (m < 60) return `${m}m`
-  return `${Math.floor(m / 60)}h ${m % 60}m`
+  if (m < 60) return `${m}分`
+  return `${Math.floor(m / 60)}時 ${m % 60}分`
+}
+
+const getPeriodLabel = (period: string) => {
+  const labels: Record<string, string> = {
+    Day: '日',
+    Week: '週',
+    Month: '月',
+    Year: '年'
+  }
+  return labels[period] || period
 }
 
 </script>
@@ -51,7 +60,7 @@ const formatDuration = (seconds: number) => {
 <template>
   <div class="relative flex h-full min-h-screen w-full flex-col sky-gradient overflow-x-hidden pb-24">
     <!-- Header -->
-    <AppPageHeader :title="$t('meditation.stats')" @back="router.back" />
+    <AppPageHeader title="禪定統計" @back="router.back" />
 
     <!-- Main Content -->
     <main class="flex flex-col gap-6 p-4">
@@ -63,7 +72,7 @@ const formatDuration = (seconds: number) => {
           class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-slate-600 text-sm font-semibold transition-all"
           :class="{ 'bg-primary text-white': selectedPeriod === period }"
         >
-          <span>{{ period }}</span>
+          <span>{{ getPeriodLabel(period) }}</span>
           <input v-model="selectedPeriod" type="radio" :value="period" class="hidden" />
         </label>
       </div>
@@ -87,7 +96,7 @@ const formatDuration = (seconds: number) => {
         <section class="glass-effect rounded-xl p-5 shadow-sm">
           <div class="flex justify-between items-end mb-6">
             <div>
-              <p class="text-slate-500 text-sm font-medium">{{ $t('meditation.totalTime') }}</p>
+              <p class="text-slate-500 text-sm font-medium">總禪定時間</p>
               <h2 class="text-slate-900 text-3xl font-extrabold tracking-tight">
                 {{ formattedTotalTime.value }}
                 <span class="text-lg font-medium text-slate-500">{{ formattedTotalTime.unit }}</span>
@@ -124,7 +133,7 @@ const formatDuration = (seconds: number) => {
             </template>
             <!-- No data yet -->
             <div v-else class="flex-1 flex items-center justify-center text-slate-400 text-sm">
-              {{ $t('meditation.noStats') }}
+              尚無統計資料
             </div>
           </div>
         </section>
@@ -132,7 +141,7 @@ const formatDuration = (seconds: number) => {
         <!-- Recent Sessions -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-slate-900 text-lg font-bold">{{ $t('meditation.recentSessions') }}</h3>
+            <h3 class="text-slate-900 text-lg font-bold">最近紀錄</h3>
           </div>
 
           <!-- Empty state -->
@@ -141,7 +150,7 @@ const formatDuration = (seconds: number) => {
             class="glass-effect rounded-xl p-8 flex flex-col items-center text-center gap-3"
           >
             <span class="material-symbols-outlined text-slate-300 text-5xl">self_improvement</span>
-            <p class="text-slate-500 text-sm">{{ $t('meditation.noSessions') }}</p>
+            <p class="text-slate-500 text-sm">尚無禪定紀錄</p>
           </div>
 
           <div v-else class="flex flex-col gap-3">
@@ -156,15 +165,15 @@ const formatDuration = (seconds: number) => {
               <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-start gap-2">
                   <h4 class="text-slate-900 font-bold text-sm">
-                    {{ session.meditationType || 'Meditation Session' }}
+                    {{ session.meditationType || '禪定紀錄' }}
                   </h4>
                   <span class="text-[11px] text-slate-500 font-medium whitespace-nowrap">
                     {{ formatDate(session.startedAt) }}
                   </span>
                 </div>
                 <p class="text-slate-400 text-xs mt-1">
-                  {{ session.completed ? $t('meditation.completed') : $t('meditation.partial') }}
-                  · {{ Math.round(session.targetSeconds / 60) }}m {{ $t('meditation.target') }}
+                  {{ session.completed ? '完成' : '部分完成' }}
+                  · 目標 {{ Math.round(session.targetSeconds / 60) }} 分
                 </p>
               </div>
               <div class="text-right flex-shrink-0">

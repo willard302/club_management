@@ -5,12 +5,6 @@ definePageMeta({
   layout: 'default'
 })
 
-const { t, locale, setLocale } = useI18n()
-
-const toggleLanguage = () => {
-  setLocale(locale.value === 'tw' ? 'en' : 'tw')
-}
-
 // 使用 useUser composable
 const {
   userProfile,
@@ -65,19 +59,25 @@ const getAvatarUrl = () => {
 
 // 統計數據
 const stats = computed<StatCard[]>(() => [
-  { icon: 'avg_time', label: $t('totalMeditation'), value: userProfile.value?.totalMeditation || '0h' },
-  { icon: 'calendar_month', label: $t('monthlyCheckIns'), value: userProfile.value?.monthlyCheckIns || '0次' }
+  { icon: 'avg_time', label: '總禪定時數', value: userProfile.value?.totalMeditation || '0h' },
+  { icon: 'calendar_month', label: '本月打卡', value: userProfile.value?.monthlyCheckIns || '0次' }
 ])
 
 const menuItems = computed<MenuItem[]>(() => [
-  { icon: 'person_edit', label: $t('editProfile'), path: '/user-center/user-info' },
-  { icon: 'lock_reset', label: $t('changePassword.title'), path: '/user-center/change-password' }
+  { icon: 'person_edit', label: '編輯個人資料', path: '/user-center/user-info' },
+  { icon: 'lock_reset', label: '修改密碼', path: '/user-center/change-password' }
 ])
+
+const getRoleName = (role?: string) => {
+  if (role === 'admin') return '管理員'
+  if (role === 'guest') return '訪客'
+  return '會員'
+}
 </script>
 
 <template>
   <!-- Header Section -->
-  <AppHeader :title="$t('profile')" bg-class="sky-gradient" :has-padding="true"></AppHeader>
+  <AppHeader title="個人資料" bg-class="sky-gradient" :has-padding="true"></AppHeader>
 
     <!-- Main Content -->
     <main class="flex-1 -mt-4 px-4 pb-24 relative z-40">
@@ -119,23 +119,23 @@ const menuItems = computed<MenuItem[]>(() => [
 
         <div class="mb-4">
           <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ userProfile?.name || $t('loading') }}
+            {{ userProfile?.name || '載入中...' }}
           </h2>
           <div class="flex items-center justify-center gap-2 mt-2 flex-wrap">
             <span class="text-sm font-semibold px-3 py-1 rounded-full border bg-primary/10 text-primary border-primary/20">
-              {{ userProfile?.role ? $t(`${userProfile.role}`) : $t('Role.member') }}
+              {{ getRoleName(userProfile?.role) }}
             </span>
           </div>
         </div>
 
         <div class="w-full grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-700 pt-4">
           <div class="text-left">
-            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('department') }}</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department || $t('loading') }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">校友會</p>
+            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.department || '載入中...' }}</p>
           </div>
           <div class="text-right">
-            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('points') }}</p>
-            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.points || $t('loading') }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">點數</p>
+            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ userProfile?.points || '載入中...' }}</p>
           </div>
         </div>
       </div>
@@ -155,18 +155,8 @@ const menuItems = computed<MenuItem[]>(() => [
 
       <!-- Action Items List -->
       <div class="space-y-3 mb-8">
-        <h3 class="px-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ $t('accountSettings') }}</h3>
+        <h3 class="px-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">帳戶設定</h3>
         <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
-          <div
-            class="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors border-b border-slate-50 dark:border-slate-700 cursor-pointer"
-            @click="toggleLanguage"
-          >
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-slate-400">language</span>
-              <span class="font-medium">{{ $t('language') }} ({{ locale === 'tw' ? '繁體中文' : 'English' }})</span>
-            </div>
-            <span class="material-symbols-outlined text-slate-300">swap_horiz</span>
-          </div>
           <NuxtLink
             v-for="(item, index) in menuItems"
             :key="item.label"
@@ -185,7 +175,7 @@ const menuItems = computed<MenuItem[]>(() => [
           >
             <div class="flex items-center gap-3 text-red-500">
               <span class="material-symbols-outlined">logout</span>
-              <span class="font-bold">{{ $t('logout') }}</span>
+              <span class="font-bold">登出</span>
             </div>
           </a>
         </div>

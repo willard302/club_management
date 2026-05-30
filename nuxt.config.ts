@@ -34,37 +34,8 @@ export default defineNuxtConfig({
     dirs: ['app/stores', 'app/composables']
   },
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@vant/nuxt', '@nuxtjs/i18n'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@vant/nuxt'],
 
-  i18n: {
-    langDir: '../locales/',
-    strategy: 'prefix_except_default',
-    locales: [
-      { 
-        code: 'tw', 
-        language: 'zh-TW',
-        name: '繁體中文', 
-        files: [
-          'tw/common.json',
-          'tw/user-info.json',
-          'tw/user-center.json',
-          'tw/auth.json'
-        ]
-      },
-      { 
-        code: 'en', 
-        language: 'en-US',
-        name: 'English', 
-        files: [
-          'en/common.json',
-          'en/user-info.json',
-          'en/user-center.json',
-          'en/auth.json'
-        ]
-      }
-    ],
-    defaultLocale: 'tw',
-  },
   supabase: {
     url: sanitizedSupabaseUrl,
     key: process.env.SUPABASE_KEY,

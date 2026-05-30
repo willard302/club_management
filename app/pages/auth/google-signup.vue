@@ -1,85 +1,73 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { GoogleSignupFormData } from '@/types'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 definePageMeta({
   layout: 'auth'
 })
 
-const supabase = useSupabaseClient()
 const router = useRouter()
-const { completeGoogleSignup } = useUser()
+const supabase = useSupabaseClient()
+const loading = ref(false)
+const errorMessage = ref('')
 
-const formData = ref<GoogleSignupFormData>({
+const formData = ref({
   fullName: '',
-  points: 0,
   department: '',
-  dateOfBirth: '',
-  gender: 'Not specified',
+  gender: '',
   bio: ''
 })
 
-const loading = ref(false)
-const errorMessage = ref('')
-const googleUserInfo = ref<{
-  name?: string
-  email?: string
-  picture?: string
-} | null>(null)
+const genderOptions = [
+  { label: '未指定', value: '' },
+  { label: '男', value: 'male' },
+  { label: '女', value: 'female' },
+  { label: '其他', value: 'other' }
+]
 
-const hasCompletedGoogleSignup = (metadata: Record<string, any>) => {
-  return metadata.google_signup_completed === true
-}
-
-// 頁面載入時取得 Google 使用者資訊
-const loadGoogleUserInfo = async () => {
+// Fetch existing user data if any
+const fetchUserData = async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) {
-      errorMessage.value = $t('auth.googleSignup.errorAuth')
+      errorMessage.value = '使用者未登入，請重新登入。'
       setTimeout(() => {
         router.push('/auth/login')
       }, 2000)
       return
     }
 
-    const metadata = user.user_metadata || {}
-    if (hasCompletedGoogleSignup(metadata)) {
-      router.push('/')
-      return
-    }
+    // Try to get existing profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
 
-    // 從 user 物件取得 Google 提供的資訊
-    googleUserInfo.value = {
-      name: metadata.name || metadata.full_name || '',
-      email: user.email || '',
-      picture: metadata.picture || ''
-    }
-
-    // 預填名字
-    if (googleUserInfo.value.name) {
-      formData.value.fullName = googleUserInfo.value.name
-    }
-
-    if (metadata.department) {
-      formData.value.department = String(metadata.department)
+    if (profile) {
+      formData.value.fullName = profile.name || ''
+      formData.value.department = profile.department || ''
+      formData.value.gender = profile.gender || ''
+      formData.value.bio = profile.bio || ''
+    } else {
+      // Fallback to metadata
+      const metadata = user.user_metadata || {}
+      formData.value.fullName = metadata.full_name || metadata.name || ''
     }
   } catch (err: any) {
-    console.error('Error loading Google user info:', err)
-    errorMessage.value = $t('auth.googleSignup.errorLoadInfo')
+    console.error('Error fetching user data:', err)
+    errorMessage.value = '載入使用者資訊失敗'
   }
 }
 
-const handleSubmit = async () => {
-  // 驗證必填欄位
-  if (!formData.value.fullName.trim()) {
-    errorMessage.value = $t('auth.googleSignup.errorName')
+const handleCompleteRegistration = async () => {
+  if (!formData.value.fullName) {
+    errorMessage.value = '請輸入您的全名'
     return
   }
 
-  if (!formData.value.department.trim()) {
-    errorMessage.value = $t('auth.googleSignup.errorDepartment')
+  if (!formData.value.department) {
+    errorMessage.value = '請選擇您的校友會'
     return
   }
 
@@ -87,47 +75,32 @@ const handleSubmit = async () => {
     loading.value = true
     errorMessage.value = ''
 
-    // 上傳 Google 頭像（如果存在）
-    let avatarPath: string | undefined
-    if (googleUserInfo.value?.picture) {
-      try {
-        const response = await fetch(googleUserInfo.value.picture)
-        const blob = await response.blob()
-        const file = new File([blob], 'google-avatar.jpg', { type: 'image/jpeg' })
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not found')
 
-        // 使用 useUser 的 uploadAvatar 方法（但不重新載入，因為還在設置中）
-        // 這裡直接調用 userService.uploadAvatar
-        const { userService } = await import('@/services/userService')
-        avatarPath = await userService.uploadAvatar(file, supabase)
-      } catch (err) {
-        console.warn('Failed to upload Google avatar:', err)
-        // 不中斷流程，頭像上傳失敗不影響註冊
-      }
-    }
-
-    // 完成用戶資料補填
-    await completeGoogleSignup({
-      fullName: formData.value.fullName,
-      points: formData.value.points,
+    // Import the service here to avoid side effects if needed, 
+    // though generally it's fine at top level
+    const { userService } = await import('@/services/userService')
+    
+    await userService.completeGoogleSignup({
+      id: user.id,
+      name: formData.value.fullName,
       department: formData.value.department,
-      dateOfBirth: formData.value.dateOfBirth,
       gender: formData.value.gender,
-      bio: formData.value.bio,
-      avatarPath: avatarPath
+      bio: formData.value.bio
     })
 
-    // 重定向到首頁
     router.push('/')
   } catch (err: any) {
-    errorMessage.value = err.message || $t('auth.googleSignup.errorComplete')
-    console.error(err)
+    console.error('Error completing registration:', err)
+    errorMessage.value = err.message || '完成註冊失敗'
   } finally {
     loading.value = false
   }
 }
 
 onMounted(() => {
-  loadGoogleUserInfo()
+  fetchUserData()
 })
 </script>
 
@@ -137,96 +110,94 @@ onMounted(() => {
     <div class="absolute inset-0 z-0">
       <div
         class="h-full w-full bg-cover bg-center"
-        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKLqnX9ZXB6k4S_M2OiUzo28rwbVbB4qgtt-CuoJnz7esDmG4EipwCVb159pJxmBEUzY0SIMcJffb8sBWx7x0cCktLUUeogL4l_7CKhM4tw-WrZapPYOiXOJ_wFK0XCHI8tjk2PkDynPSxN-hiE_8DwZJ0-k355BY8O0Jn4yeAvRUuQ6juPcePLPZzromKaH4sAy7R06qG24jk8u4mJDZr3UbyPmicNP-tofDjENIMKDtGvnRYe5SgAVTeEDieQCXIlvpG11VqryQ')"
+        style="background-image: url('https://images.unsplash.com/photo-1499244015948-ac75439983c3?q=80&w=2070&auto=format&fit=crop')"
       ></div>
-      <div class="absolute inset-0 bg-primary/10"></div>
+      <div class="absolute inset-0 bg-primary/20 backdrop-blur-[2px]"></div>
     </div>
 
     <!-- Content -->
-    <div class="relative z-10 flex flex-col items-center justify-between h-full px-6 py-12 overflow-y-auto">
-      <!-- Header -->
-      <div class="flex flex-col items-center gap-4 w-full">
-        <LogoIcon size="md" />
-        <h1 class="text-white text-2xl font-bold tracking-widest drop-shadow-md text-center">{{ $t('auth.googleSignup.title') }}</h1>
-      </div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full px-6 py-12 overflow-y-auto">
+      <div class="w-full max-w-sm flex flex-col gap-8">
+        <!-- Title -->
+        <div class="text-center space-y-2">
+          <LogoIcon size="md" class="mx-auto mb-4" />
+          <h1 class="text-white text-2xl font-bold tracking-widest drop-shadow-md text-center">歡迎加入！</h1>
+        </div>
 
-      <!-- Form -->
-      <div class="w-full max-w-sm flex flex-col gap-4 my-auto">
-        <!-- Google User Info Display -->
-        <div v-if="googleUserInfo" class="glass-effect rounded-xl p-4 mb-4">
-          <div class="flex items-center gap-3">
-            <img
-              v-if="googleUserInfo.picture"
-              :src="googleUserInfo.picture"
-              alt="Google Avatar"
-              class="w-10 h-10 rounded-full"
+        <!-- Form -->
+        <div class="flex flex-col gap-4">
+          <!-- Full Name -->
+          <div class="glass-effect rounded-xl p-1">
+            <input
+              v-model="formData.fullName"
+              type="text"
+              placeholder="全名"
+              class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
             />
-            <div class="flex-1 text-white text-sm">
-              <p class="font-semibold">{{ googleUserInfo.name }}</p>
-              <p class="text-white/70">{{ googleUserInfo.email }}</p>
-            </div>
           </div>
+
+          <!-- Department -->
+          <div class="glass-effect rounded-xl p-1">
+            <input
+              v-model="formData.department"
+              type="text"
+              placeholder="校友會"
+              class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
+            />
+          </div>
+
+          <!-- Gender Selector -->
+          <div class="glass-effect rounded-xl p-1">
+            <select
+              v-model="formData.gender"
+              class="w-full bg-transparent border-none text-white focus:ring-0 text-base py-3 px-4 outline-none appearance-none"
+            >
+              <option v-for="opt in genderOptions" :key="opt.value" :value="opt.value" class="text-slate-900">
+                {{ opt.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Bio -->
+          <div class="glass-effect rounded-xl p-1">
+            <textarea
+              v-model="formData.bio"
+              rows="3"
+              placeholder="個人簡介（選填）"
+              class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Error Message -->
+          <div v-if="errorMessage" class="text-red-400 text-sm text-center bg-red-400/10 py-2 rounded-lg border border-red-400/20">
+            {{ errorMessage }}
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            @click="handleCompleteRegistration"
+            :disabled="loading"
+            class="w-full bg-white text-primary font-bold py-3 rounded-xl shadow-xl text-lg tracking-wide hover:bg-white/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+          >
+            {{ loading ? '完成中...' : '完成註冊' }}
+          </button>
         </div>
 
-        <!-- Full Name Input -->
-        <div class="glass-effect rounded-xl p-1">
-          <input
-            v-model="formData.fullName"
-            type="text"
-            :placeholder="$t('auth.googleSignup.fullNamePlaceholder')"
-            class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
-          />
+        <div class="text-center">
+          <p class="text-white/60 text-sm">
+            已完成了？
+            <NuxtLink to="/" class="text-white/80 hover:text-white transition-colors">回首頁</NuxtLink>
+          </p>
         </div>
-
-        <!-- Department Input -->
-        <div class="glass-effect rounded-xl p-1">
-          <input
-            v-model="formData.department"
-            type="text"
-            :placeholder="$t('auth.googleSignup.departmentPlaceholder')"
-            class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
-          />
-        </div>
-
-        <!-- Bio Textarea -->
-        <div class="glass-effect rounded-xl p-1">
-          <textarea
-            v-model="formData.bio"
-            :placeholder="$t('auth.googleSignup.bioPlaceholder')"
-            rows="3"
-            class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none resize-none"
-          ></textarea>
-        </div>
-
-        <!-- Error Message -->
-        <div v-if="errorMessage" class="text-red-400 text-sm text-center bg-red-400/10 py-2 rounded-lg">
-          {{ errorMessage }}
-        </div>
-
-        <!-- Submit Button -->
-        <button
-          @click="handleSubmit"
-          :disabled="loading"
-          class="w-full bg-primary text-white font-bold py-3 rounded-xl glow-button text-lg tracking-wide hover:bg-primary/90 transition-all active:scale-[0.8] disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {{ loading ? $t('auth.googleSignup.completing') : $t('auth.googleSignup.submit') }}
-        </button>
-      </div>
-
-      <!-- Footer -->
-      <div class="text-center">
-        <p class="text-white/50 text-sm">
-          {{ $t('auth.googleSignup.alreadyCompleted') }}
-          <NuxtLink to="/" class="text-white/80 hover:text-white transition-colors">{{ $t('auth.googleSignup.goHome') }}</NuxtLink>
-        </p>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-select option {
-  background-color: #1f2937;
-  color: white;
+.glass-effect {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 </style>
