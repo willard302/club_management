@@ -35,6 +35,7 @@ export function useUser() {
     } catch (err: any) {
       error.value = err.message || 'Failed to load user data'
       console.error(err)
+      router.push('/auth/login') // 如果載入失敗，可能是未認證，跳轉到登入頁
     } finally {
       isLoading.value = false
     }
@@ -195,6 +196,23 @@ export function useUser() {
         gender: googleSignupData.gender,
         bio: googleSignupData.bio
       })
+
+      // 標記 Google 首次資料補填已完成
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        throw new Error('User not authenticated')
+      }
+
+      const { error: completionError } = await supabase.auth.updateUser({
+        data: {
+          ...(user.user_metadata || {}),
+          google_signup_completed: true
+        }
+      })
+
+      if (completionError) {
+        throw completionError
+      }
 
       // 重新載入用戶資料以確保本地狀態一致
       await loadUserData()

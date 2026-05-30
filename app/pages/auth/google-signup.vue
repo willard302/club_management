@@ -27,12 +27,8 @@ const googleUserInfo = ref<{
   picture?: string
 } | null>(null)
 
-const hasRequiredProfile = (metadata: Record<string, any>) => {
-  const points = metadata.points
-  const department = metadata.department
-
-  return Boolean(points && String(points).trim()) &&
-    Boolean(department && String(department).trim())
+const hasCompletedGoogleSignup = (metadata: Record<string, any>) => {
+  return metadata.google_signup_completed === true
 }
 
 // 頁面載入時取得 Google 使用者資訊
@@ -49,7 +45,7 @@ const loadGoogleUserInfo = async () => {
     }
 
     const metadata = user.user_metadata || {}
-    if (hasRequiredProfile(metadata)) {
+    if (hasCompletedGoogleSignup(metadata)) {
       router.push('/')
       return
     }
@@ -65,6 +61,10 @@ const loadGoogleUserInfo = async () => {
     if (googleUserInfo.value.name) {
       formData.value.fullName = googleUserInfo.value.name
     }
+
+    if (metadata.department) {
+      formData.value.department = String(metadata.department)
+    }
   } catch (err: any) {
     console.error('Error loading Google user info:', err)
     errorMessage.value = $t('auth.googleSignup.errorLoadInfo')
@@ -75,11 +75,6 @@ const handleSubmit = async () => {
   // 驗證必填欄位
   if (!formData.value.fullName.trim()) {
     errorMessage.value = $t('auth.googleSignup.errorName')
-    return
-  }
-
-  if (!formData.value.points) {
-    errorMessage.value = $t('auth.googleSignup.errorPoints')
     return
   }
 
@@ -179,16 +174,6 @@ onMounted(() => {
             v-model="formData.fullName"
             type="text"
             :placeholder="$t('auth.googleSignup.fullNamePlaceholder')"
-            class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
-          />
-        </div>
-
-        <!-- Points Input -->
-        <div class="glass-effect rounded-xl p-1">
-          <input
-            v-model="formData.points"
-            type="number"
-            :placeholder="$t('auth.googleSignup.pointsPlaceholder')"
             class="w-full bg-transparent border-none text-white placeholder:text-white/50 focus:ring-0 text-base py-3 px-4 outline-none"
           />
         </div>

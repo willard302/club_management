@@ -23,7 +23,7 @@ export const userService = {
         joinDate: metadata.join_date || 'Since 2024',
         totalMeditation: metadata.total_meditation || '0h',
         monthlyCheckIns: metadata.monthly_checkins || '0次',
-        department: metadata.department || 'Department',
+        department: metadata.department || '',
         points: metadata.points || 0,
         avatar: metadata.avatar_url || undefined,
         dateOfBirth: metadata.date_of_birth,
@@ -31,21 +31,7 @@ export const userService = {
         bio: metadata.bio
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error)
-      // 返回默認資料
-      return {
-        name: 'User Name',
-        role: 'Role.member',
-        joinDate: 'Since 2024',
-        totalMeditation: '12.5h',
-        monthlyCheckIns: '8次',
-        department: 'Department Name',
-        points: 9999,
-        avatar: undefined,
-        dateOfBirth: undefined,
-        gender: undefined,
-        bio: undefined
-      }
+      throw new Error('User not authenticated')
     }
   },
 
@@ -188,7 +174,7 @@ export const userService = {
           points: points || 0,
           join_date: new Date().toISOString().split('T')[0],
           role: 'Club Member',
-          department: 'Department',
+          department: '',
           total_meditation: '0h',
           monthly_checkins: '0次'
         }

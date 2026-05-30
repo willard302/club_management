@@ -4,7 +4,8 @@ import { format as fnsFormat } from 'date-fns'
 import { eventService } from '@/services/eventService'
 
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  middleware: ['auth']
 })
 
 interface AnnouncementItem {

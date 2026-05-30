@@ -16,40 +16,40 @@ export type Database = {
     Tables: {
       events: {
         Row: {
-          all_day: boolean
-          color: string
-          created_at: string
-          created_by: string
-          description: string
+          all_day: boolean | null
+          color: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
           end_at: string
           id: string
-          location: string
+          location: string | null
           participants: string[] | null
           start_at: string
           title: string
         }
         Insert: {
-          all_day?: boolean
-          color?: string
-          created_at?: string
-          created_by?: string
-          description?: string
+          all_day?: boolean | null
+          color?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
           end_at: string
           id?: string
-          location?: string
+          location?: string | null
           participants?: string[] | null
           start_at: string
-          title?: string
+          title: string
         }
         Update: {
-          all_day?: boolean
-          color?: string
-          created_at?: string
-          created_by?: string
-          description?: string
+          all_day?: boolean | null
+          color?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
           end_at?: string
           id?: string
-          location?: string
+          location?: string | null
           participants?: string[] | null
           start_at?: string
           title?: string
@@ -92,6 +92,51 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          department: string | null
+          dob: string | null
+          gender: string | null
+          id: string
+          name: string
+          phone_number: string | null
+          points: number | null
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          department?: string | null
+          dob?: string | null
+          gender?: string | null
+          id: string
+          name: string
+          phone_number?: string | null
+          points?: number | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          department?: string | null
+          dob?: string | null
+          gender?: string | null
+          id?: string
+          name?: string
+          phone_number?: string | null
+          points?: number | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -106,6 +151,7 @@ export type Database = {
           name: string
         }[]
       }
+      is_conversation_member: { Args: { conv_id: string }; Returns: boolean }
     }
     Enums: {
       attendance_status: "attendance" | "lateness" | "leave" | "absence"

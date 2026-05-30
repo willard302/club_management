@@ -12,12 +12,8 @@ const supabase = useSupabaseClient()
 const router = useRouter()
 const route = useRoute()
 
-const hasRequiredProfile = (metadata: Record<string, any>) => {
-  const points = metadata.points
-  const department = metadata.department
-
-  return Boolean(points && String(points).trim()) &&
-    Boolean(department && String(department).trim())
+const hasCompletedGoogleSignup = (metadata: Record<string, any>) => {
+  return metadata.google_signup_completed === true
 }
 
 const waitForAuthenticatedUser = async () => {
@@ -77,7 +73,7 @@ onMounted(async () => {
       }
 
       const metadata = user.user_metadata || {}
-      if (hasRequiredProfile(metadata)) {
+      if (hasCompletedGoogleSignup(metadata)) {
         router.push('/')
       } else {
         router.push('/auth/google-signup')
