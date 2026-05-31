@@ -41,7 +41,7 @@ export function useCalendar() {
       .eq('id', authData.user.id)
       .maybeSingle()
 
-    currentRole.value = (profile?.role || authData.user.user_metadata?.role || 'member') as Role
+    currentRole.value = (profile?.role || 'member') as Role
   }
 
   const canAddEvent = computed(() => currentRole.value === 'admin')

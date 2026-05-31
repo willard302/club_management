@@ -1,6 +1,21 @@
 import type { UserProfile, Activity, Role } from '@/types'
 import type { Database } from '@/types/database.types'
 
+async function fetchProfilePoints(userId: string, profilePoints: number | null | undefined): Promise<number> {
+  const supabase = useSupabaseClient<Database>()
+  const { data, error } = await supabase
+    .from('point_transactions')
+    .select('points')
+    .eq('user_id', userId)
+
+  if (error) throw error
+  if (data && data.length > 0) {
+    return data.reduce((total, transaction) => total + transaction.points, 0)
+  }
+
+  return profilePoints ?? 0
+}
+
 /**
  * 使用者相關的 API 服務，負責網路請求 (Data Layer)
  */
@@ -23,13 +38,14 @@ export const userService = {
         .maybeSingle()
 
       const metadata = user.user_metadata || {}
+      const points = await fetchProfilePoints(user.id, profile?.points)
 
       return {
         name: profile?.name || metadata.name || user.email?.split('@')[0] || 'User',
-        role: (profile?.role as Role) || (metadata.role as Role) || 'member',
+        role: (profile?.role as Role) || 'member',
         joinDate: profile?.created_at || metadata.join_date || 'Since 2024',
         department: profile?.department || metadata.department || '',
-        points: profile?.points || metadata.points || 0,
+        points,
         avatar: profile?.avatar_url || metadata.avatar_url || undefined,
         phoneNumber: profile?.phone_number || metadata.phone_number || '',
         gender: profile?.gender || metadata.gender || '',
@@ -149,8 +165,7 @@ export const userService = {
    */
   async initializeUserMetadata(
     supabase: any,
-    displayName: string,
-    points: number = 0
+    displayName: string
   ): Promise<void> {
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -165,9 +180,7 @@ export const userService = {
           ...currentMetadata,
           name: displayName,
           display_name: displayName,
-          points: points || 0,
           join_date: new Date().toISOString().split('T')[0],
-          role: 'member',
           department: ''
         }
       })
@@ -226,8 +239,6 @@ export const userService = {
         authUpdate.name = profileData.name
         authUpdate.display_name = profileData.name
       }
-      if (profileData.points !== undefined) authUpdate.points = profileData.points
-      if (profileData.role !== undefined) authUpdate.role = profileData.role
       if (profileData.department !== undefined) authUpdate.department = profileData.department
       if (profileData.phoneNumber !== undefined) authUpdate.phone_number = profileData.phoneNumber
       if (profileData.gender !== undefined) authUpdate.gender = profileData.gender
@@ -329,8 +340,6 @@ export const userService = {
           department: data.department,
           gender: data.gender,
           bio: data.bio,
-          role: 'member',
-          points: 0,
           join_date: new Date().toISOString().split('T')[0]
         }
       })

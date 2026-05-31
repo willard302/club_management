@@ -58,8 +58,8 @@ const handleLogin = async () => {
           id: user.id,
           name: metadata.name || metadata.display_name || user.email?.split('@')[0] || 'User',
           avatar_url: metadata.avatar_url || null,
-          role: metadata.role || 'member',
-          points: Number(metadata.points ?? 0)
+          role: 'member',
+          points: 0
         })
 
       if (createProfileError) {
