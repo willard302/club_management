@@ -103,17 +103,22 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="relative flex h-screen w-full flex-col overflow-hidden bg-primary font-display">
+  <div class="relative flex h-screen w-full flex-col overflow-hidden bg-background-light font-display">
     <!-- Animated background elements -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-      <div class="absolute top-[60%] -right-[5%] w-[30%] h-[30%] bg-white/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s"></div>
+    <div class="absolute inset-0 z-0 overflow-hidden">
+      <div
+        class="h-full w-full bg-cover bg-center"
+        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKLqnX9ZXB6k4S_M2OiUzo28rwbVbB4qgtt-CuoJnz7esDmG4EipwCVb159pJxmBEUzY0SIMcJffb8sBWx7x0cCktLUUeogL4l_7CKhM4tw-WrZapPYOiXOJ_wFK0XCHI8tjk2PkDynPSxN-hiE_8DwZJ0-k355BY8O0Jn4yeAvRUuQ6juPcePLPZzromKaH4sAy7R06qG24jk8u4mJDZr3UbyPmicNP-tofDjENIMKDtGvnRYe5SgAVTeEDieQCXIlvpG11VqryQ')"
+      ></div>
+      <div class="absolute inset-0 bg-gradient-to-tr from-primary/15 via-white/5 to-white/10"></div>
+      <div class="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-white/15 blur-3xl animate-pulse"></div>
+      <div class="absolute bottom-8 -right-28 h-80 w-80 rounded-full bg-white/20 blur-3xl animate-pulse" style="animation-delay: 1s"></div>
     </div>
 
     <!-- Content -->
     <div class="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
       <div class="w-full max-w-sm glass-effect rounded-[2.5rem] p-10 shadow-2xl space-y-8 border border-white/20">
-        <div class="size-24 bg-white rounded-3xl shadow-xl flex items-center justify-center mx-auto text-primary">
+        <div class="size-2 rounded-3xl flex items-center justify-center mx-auto text-primary">
           <span v-if="loading" class="material-symbols-outlined text-5xl animate-spin">progress_activity</span>
           <span v-else-if="errorMessage" class="material-symbols-outlined text-5xl text-red-500">error</span>
           <span v-else class="material-symbols-outlined text-5xl text-green-500">check_circle</span>
@@ -153,10 +158,61 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.glass-effect {
+.confirm-panel {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.status-orbit {
+  position: relative;
+  border-radius: 9999px;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+}
+
+.status-orbit::before,
+.status-orbit::after {
+  content: '';
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.status-orbit::before {
+  inset: 0;
+  border: 6px solid #ba1a1a;
+}
+
+.status-orbit::after {
+  inset: 8px;
+  border: 6px solid #ffb869;
+}
+
+.confirm-panel h1 {
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-shadow: 0 2px 16px rgba(16, 26, 34, 0.25);
+}
+
+.confirm-panel p {
+  text-shadow: 0 2px 14px rgba(16, 26, 34, 0.22);
+}
+
+.confirm-panel a {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  padding: 0.75rem 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+.floating {
+  animation: floating 6s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+  100% { transform: translateY(0); }
 }
 
 @keyframes progress-bar {

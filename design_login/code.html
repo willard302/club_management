@@ -1,0 +1,213 @@
+<!DOCTYPE html><html lang="zh-TW"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>TKU Zen Club - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "rgba(255, 255, 255, 0.8)",
+                        "on-primary-container": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "rgba(255, 255, 255, 0.1)",
+                        "surface-container-highest": "rgba(255, 255, 255, 0.4)",
+                        "surface-container-high": "rgba(255, 255, 255, 0.3)",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#d78400",
+                        "primary-fixed-dim": "#98cbff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#284967",
+                        "surface-container": "rgba(255, 255, 255, 0.2)",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f6f7f8",
+                        "on-primary-fixed-variant": "#004a77",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#2b1700",
+                        "on-secondary-container": "#40607f",
+                        "tertiary-fixed-dim": "#ffb869",
+                        "on-tertiary-container": "#472800",
+                        "inverse-surface": "#101a22",
+                        "primary-container": "#2b9dee",
+                        "on-secondary-fixed": "#001d33",
+                        "outline": "rgba(255, 255, 255, 0.3)",
+                        "primary": "#2b9dee",
+                        "surface-variant": "rgba(255, 255, 255, 0.15)",
+                        "on-tertiary-fixed-variant": "#673d00",
+                        "surface-dim": "#d7dae1",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#4CAF50",
+                        "primary-fixed": "#cfe5ff",
+                        "secondary-container": "#b9dbff",
+                        "background": "#f6f7f8",
+                        "tertiary-fixed": "#ffdcbb",
+                        "secondary-fixed-dim": "#a9caee",
+                        "secondary-fixed": "#cfe5ff",
+                        "on-primary-fixed": "#001d33",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#98cbff",
+                        "outline-variant": "rgba(255, 255, 255, 0.2)",
+                        "on-background": "#101a22",
+                        "surface-tint": "#2b9dee",
+                        "secondary": "#87ceeb",
+                        "surface-bright": "#ffffff",
+                        "surface": "rgba(255, 255, 255, 0.2)",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+        }
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .glow-logo {
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+        }
+        .zen-orbit {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center relative">
+<!-- Cinematic Background Container -->
+<div class="fixed inset-0 z-0">
+<img alt="Cinematic background of clear blue sky" class="w-full h-full object-cover" data-alt="A wide-angle, cinematic view of a breathtakingly clear blue sky filled with soft, voluminous white clouds during a peaceful afternoon. The lighting is high-key and ethereal, creating a sense of weightless serenity and vastness. The color palette features gradients of brilliant sky blue and pristine white, perfectly aligning with a modern celestial sanctuary aesthetic. The mood is calm, professional, and spiritually uplifting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtXRdR-zO9OJuoifXGDT3UEhS6M96YF5Jd1xblFVAMISsisMQAbXjncs3Yzi3OQJ8xPdRg5VvxPbJP2jpUPS2iTQEqj32af62NXzrfq6EG0pDWZlLGT_qpA514XQZCGdoPaZqkY8n3QoFz79xqkUArpxH0ozycmRsAA-Vj586N9PIdDzRY_0z3LmtmjWcULfN1eF4US4bmwuML7W0HIJzBDWBILxh3XFTyVcD8-yj2tdessxfu1r6OfUk2PiZIR3EkhRndn0WO-MA">
+<!-- Animated atmospheric light spots -->
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-white/5 pointer-events-none"></div>
+</div>
+<!-- Login Shell -->
+<main class="relative z-10 w-full max-w-[1200px] px-6 flex justify-center items-center">
+<!-- Central Glass Container -->
+<div class="glass-panel w-full max-w-md bg-white/15 border border-white/30 rounded-xl p-10 shadow-[0_0_60px_-15px_rgba(255,255,255,0.4)] text-center floating">
+<!-- Three-Color Light Logo -->
+<div class="relative w-24 h-24 mx-auto mb-8 glow-logo flex items-center justify-center">
+<!-- Outer Red -->
+<div class="absolute inset-0 rounded-full border-[6px] border-[#ba1a1a]"></div>
+<!-- Middle Yellow -->
+<div class="absolute inset-2 rounded-full border-[6px] border-[#ffb869]"></div>
+<!-- Inner Green -->
+<div class="absolute inset-4 rounded-full bg-[#4CAF50]"></div>
+</div>
+<!-- Titles -->
+<div class="mb-10">
+<h1 class="text-white text-3xl font-extrabold tracking-[0.2em] mb-1 drop-shadow-md">淡江大學禪學社</h1>
+<p class="text-white/80 font-display text-sm tracking-[0.4em] font-bold">TKU ZEN CLUB</p>
+</div>
+<!-- Login Form -->
+<form class="space-y-6 text-left">
+<!-- Email Input -->
+<div class="space-y-2">
+<label class="block text-[10px] font-bold text-white/70 tracking-[0.2em] uppercase px-1">Email</label>
+<div class="relative">
+<input class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-white/20 transition-all duration-300" placeholder="請輸入您的Email" type="email">
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-2">
+<label class="block text-[10px] font-bold text-white/70 tracking-[0.2em] uppercase px-1">Password</label>
+<div class="relative">
+<input class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-white/20 transition-all duration-300" placeholder="請輸入您的密碼" type="password">
+</div>
+</div>
+<!-- Login Button -->
+<button class="w-full bg-primary text-white font-bold py-4 rounded-lg shadow-[0_0_20px_rgba(43,157,238,0.4)] hover:shadow-[0_0_30px_rgba(43,157,238,0.6)] active:scale-95 transition-all duration-200 tracking-widest mt-4" type="submit">
+                    登入
+                </button>
+</form>
+<!-- Secondary Actions -->
+<div class="mt-8 flex justify-between items-center text-[12px] font-medium tracking-wide">
+<a class="text-white/60 hover:text-white transition-colors duration-300" href="#">忘記密碼?</a>
+<a class="text-white/80 hover:text-white font-bold underline underline-offset-4 decoration-primary/50 transition-all duration-300" href="#">註冊</a>
+</div>
+<!-- Divider -->
+<div class="flex items-center my-10 px-4">
+<div class="flex-grow h-[1px] bg-white/20"></div>
+<span class="px-4 text-[10px] text-white/40 tracking-[0.3em] font-bold uppercase">Continue With</span>
+<div class="flex-grow h-[1px] bg-white/20"></div>
+</div>
+<!-- Social/Portal Icons -->
+<div class="flex justify-center gap-8">
+<button class="w-12 h-12 rounded-full glass-panel bg-white/10 border border-white/20 flex items-center justify-center text-white/80 hover:bg-white/30 hover:text-white transition-all duration-300 active:scale-90" title="Cloud Sync">
+<span class="material-symbols-outlined">cloud</span>
+</button>
+<button class="w-12 h-12 rounded-full glass-panel bg-white/10 border border-white/20 flex items-center justify-center text-white/80 hover:bg-white/30 hover:text-white transition-all duration-300 active:scale-90" title="Scan Access">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+</button>
+<button class="w-12 h-12 rounded-full glass-panel bg-white/10 border border-white/20 flex items-center justify-center text-white/80 hover:bg-white/30 hover:text-white transition-all duration-300 active:scale-90" title="Portal Login">
+<span class="material-symbols-outlined">hub</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer Meta (Optional for Desktop spacing) -->
+<div class="fixed bottom-8 w-full text-center z-10 hidden md:block">
+<p class="text-[10px] text-white/30 tracking-[0.5em] font-bold uppercase">© 2024 淡江禪學社 · Find Inner Peace</p>
+</div>
+<!-- Background Interactive Particles (Client-side script) -->
+<script>
+        document.addEventListener('mousemove', (e) => {
+            const container = document.body;
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Subtle parallax effect on the glass card
+            const card = document.querySelector('.floating');
+            const rect = card.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const moveX = (x - centerX) / 50;
+            const moveY = (y - centerY) / 50;
+            
+            card.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+
+        // Generate ambient light particles
+        for(let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'absolute bg-white/10 rounded-full blur-xl pointer-events-none';
+            const size = Math.random() * 200 + 100;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.opacity = Math.random() * 0.3;
+            document.body.appendChild(particle);
+        }
+    </script>
+</body></html>
