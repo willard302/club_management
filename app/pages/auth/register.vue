@@ -8,7 +8,6 @@ definePageMeta({
 
 const formData = ref<RegisterFormData>({
   fullName: '',
-  points: 0,
   email: '',
   password: '',
   confirmPassword: ''
@@ -43,7 +42,6 @@ const handleRegister = async () => {
       options: {
         emailRedirectTo: `${window.location.origin}/auth/confirm`,
         data: {
-          points: formData.value.points,
           name: formData.value.fullName,
           display_name: formData.value.fullName
         }

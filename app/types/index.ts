@@ -31,7 +31,6 @@ export interface LoginFormData {
 
 export interface RegisterFormData {
   fullName: string
-  points: number
   email: string
   password: string
   confirmPassword: string
