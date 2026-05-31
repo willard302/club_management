@@ -108,16 +108,6 @@ export const userService = {
         .eq('id', user.id)
 
       // 2. 更新 auth metadata
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          ...currentMetadata,
-          avatar_path: fileName,
-          avatar_url: publicUrl
-        }
-      })
-
-      if (updateError) throw updateError
-
       return publicUrl
     } catch (error: any) {
       console.error('Error uploading avatar:', error)
@@ -214,8 +204,6 @@ export const userService = {
 
       if (!user) throw new Error('User not authenticated')
 
-      const currentMetadata = user.user_metadata || {}
-
       // 1. 更新 profiles 表
       const dbUpdate: Record<string, any> = {}
       if (profileData.name !== undefined) dbUpdate.name = profileData.name
@@ -233,22 +221,8 @@ export const userService = {
 
       if (dbError) throw dbError
 
-      // 2. 更新 auth metadata
-      const authUpdate: Record<string, any> = { ...currentMetadata }
-      if (profileData.name !== undefined) {
-        authUpdate.name = profileData.name
-        authUpdate.display_name = profileData.name
-      }
-      if (profileData.department !== undefined) authUpdate.department = profileData.department
-      if (profileData.phoneNumber !== undefined) authUpdate.phone_number = profileData.phoneNumber
-      if (profileData.gender !== undefined) authUpdate.gender = profileData.gender
-      if (profileData.bio !== undefined) authUpdate.bio = profileData.bio
-
-      const { error: authError } = await supabase.auth.updateUser({
-        data: authUpdate
-      })
-
-      if (authError) throw authError
+      // 註冊後的個人資料編輯僅修改 profiles 表，不再同步更新 auth metadata
+      // 這是為了確保數據單一來源，避免 metadata 冗餘
     } catch (error: any) {
       console.error('Error updating user profile:', error)
       throw new Error(error.message || 'Failed to update user profile')
@@ -332,19 +306,7 @@ export const userService = {
 
       if (profileError) throw profileError
 
-      // 2. 更新 auth.users 的 metadata
-      const { error: authError } = await supabase.auth.updateUser({
-        data: {
-          name: data.name,
-          display_name: data.name,
-          department: data.department,
-          gender: data.gender,
-          bio: data.bio,
-          join_date: new Date().toISOString().split('T')[0]
-        }
-      })
-
-      if (authError) throw authError
+      // Google 註冊後的基本資料補填僅修改 profiles 表，不再同步更新 auth metadata
     } catch (error: any) {
       console.error('Error completing Google signup:', error)
       throw new Error(error.message || '完成註冊失敗')
