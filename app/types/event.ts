@@ -1,3 +1,5 @@
+export type EventStatus = 'draft' | 'published' | 'closed'
+
 export interface Event {
   id: string
   title: string
@@ -9,6 +11,13 @@ export interface Event {
   color: string
   createdBy: string
   attendees: number
+  status: EventStatus
+  googleFormUrl?: string
+  googleSheetId?: string
+  subdomain?: string
+  registrationBonus: number
+  checkinBonus: number
+  raffleThreshold: number
   // Derived display fields
   date: Date        // alias of startAt for calendar grid lookup
   time: string      // 'HH:mm' formatted from startAt
@@ -23,4 +32,11 @@ export interface CreateEventPayload {
   end_at: string    // ISO8601
   all_day?: boolean
   color?: string
+  status?: EventStatus
+  google_form_url?: string
+  google_sheet_id?: string
+  subdomain?: string
+  registration_bonus?: number
+  checkin_bonus?: number
+  raffle_threshold?: number
 }

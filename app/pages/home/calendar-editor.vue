@@ -178,6 +178,86 @@ const getTimeColumns = (timeStr: string) => {
         </div>
       </section>
 
+      <section class="glass-card rounded-2xl p-2 space-y-1">
+        <div class="flex items-center gap-3 px-3 py-4">
+          <span class="material-symbols-outlined text-slate-400">visibility</span>
+          <label class="text-sm font-medium text-slate-700 min-w-20">Status</label>
+          <select
+            v-model="formData.status"
+            class="flex-1 bg-transparent border-0 p-0 text-sm focus:ring-0 outline-none text-slate-700"
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="h-[1px] bg-white/30 mx-3"></div>
+        <div class="flex items-start gap-3 px-3 py-4">
+          <span class="material-symbols-outlined text-slate-400 mt-0.5">link</span>
+          <input
+            v-model="formData.googleFormUrl"
+            type="url"
+            placeholder="Google Form URL"
+            class="flex-1 bg-transparent border-0 p-0 text-sm focus:ring-0 placeholder:text-slate-300 outline-none"
+          />
+        </div>
+        <div class="h-[1px] bg-white/30 mx-3"></div>
+        <div class="flex items-start gap-3 px-3 py-4">
+          <span class="material-symbols-outlined text-slate-400 mt-0.5">table</span>
+          <input
+            v-model="formData.googleSheetId"
+            type="text"
+            placeholder="Google Sheet ID"
+            class="flex-1 bg-transparent border-0 p-0 text-sm focus:ring-0 placeholder:text-slate-300 outline-none"
+          />
+        </div>
+        <div class="h-[1px] bg-white/30 mx-3"></div>
+        <div class="flex items-start gap-3 px-3 py-4">
+          <span class="material-symbols-outlined text-slate-400 mt-0.5">language</span>
+          <input
+            v-model="formData.subdomain"
+            type="text"
+            placeholder="Event subdomain"
+            class="flex-1 bg-transparent border-0 p-0 text-sm focus:ring-0 placeholder:text-slate-300 outline-none"
+          />
+        </div>
+      </section>
+
+      <section class="glass-card rounded-2xl p-2 space-y-1">
+        <div class="flex items-center gap-3 px-3 py-4">
+          <span class="material-symbols-outlined text-slate-400">how_to_reg</span>
+          <label class="text-sm font-medium text-slate-700 flex-1">Registration bonus</label>
+          <input
+            v-model.number="formData.registrationBonus"
+            type="number"
+            min="0"
+            class="w-20 bg-white/40 px-2 py-1 rounded-lg text-right text-sm text-[#2b9dee] outline-none"
+          />
+        </div>
+        <div class="h-[1px] bg-white/30 mx-3"></div>
+        <div class="flex items-center gap-3 px-3 py-4">
+          <span class="material-symbols-outlined text-slate-400">fact_check</span>
+          <label class="text-sm font-medium text-slate-700 flex-1">Check-in bonus</label>
+          <input
+            v-model.number="formData.checkinBonus"
+            type="number"
+            min="0"
+            class="w-20 bg-white/40 px-2 py-1 rounded-lg text-right text-sm text-[#2b9dee] outline-none"
+          />
+        </div>
+        <div class="h-[1px] bg-white/30 mx-3"></div>
+        <div class="flex items-center gap-3 px-3 py-4">
+          <span class="material-symbols-outlined text-slate-400">social_leaderboard</span>
+          <label class="text-sm font-medium text-slate-700 flex-1">Raffle threshold</label>
+          <input
+            v-model.number="formData.raffleThreshold"
+            type="number"
+            min="0"
+            class="w-20 bg-white/40 px-2 py-1 rounded-lg text-right text-sm text-[#2b9dee] outline-none"
+          />
+        </div>
+      </section>
+
       <section class="glass-card rounded-2xl p-5 space-y-4">
         <label class="block text-[10px] font-bold tracking-widest uppercase text-slate-500">
           活動顏色

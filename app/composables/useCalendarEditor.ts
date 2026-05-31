@@ -12,6 +12,15 @@ export const COLOR_OPTIONS = [
   '#64748b',
 ] as const
 
+function isValidUrl(value: string): boolean {
+  try {
+    new URL(value)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export function useCalendarEditor() {
   const router = useRouter()
   const route = useRoute()
@@ -37,6 +46,13 @@ export function useCalendarEditor() {
     endTime: '',
     allDay: false,
     color: COLOR_OPTIONS[0] as string,
+    status: 'draft' as CreateEventPayload['status'],
+    googleFormUrl: '',
+    googleSheetId: '',
+    subdomain: '',
+    registrationBonus: 0,
+    checkinBonus: 0,
+    raffleThreshold: 0,
   })
 
   let savedStartTime = '14:00'
@@ -65,6 +81,13 @@ export function useCalendarEditor() {
     formData.value.endTime = format(event.endAt, 'HH:mm')
     formData.value.allDay = event.allDay
     formData.value.color = event.color || COLOR_OPTIONS[0]
+    formData.value.status = event.status
+    formData.value.googleFormUrl = event.googleFormUrl || ''
+    formData.value.googleSheetId = event.googleSheetId || ''
+    formData.value.subdomain = event.subdomain || ''
+    formData.value.registrationBonus = event.registrationBonus
+    formData.value.checkinBonus = event.checkinBonus
+    formData.value.raffleThreshold = event.raffleThreshold
     savedStartTime = formData.value.startTime
     savedEndTime = formData.value.endTime
   }
@@ -122,6 +145,14 @@ export function useCalendarEditor() {
       return { valid: false, error: '活動期間不能超過 7 天' }
     }
 
+    if (formData.value.googleFormUrl && !isValidUrl(formData.value.googleFormUrl)) {
+      return { valid: false, error: 'Google Form URL format is invalid' }
+    }
+
+    if (formData.value.registrationBonus < 0 || formData.value.checkinBonus < 0 || formData.value.raffleThreshold < 0) {
+      return { valid: false, error: 'Point settings cannot be negative' }
+    }
+
     return { valid: true }
   }
 
@@ -143,6 +174,13 @@ export function useCalendarEditor() {
         end_at: new Date(`${formData.value.endDate}T${formData.value.endTime}`).toISOString(),
         all_day: formData.value.allDay,
         color: formData.value.color,
+        status: formData.value.status,
+        google_form_url: formData.value.googleFormUrl.trim() || undefined,
+        google_sheet_id: formData.value.googleSheetId.trim() || undefined,
+        subdomain: formData.value.subdomain.trim() || undefined,
+        registration_bonus: Number(formData.value.registrationBonus) || 0,
+        checkin_bonus: Number(formData.value.checkinBonus) || 0,
+        raffle_threshold: Number(formData.value.raffleThreshold) || 0,
       }
 
       if (editingEventId.value) {
