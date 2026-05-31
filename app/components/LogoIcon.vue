@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 interface Props {
   size?: 'sm' | 'md' | 'lg'
   glowIntensity?: number
+  shadow?: boolean
+  shadowColor?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   size: 'lg',
-  glowIntensity: 10
+  glowIntensity: 10,
+  shadow: true
 })
 
 const sizeClasses = {
@@ -31,6 +36,19 @@ const sizeClasses = {
 }
 
 const current = sizeClasses[props.size]
+
+const shadowClass = computed(() => {
+  if (!props.shadow || props.shadowColor) return ''
+  return 'shadow-lg'
+})
+
+const shadowStyle = computed(() => {
+  if (!props.shadow || !props.shadowColor) return undefined
+
+  return {
+    boxShadow: `0 10px 15px -3px ${props.shadowColor}, 0 4px 6px -4px ${props.shadowColor}`
+  }
+})
 </script>
 
 <template>
@@ -38,21 +56,14 @@ const current = sizeClasses[props.size]
     <div
       :class="[
         current.outer,
-        'rounded-full flex items-center justify-center relative overflow-hidden bg-red-500/80 shadow-lg'
+        'rounded-full flex items-center justify-center relative overflow-hidden',
+        shadowClass
       ]"
-      :style="{ boxShadow: current.glow }"
+      :style="shadowStyle"
     >
-      <!-- <div
-        :class="[
-          current.middle,
-          'rounded-full flex items-center justify-center bg-yellow-400/90'
-        ]"
-      >
-        <div
-          :class="[current.inner, 'rounded-full']"
-          style="background-color: #4CAF50;"
-        ></div>
-      </div> -->
+      <img 
+        src="https://www.wlef.org/wp-content/uploads/2022/07/領袖會logo_大logo-02-300x293.png"
+      />
     </div>
   </div>
 </template>
