@@ -118,10 +118,29 @@ onMounted(async () => {
     <!-- Content -->
     <div class="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
       <div class="w-full max-w-sm glass-effect rounded-[2.5rem] p-10 shadow-2xl space-y-8 border border-white/20">
-        <div class="size-2 rounded-3xl flex items-center justify-center mx-auto text-primary">
-          <span v-if="loading" class="material-symbols-outlined text-5xl animate-spin">progress_activity</span>
-          <span v-else-if="errorMessage" class="material-symbols-outlined text-5xl text-red-500">error</span>
-          <span v-else class="material-symbols-outlined text-5xl text-green-500">check_circle</span>
+        <div class="size-24 rounded-3xl flex items-center justify-center mx-auto text-primary">
+          <span v-if="loading" class="status-spinner" aria-label="載入中"></span>
+          <svg
+            v-else-if="errorMessage"
+            class="size-14 text-red-500"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-label="錯誤"
+          >
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.25" />
+            <path d="M12 7.5v5.25" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" />
+            <circle cx="12" cy="16.5" r="1.2" fill="currentColor" />
+          </svg>
+          <svg
+            v-else
+            class="size-14 text-green-500"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-label="成功"
+          >
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.25" />
+            <path d="m8 12.25 2.55 2.55L16.5 8.85" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </div>
 
         <div class="space-y-3">
@@ -148,7 +167,9 @@ onMounted(async () => {
             to="/auth/login" 
             class="inline-flex items-center gap-2 text-white/60 hover:text-white font-bold transition-colors"
           >
-            <span class="material-symbols-outlined text-xl">arrow_back</span>
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M19 12H5m0 0 6-6m-6 6 6 6" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
             <span>返回登入</span>
           </NuxtLink>
         </div>
@@ -207,6 +228,20 @@ onMounted(async () => {
 
 .floating {
   animation: floating 6s ease-in-out infinite;
+}
+
+.status-spinner {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  border: 4px solid rgba(43, 157, 238, 0.22);
+  border-top-color: #2b9dee;
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.45);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @keyframes floating {
