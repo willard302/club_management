@@ -71,11 +71,10 @@ const getRoleName = (role?: string) => {
 </script>
 
 <template>
-  <!-- Header Section -->
-  <AppHeader title="個人資料" bg-class="sky-gradient" :has-padding="true"></AppHeader>
+  <AppHeroHeader title="會員中心" />
 
     <!-- Main Content -->
-    <main class="flex-1 -mt-4 px-4 pb-24 relative z-40">
+    <main class="flex-1 -mt-10 px-4 pb-24 relative z-20">
       <!-- Profile Info Card -->
       <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-6 flex flex-col items-center text-center mb-6">
         <div class="relative -mt-20 mb-4 p-2 bg-white dark:bg-slate-800 rounded-full shadow-lg">
@@ -165,22 +164,3 @@ const getRoleName = (role?: string) => {
     </main>
 
 </template>
-
-<style scoped>
-:root {
-  --primary: #0ea5e9;
-  --logo-red: #EF4444;
-  --logo-yellow: #FBBF24;
-  --logo-green: #22C55E;
-}
-
-.sky-gradient {
-  background: var(--sky-gradient-dark)
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-</style>

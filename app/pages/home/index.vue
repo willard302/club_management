@@ -115,44 +115,34 @@ onMounted(async () => {
 
 <template>
   <div class="dashboard-page pb-24">
-    <section class="relative h-64 overflow-hidden rounded-b-[3rem] shadow-2xl transition-all">
-      <div class="absolute inset-0 z-0">
-        <div class="h-full w-full bg-gradient-to-br from-sky-600 via-sky-500 to-indigo-400"></div>
-        <div class="absolute inset-0 opacity-20 pattern-dots"></div>
-      </div>
+    <AppHeroHeader
+      eyebrow="Club Management"
+      :title="`哈囉，${userProfile?.name ?? '使用者'}`"
+    >
+      <!-- <template #actions>
+        <button
+          @click="menuVisible = true"
+          class="size-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/30 transition-all"
+        >
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
+      </template> -->
 
-      <div class="relative z-10 h-full flex flex-col justify-between p-6 text-white">
-        <div class="flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-sky-200 text-[10px] font-bold tracking-[0.2em] uppercase">Club Management</span>
-            <h2 class="text-xl font-bold tracking-tight">哈囉，{{ userProfile?.name ?? '使用者' }}</h2>
-          </div>
-          <button
-            @click="menuVisible = true"
-            class="size-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/30 transition-all"
-          >
-            <span class="material-symbols-outlined text-2xl">menu</span>
-          </button>
-        </div>
-
-        <div class="mb-4">
-          <p class="text-sky-100 text-xs font-bold uppercase tracking-widest mb-1 opacity-80">UPCOMING EVENT</p>
-          <div v-if="isEventLoading" class="animate-pulse space-y-2">
-            <div class="h-8 w-3/4 bg-white/20 rounded-lg"></div>
-            <div class="h-4 w-1/2 bg-white/10 rounded-lg"></div>
-          </div>
-          <button
-            v-else
-            class="space-y-1 text-left"
-            :disabled="!upcomingEvent?.id"
-            @click="upcomingEvent?.id && navigateToEditEvent(upcomingEvent.id)"
-          >
-            <h1 class="text-3xl font-extrabold leading-tight text-white drop-shadow-sm">{{ upcomingEvent?.title }}</h1>
-            <p class="text-sky-50 text-sm font-medium opacity-90">{{ upcomingEvent?.meta }}</p>
-          </button>
-        </div>
+      <p class="text-sky-100 text-xs font-bold uppercase tracking-widest mb-1 opacity-80">UPCOMING EVENT</p>
+      <div v-if="isEventLoading" class="animate-pulse space-y-2">
+        <div class="h-8 w-3/4 bg-white/20 rounded-lg"></div>
+        <div class="h-4 w-1/2 bg-white/10 rounded-lg"></div>
       </div>
-    </section>
+      <button
+        v-else
+        class="space-y-1 text-left"
+        :disabled="!upcomingEvent?.id"
+        @click="upcomingEvent?.id && navigateToEditEvent(upcomingEvent.id)"
+      >
+        <h1 class="text-3xl font-extrabold leading-tight text-white drop-shadow-sm">{{ upcomingEvent?.title }}</h1>
+        <p class="text-sky-50 text-sm font-medium opacity-90">{{ upcomingEvent?.meta }}</p>
+      </button>
+    </AppHeroHeader>
 
     <main class="px-4 -mt-10 relative z-20 space-y-6">
       <section class="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-xl border border-white">
@@ -336,11 +326,6 @@ onMounted(async () => {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-}
-
-.pattern-dots {
-  background-image: radial-gradient(circle, #fff 1px, transparent 1px);
-  background-size: 20px 20px;
 }
 
 .van-action-sheet {
