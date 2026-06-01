@@ -137,9 +137,9 @@ export function useUser() {
   }
 
   /**
-   * 完成 Google OAuth 用戶註冊
+   * 完成社群 OAuth 用戶註冊
    */
-  const completeGoogleSignup = async (googleSignupData: {
+  const completeSocialSignup = async (socialSignupData: {
     fullName: string
     points: number
     department: string
@@ -153,21 +153,22 @@ export function useUser() {
     try {
       // 更新用戶個人資料
       await userService.updateUserProfile(supabase, {
-        name: googleSignupData.fullName,
-        points: googleSignupData.points,
-        department: googleSignupData.department,
-        phoneNumber: googleSignupData.phoneNumber,
-        gender: googleSignupData.gender,
-        bio: googleSignupData.bio
+        name: socialSignupData.fullName,
+        points: socialSignupData.points,
+        department: socialSignupData.department,
+        phoneNumber: socialSignupData.phoneNumber,
+        gender: socialSignupData.gender,
+        bio: socialSignupData.bio
       })
 
-      // 標記 Google 首次資料補填已完成
+      // 標記社群登入首次資料補填已完成
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
       await supabase.auth.updateUser({
         data: {
           ...(user.user_metadata || {}),
+          social_signup_completed: true,
           google_signup_completed: true
         }
       })
@@ -195,7 +196,7 @@ export function useUser() {
     uploadAvatar,
     updateUserProfile,
     changePassword,
-    completeGoogleSignup,
+    completeSocialSignup,
     handleLogout
   }
 }

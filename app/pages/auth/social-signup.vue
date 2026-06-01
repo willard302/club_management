@@ -89,7 +89,7 @@ const handleCompleteRegistration = async () => {
 
     const { userService } = await import('@/services/userService')
     
-    await userService.completeGoogleSignup({
+    await userService.completeSocialSignup({
       id: user.id,
       name: formData.value.fullName.trim(),
       department: formData.value.department.trim(),

@@ -278,9 +278,9 @@ export const userService = {
   },
 
   /**
-   * 完成 Google 註冊後的基本資料設置
+   * 完成社群登入後的基本資料設置
    */
-  async completeGoogleSignup(data: {
+  async completeSocialSignup(data: {
     id: string
     name: string
     department: string
@@ -306,9 +306,9 @@ export const userService = {
 
       if (profileError) throw profileError
 
-      // Google 註冊後的基本資料補填僅修改 profiles 表，不再同步更新 auth metadata
+      // 社群登入後的基本資料補填僅修改 profiles 表，不再同步更新 auth metadata
     } catch (error: any) {
-      console.error('Error completing Google signup:', error)
+      console.error('Error completing social signup:', error)
       throw new Error(error.message || '完成註冊失敗')
     }
   }

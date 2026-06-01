@@ -13,7 +13,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return navigateTo('/home')
   }
 
-  const excludedPaths = ['/auth/login', '/auth/register', '/auth/confirm', '/auth/google-signup']
+  const excludedPaths = ['/auth/login', '/auth/register', '/auth/confirm', '/auth/social-signup']
   if (!excludedPaths.includes(to.path)) {
     const { data: profile } = await supabase
       .from('profiles')
@@ -22,7 +22,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       .maybeSingle()
 
     if (!profile || !profile.name || !profile.department) {
-      return navigateTo('/auth/google-signup')
+      return navigateTo('/auth/social-signup')
     }
   }
 

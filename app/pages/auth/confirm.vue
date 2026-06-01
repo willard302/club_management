@@ -74,7 +74,7 @@ onMounted(async () => {
         successMessage.value = '登入成功！即將跳轉完善資料...'
         loading.value = false
         setTimeout(() => {
-          router.push('/auth/google-signup')
+          router.push('/auth/social-signup')
         }, 1500)
       } else {
         successMessage.value = '驗證成功！即將跳轉首頁...'
