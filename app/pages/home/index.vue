@@ -65,7 +65,7 @@ const loadUpcomingEvent = async () => {
           meta: `${fnsFormat(nextEvent.startAt, 'MM/dd HH:mm')}，${nextEvent.location || '待定地點'}`,
         }
       : {
-          title: '目前沒有即將到來的活動',
+          title: '敬請期待下次活動',
           meta: '新增活動後會顯示在這裡',
         }
   } catch (error) {
@@ -139,7 +139,7 @@ onMounted(async () => {
         :disabled="!upcomingEvent?.id"
         @click="upcomingEvent?.id && navigateToEditEvent(upcomingEvent.id)"
       >
-        <h1 class="text-3xl font-extrabold leading-tight text-white drop-shadow-sm">{{ upcomingEvent?.title }}</h1>
+        <h1 class="text-2xl font-extrabold leading-tight text-white drop-shadow-sm">{{ upcomingEvent?.title }}</h1>
         <p class="text-sky-50 text-sm font-medium opacity-90">{{ upcomingEvent?.meta }}</p>
       </button>
     </AppHeroHeader>
